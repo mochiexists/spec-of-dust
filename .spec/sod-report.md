@@ -19,6 +19,8 @@
 | `.github/workflows/validate.yml` | 23 | 42 | 404 | 101 |
 | `.gitignore` | 4 | 6 | 72 | 18 |
 | `.spec/FLOW.md` | 201 | 1823 | 11465 | 2867 |
+| `.spec/archive/2026-04-15-005156-final-polish-and-ci.md` | 66 | 704 | 4626 | 1157 |
+| `.spec/archive/2026-04-15-005156-merge-and-advance-workflow.md` | 79 | 1061 | 6685 | 1672 |
 | `.spec/archive/add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -28,8 +30,6 @@
 | `.spec/archive/widen-peer-review-context.md` | 57 | 704 | 4346 | 1087 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 36 | 151 | 918 | 230 |
-| `.spec/changes/final-polish-and-ci.md` | 66 | 704 | 4626 | 1157 |
-| `.spec/changes/merge-and-advance-workflow.md` | 79 | 1061 | 6685 | 1672 |
 | `.spec/devlog.jsonl` | 1 | 15 | 241 | 61 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 14 | 128 | 836 | 209 |
