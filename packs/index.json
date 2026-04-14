@@ -9,6 +9,5 @@
       "docs": "packs/javascript/v0/README.md",
       "artifact": "releases/spec-of-dust-pack-javascript-v0.tar.gz"
     }
-  ],
-  "starters": []
+  ]
 }

@@ -52,15 +52,53 @@ make_repo() {
   printf '%s\n' "$repo"
 }
 
+seed_change_file() {
+  local status="$1"
+
+  find .spec/changes -maxdepth 1 -type f -name '*.md' \
+    ! -name '_template.md' \
+    ! -name '_example-*' \
+    -delete
+
+  cat > .spec/changes/test-change.md <<EOF
+status: ${status}
+
+# Test change
+
+## What
+Test-only change file for hook validation.
+
+## Acceptance criteria
+- [ ] Hook behavior under test
+
+## Peer spec review
+Synthetic test fixture.
+
+## Peer code review
+Synthetic test fixture.
+
+## Verify
+- [pass] Synthetic test fixture.
+
+## Closure
+- Challenges: nothing notable
+- Learnings: nothing notable
+- Outcomes: nothing notable
+- Dust: nothing notable
+EOF
+}
+
 active_change_commit_passes() {
   local repo
   repo="$(make_repo active)"
 
   (
     cd "$repo"
+    seed_change_file build
+    git add -A .spec/changes
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
     bash scripts/update-sod-report.sh
-    git add CODEX.md README.md .spec/sod-report.md
+    git add .spec/changes CODEX.md README.md .spec/sod-report.md
     git commit -qm 'test: active change commit'
   ) || fail "active change commit"
 
@@ -74,12 +112,13 @@ missing_change_commit_is_blocked() {
   (
     cd "$repo"
     # A change in `spec` state exists on disk but does not count as an active build/verify/done change.
-    perl -0pi -e 's/status: build/status: spec/' .spec/changes/follow-up-repo-hygiene.md
+    seed_change_file spec
+    git add -A .spec/changes
     source .githooks/_spec_gate.sh
     has_active_standard_change && exit 1
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
     bash scripts/update-sod-report.sh
-    git add CODEX.md README.md .spec/sod-report.md
+    git add .spec/changes CODEX.md README.md .spec/sod-report.md
     expect_blocked_commit "blocked without active change" "Commit policy failed" git commit -m 'test: blocked without active change'
   ) || fail "blocked commit without active change"
 
@@ -93,11 +132,11 @@ invalid_skip_commit_is_blocked() {
   (
     cd "$repo"
     # `--no-verify` skips pre-commit, so this proves prepare-commit-msg still enforces skip mode.
-    perl -0pi -e 's/status: build/status: spec/' .spec/changes/follow-up-repo-hygiene.md
+    seed_change_file spec
     source .githooks/_spec_gate.sh
     has_active_standard_change && exit 1
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    git add CODEX.md
+    git add .spec/changes/test-change.md CODEX.md
     expect_blocked_commit "invalid skip commit" "Skip commits|must be staged for skip commits" git commit --no-verify -m 'test: invalid skip commit'
   ) || fail "invalid skip commit"
 
@@ -110,7 +149,7 @@ valid_skip_commit_passes() {
 
   (
     cd "$repo"
-    perl -0pi -e 's/status: build/status: spec/' .spec/changes/follow-up-repo-hygiene.md
+    seed_change_file spec
     source .githooks/_spec_gate.sh
     has_active_standard_change && exit 1
     cat >> .spec/devlog.jsonl <<'EOF'
