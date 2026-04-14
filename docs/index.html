@@ -67,6 +67,10 @@
         background: var(--card);
       }
 
+      .card p {
+        margin-bottom: 0;
+      }
+
       code,
       a {
         color: var(--accent);
@@ -90,15 +94,15 @@
       <section class="grid" aria-label="Entry points">
         <div class="card">
           <h2>Start</h2>
-          <p><a href="../README.md">Read the README</a>, then follow the startup and flow docs in the repo.</p>
+          <p><a id="repo-link" href="https://github.com/timapple/spec-of-dust">Read the repo on GitHub</a>, then follow the startup and flow docs in the repo.</p>
         </div>
         <div class="card">
           <h2>Use</h2>
-          <p><a href="./README.md">Open the docs dock</a> for architecture notes, ADRs, and runbooks.</p>
+          <p><a id="docs-link" href="https://github.com/timapple/spec-of-dust/tree/main/docs">Open the docs dock</a> for architecture notes, ADRs, and runbooks.</p>
         </div>
         <div class="card">
           <h2>Extend</h2>
-          <p><a href="../packs/index.json">Browse the pack index</a> for future release-pack sources.</p>
+          <p><a id="packs-link" href="https://github.com/timapple/spec-of-dust/tree/main/packs">Browse the pack index</a> for future release-pack sources.</p>
         </div>
       </section>
 
@@ -111,5 +115,22 @@
         </ul>
       </section>
     </main>
+    <script>
+      (() => {
+        let base = "https://github.com/timapple/spec-of-dust";
+        const host = window.location.hostname;
+        const pathParts = window.location.pathname.split("/").filter(Boolean);
+
+        if (host.endsWith(".github.io") && pathParts.length > 0) {
+          const owner = host.split(".")[0];
+          const repo = pathParts[0];
+          base = `https://github.com/${owner}/${repo}`;
+        }
+
+        document.getElementById("repo-link").href = base;
+        document.getElementById("docs-link").href = `${base}/tree/main/docs`;
+        document.getElementById("packs-link").href = `${base}/tree/main/packs`;
+      })();
+    </script>
   </body>
 </html>

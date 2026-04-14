@@ -1,3 +1,4 @@
 # Local overrides
+.DS_Store
 CLAUDE.local.md
 .spec/changes/_example-*.md

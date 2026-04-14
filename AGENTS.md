@@ -16,7 +16,9 @@ See `.spec/FLOW.md` for the exact protocol.
 
 ## Project
 
-<!-- e.g. -->
-<!-- Swift/iOS app using SwiftUI and SwiftData. -->
-<!-- Run tests: swift test -->
-<!-- Lint: swiftlint -->
+This repo is `spec-of-dust` itself: a zero-dependency workflow framework, not an app.
+
+- Primary surfaces: `.spec/`, `.githooks/`, `README.md`, `setup.sh`, and `scripts/update-sod-report.sh`
+- No runtime app code lives here; the repo is the product
+- Refresh repo metrics with `bash scripts/update-sod-report.sh` after tracked text-file changes
+- Keep durable notes in `docs/`, release-pack definitions in `packs/`, and active work in `.spec/changes/`

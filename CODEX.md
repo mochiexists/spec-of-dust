@@ -10,4 +10,5 @@ Read `.spec/FLOW.md` for the full `spec-of-dust` workflow.
 - If the Claude CLI is not available, print the review prompt and ask the human to relay it
 - If `.spec/b-startup.md` sets `teams: none | some | many`, respect it when deciding whether to spawn subagents.
 - Codex subagents are explicit and cost more tokens, so prefer them for clearly parallel work rather than tightly coupled tasks.
+- If tracked text files change, run `bash scripts/update-sod-report.sh` and stage the refreshed SOD outputs before committing.
 - On session start, run: `ls .spec/changes/ | grep -Ev '^(_template|_example-)'` to check for active work

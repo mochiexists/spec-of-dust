@@ -1,1 +1,1 @@
-
+{"ts":"2026-04-15T08:00:00Z","event":"skip-no-verify","kind":"comment","summary":"Synthetic example skip entry","reason":"Single-file docs tweak kept in-repo to show the JSONL shape","files":["README.md"],"command":"git commit --no-verify"}
