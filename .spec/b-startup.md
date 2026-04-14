@@ -9,3 +9,5 @@ This repo is `spec-of-dust` itself: a zero-dependency workflow framework, not an
 - Skip audit entries live in `.spec/devlog.jsonl`
 
 teams: some
+merge: confirm
+merge-target: main

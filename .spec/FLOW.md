@@ -37,7 +37,13 @@ Before moving a standard change to `done`, add a short closure note with:
 - `Dust` — one short human or artistic line; keep it under 80 characters
 
 Keep closure notes short. If the work was straightforward, write `nothing notable` instead of filler.
-The change file gets archived on next merge (via git hook).
+After `done`, completion moves into merge behavior:
+- `merge: manual` means stop at `done` and wait for a human to merge
+- `merge: confirm` means ask the human before invoking the merge helper; if the answer is no, stay at `done`
+- `merge: auto` means the agent may invoke the merge helper directly once verify is complete, local gates have passed, and the repo is in a safe state
+
+`merge-target` defaults to `main` when omitted.
+Merge failure does not invent a new state: the change stays `done` and the error is reported.
 
 ## Change files
 
@@ -69,6 +75,29 @@ Repos should extend these gates to reflect real engineering policy:
 - performance, security, or bundle-size limits where relevant
 
 Keep local gates fast. Let CI run the strict superset.
+
+## Merge And Advance
+
+Merge behavior is configured in `.spec/b-startup.md`:
+
+- `merge: manual | confirm | auto`
+- `merge-target: <branch>` with default `main`
+
+`FLOW.md` defines what those values mean; `.spec/b-startup.md` only carries the live values for this repo.
+
+Use `bash scripts/merge-completed-work.sh` to advance completed work:
+- on the merge target branch, it archives `done` change files and commits the archive move
+- on a feature branch, it first archives and commits completed change files on that branch, then merges the branch into the configured target with `--no-ff`
+- use `bash scripts/merge-completed-work.sh --auto` when running in `merge: auto` mode so the helper rechecks repo-local prerequisites before advancing
+
+Safety rules:
+- refuse to run outside a Git repo
+- refuse dirty working trees, including untracked files
+- refuse to run when no completed standard change file exists
+- for `auto`, only run after verify is complete and local gates have passed; the helper rechecks repo-local prerequisites before merging
+
+`confirm` is an explicit ask-to-merge step. If the human declines, stop and leave the change at `done`.
+Do not auto-delete branches in this first pass.
 
 ## Agent teams
 
