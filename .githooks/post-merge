@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# .githooks/post-merge
+# Moves change files with status:done to .spec/archive/ after merge.
+
+set -euo pipefail
+
+SPEC_DIR=".spec/changes"
+ARCHIVE_DIR=".spec/archive"
+
+[ -d "$SPEC_DIR" ] || exit 0
+mkdir -p "$ARCHIVE_DIR"
+
+archived=0
+
+for f in "$SPEC_DIR"/*.md; do
+  [ -f "$f" ] || continue
+  case "$(basename "$f")" in
+    _template.md|_example-*) continue ;;
+  esac
+
+  status=$(awk '
+    index($0, "status:") == 1 {
+      sub("^status:[[:space:]]*", "", $0)
+      print $0
+      exit
+    }
+  ' "$f")
+
+  if [ "$status" = "done" ]; then
+    basename_f=$(basename "$f")
+    datestamp=$(date +%Y-%m-%d)
+    dest="$ARCHIVE_DIR/${datestamp}-${basename_f}"
+
+    # Avoid clobbering
+    if [ -f "$dest" ]; then
+      dest="$ARCHIVE_DIR/${datestamp}-$(date +%H%M%S)-${basename_f}"
+    fi
+
+    mv "$f" "$dest"
+    git add "$dest" 2>/dev/null || true
+    git rm --cached "$f" 2>/dev/null || true
+    archived=$((archived + 1))
+  fi
+done
+
+if [ "$archived" -gt 0 ]; then
+  echo ""
+  echo "📦 Archived $archived completed change file(s) to .spec/archive/"
+  echo "   Run 'git add .spec/ && git commit -m \"archive completed specs\"' to commit."
+  echo ""
+fi
+
+exit 0

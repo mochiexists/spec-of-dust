@@ -1,0 +1,312 @@
+#!/usr/bin/env bash
+
+SPEC_DIR=".spec/changes"
+DEVLOG_FILE=".spec/devlog.jsonl"
+SOD_REPORT_FILE=".spec/sod-report.md"
+SOD_SCRIPT="scripts/update-sod-report.sh"
+README_FILE="README.md"
+EXEMPT_PATTERNS='^\.spec/|^AGENTS\.md$|^CLAUDE\.md$|^README|^\.git|^\.github/|package\.json$|package-lock\.json$|\.lock$'
+MAX_SKIP_LINES=20
+
+is_reserved_change_file() {
+  local name
+
+  name="$(basename "$1")"
+  [ "$name" = "_template.md" ] || [[ "$name" == _example-* ]]
+}
+
+get_staged_files() {
+  git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true
+}
+
+is_text_file_path() {
+  local path="$1"
+
+  [ -f "$path" ] || return 1
+
+  if [ ! -s "$path" ]; then
+    return 0
+  fi
+
+  LC_ALL=C grep -Iq . "$path"
+}
+
+has_code_changes() {
+  local file
+
+  while IFS= read -r file; do
+    if ! printf '%s\n' "$file" | grep -Eq "$EXEMPT_PATTERNS"; then
+      return 0
+    fi
+  done < <(get_staged_files)
+
+  return 1
+}
+
+extract_meta_value() {
+  local file="$1"
+  local key="$2"
+
+  awk -v key="$key" '
+    index($0, key ":") == 1 {
+      sub("^" key ":[[:space:]]*", "", $0)
+      print $0
+      exit
+    }
+  ' "$file"
+}
+
+has_active_standard_change() {
+  local file status
+
+  [ -d "$SPEC_DIR" ] || return 1
+
+  for file in "$SPEC_DIR"/*.md; do
+    [ -f "$file" ] || continue
+    is_reserved_change_file "$file" && continue
+
+    status=$(extract_meta_value "$file" "status")
+
+    case "$status" in
+      build|verify|done) return 0 ;;
+    esac
+  done
+
+  return 1
+}
+
+list_non_exempt_staged_files() {
+  local file
+
+  while IFS= read -r file; do
+    if ! printf '%s\n' "$file" | grep -Eq "$EXEMPT_PATTERNS"; then
+      printf '%s\n' "$file"
+    fi
+  done < <(get_staged_files)
+}
+
+list_skip_target_files() {
+  local file
+
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+    [ "$file" = "$DEVLOG_FILE" ] && continue
+    printf '%s\n' "$file"
+  done < <(get_staged_files)
+}
+
+devlog_is_staged() {
+  local file
+
+  while IFS= read -r file; do
+    [ "$file" = "$DEVLOG_FILE" ] && return 0
+  done < <(get_staged_files)
+
+  return 1
+}
+
+last_devlog_line() {
+  awk 'NF { line = $0 } END { print line }' "$DEVLOG_FILE"
+}
+
+valid_skip_devlog_entry() {
+  local line="$1"
+
+  [ -n "$line" ] || return 1
+
+  printf '%s\n' "$line" | grep -Eq '"event"[[:space:]]*:[[:space:]]*"skip-no-verify"' &&
+    printf '%s\n' "$line" | grep -Eq '"kind"[[:space:]]*:[[:space:]]*"(typo|version-bump|comment|config-tweak|one-line-fix)"' &&
+    printf '%s\n' "$line" | grep -Eq '"summary"[[:space:]]*:[[:space:]]*"[^"]+' &&
+    printf '%s\n' "$line" | grep -Eq '"reason"[[:space:]]*:[[:space:]]*"[^"]+' &&
+    printf '%s\n' "$line" | grep -Eq '"files"[[:space:]]*:[[:space:]]*\[[^]]+\]' &&
+    printf '%s\n' "$line" | grep -Eq '"command"[[:space:]]*:[[:space:]]*"git commit --no-verify"'
+}
+
+print_skip_requirements() {
+  cat <<EOF
+Skip commits without an active change file must include a staged \`${DEVLOG_FILE}\` entry.
+
+Append one JSON object per line. Required fields:
+- \`event: "skip-no-verify"\`
+- \`kind: "typo" | "version-bump" | "comment" | "config-tweak" | "one-line-fix"\`
+- \`summary\`
+- \`reason\`
+- \`files\`
+- \`command: "git commit --no-verify"\`
+
+Example:
+{"ts":"2026-04-14T22:00:00Z","event":"skip-no-verify","kind":"one-line-fix","summary":"Guard empty slug","reason":"Single-file 4-line fix with obvious behavior","files":["src/slug.ts"],"command":"git commit --no-verify"}
+
+Skip-mode only covers truly trivial code changes:
+- exactly one target file modified in place, plus the staged devlog entry
+- no new files, deletes, or renames
+- no more than ${MAX_SKIP_LINES} total added/deleted lines
+EOF
+}
+
+validate_skip_devlog() {
+  local line
+
+  if ! devlog_is_staged; then
+    echo ""
+    echo "⚠️  ${DEVLOG_FILE} must be staged for skip commits."
+    echo ""
+    print_skip_requirements
+    echo ""
+    return 1
+  fi
+
+  if [ ! -f "$DEVLOG_FILE" ]; then
+    echo ""
+    echo "⚠️  ${DEVLOG_FILE} does not exist."
+    echo ""
+    return 1
+  fi
+
+  line=$(last_devlog_line)
+
+  if ! valid_skip_devlog_entry "$line"; then
+    echo ""
+    echo "⚠️  ${DEVLOG_FILE} is missing a valid skip-no-verify JSONL entry."
+    echo ""
+    print_skip_requirements
+    echo ""
+    return 1
+  fi
+}
+
+validate_skip_mode() {
+  local file target_file added deleted total
+  local target_files=()
+
+  validate_skip_devlog || return 1
+
+  while IFS= read -r file; do
+    [ -n "$file" ] && target_files+=("$file")
+  done < <(list_skip_target_files)
+
+  if [ "${#target_files[@]}" -ne 1 ]; then
+    echo ""
+    echo "⚠️  Skip commits only allow one target file change plus ${DEVLOG_FILE}."
+    echo ""
+    print_skip_requirements
+    echo ""
+    return 1
+  fi
+
+  while IFS=$'\t' read -r status file; do
+    [ -n "$status" ] || continue
+
+    if [ "$file" = "$DEVLOG_FILE" ]; then
+      continue
+    fi
+
+    if [ "$status" != "M" ]; then
+      echo ""
+      echo "⚠️  Skip commits only allow in-place edits to an existing file."
+      echo ""
+      print_skip_requirements
+      echo ""
+      return 1
+    fi
+  done < <(git diff --cached --name-status --diff-filter=ACMR 2>/dev/null || true)
+
+  target_file="${target_files[0]}"
+  read -r added deleted _ < <(git diff --cached --numstat -- "$target_file" | head -1)
+
+  if [ "${added:-0}" = "-" ] || [ "${deleted:-0}" = "-" ]; then
+    echo ""
+    echo "⚠️  Skip commits do not allow binary or non-text changes."
+    echo ""
+    return 1
+  fi
+
+  total=$((added + deleted))
+
+  if [ "$total" -gt "$MAX_SKIP_LINES" ]; then
+    echo ""
+    echo "⚠️  Skip commit is too large: ${total} changed lines in ${target_file}."
+    echo ""
+    print_skip_requirements
+    echo ""
+    return 1
+  fi
+
+  return 0
+}
+
+enforce_spec_gate() {
+  if ! has_code_changes; then
+    return 0
+  fi
+
+  if has_active_standard_change; then
+    return 0
+  fi
+
+  validate_skip_mode
+}
+
+has_sod_relevant_changes() {
+  local file
+
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+
+    case "$file" in
+      "$DEVLOG_FILE"|"$SOD_REPORT_FILE") continue ;;
+    esac
+
+    if is_text_file_path "$file"; then
+      return 0
+    fi
+  done < <(get_staged_files)
+
+  return 1
+}
+
+skip_mode_applies() {
+  validate_skip_mode >/dev/null 2>&1
+}
+
+enforce_sod_gate() {
+  if skip_mode_applies; then
+    return 0
+  fi
+
+  if ! has_sod_relevant_changes; then
+    return 0
+  fi
+
+  if [ ! -x "$SOD_SCRIPT" ]; then
+    echo ""
+    echo "⚠️  Missing executable SOD generator: ${SOD_SCRIPT}"
+    echo ""
+    return 1
+  fi
+
+  if ! "$SOD_SCRIPT" --check >/dev/null 2>&1; then
+    echo ""
+    echo "⚠️  SOD output is stale."
+    echo ""
+    echo "Run \`${SOD_SCRIPT}\`, then stage \`${SOD_REPORT_FILE}\` and \`${README_FILE}\`."
+    echo ""
+    return 1
+  fi
+
+  if ! git diff --quiet -- "$SOD_REPORT_FILE" "$README_FILE"; then
+    echo ""
+    echo "⚠️  Refreshed SOD files are not fully staged."
+    echo ""
+    echo "Stage \`${SOD_REPORT_FILE}\` and \`${README_FILE}\` before committing."
+    echo ""
+    return 1
+  fi
+
+  return 0
+}
+
+enforce_commit_policies() {
+  enforce_spec_gate || return 1
+  enforce_sod_gate || return 1
+}

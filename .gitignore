@@ -1,0 +1,3 @@
+# Local overrides
+CLAUDE.local.md
+.spec/changes/_example-*.md

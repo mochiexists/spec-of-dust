@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# .githooks/prepare-commit-msg
+# Enforces the spec gate even when the commit uses --no-verify.
+
+set -euo pipefail
+
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$HOOK_DIR/_spec_gate.sh"
+
+enforce_commit_policies

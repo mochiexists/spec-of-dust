@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit
+# Ensures code changes have a corresponding active standard change file,
+# or a documented trivial skip-mode change.
+
+set -euo pipefail
+
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$HOOK_DIR/_spec_gate.sh"
+
+if ! enforce_commit_policies; then
+  echo ""
+  echo "⚠️  Commit policy failed."
+  echo ""
+  echo "You may need:"
+  echo "   - a standard change file in 'build', 'verify', or 'done'"
+  echo "   - or a staged .spec/devlog.jsonl entry for a truly trivial skip-no-verify change"
+  echo "   - and a refreshed/staged SOD report plus README summary"
+  echo ""
+  exit 1
+fi

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>spec-of-dust</title>
+    <style>
+      :root {
+        --bg: #f4efe6;
+        --fg: #1d1a17;
+        --muted: #5c544c;
+        --line: #cdbfaf;
+        --card: #fffaf2;
+        --accent: #8c4f2f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background:
+          radial-gradient(circle at top left, #fff7ec 0, transparent 35%),
+          linear-gradient(180deg, #f7f1e8 0%, var(--bg) 100%);
+        color: var(--fg);
+      }
+
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+      }
+
+      h1,
+      h2 {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      h1 {
+        font-size: clamp(2.6rem, 7vw, 4.8rem);
+        margin: 0 0 12px;
+      }
+
+      p {
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+
+      .lede {
+        max-width: 42rem;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin: 32px 0 40px;
+      }
+
+      .card {
+        padding: 18px;
+        border: 1px solid var(--line);
+        background: var(--card);
+      }
+
+      code,
+      a {
+        color: var(--accent);
+      }
+
+      ul {
+        padding-left: 20px;
+        line-height: 1.7;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>spec-of-dust</h1>
+      <p class="lede">
+        A zero-dependency spec, review, and gate workflow for AI-assisted development.
+        The repo stays local-first and minimal, while leaving room for GitHub Pages,
+        release artifacts, gate packs, and starter templates.
+      </p>
+
+      <section class="grid" aria-label="Entry points">
+        <div class="card">
+          <h2>Start</h2>
+          <p><a href="../README.md">Read the README</a>, then follow the startup and flow docs in the repo.</p>
+        </div>
+        <div class="card">
+          <h2>Use</h2>
+          <p><a href="./README.md">Open the docs dock</a> for architecture notes, ADRs, and runbooks.</p>
+        </div>
+        <div class="card">
+          <h2>Extend</h2>
+          <p><a href="../packs/index.json">Browse the pack index</a> for future release-pack sources.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Publishing Shape</h2>
+        <ul>
+          <li>GitHub repo for source and issue tracking</li>
+          <li>GitHub Pages from <code>docs/</code> for lightweight public docs</li>
+          <li>GitHub Releases for versioned gate packs and starter artifacts</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

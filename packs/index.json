@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "project": "spec-of-dust",
+  "packs": [
+    {
+      "slug": "javascript",
+      "version": "v0",
+      "summary": "Baseline JavaScript gate-pack scaffold for future releases.",
+      "docs": "packs/javascript/v0/README.md",
+      "artifact": "releases/spec-of-dust-pack-javascript-v0.tar.gz"
+    }
+  ],
+  "starters": []
+}
