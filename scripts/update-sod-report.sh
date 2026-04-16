@@ -113,6 +113,52 @@ build_metrics() {
   done < "$FILE_LIST"
 }
 
+count_tokens_for() {
+  local file="$ROOT_DIR/$1"
+  [ -f "$file" ] || { echo 0; return; }
+  local chars
+  chars=$(wc -m < "$file" | tr -d '[:space:]')
+  echo $(( (chars + 3) / 4 ))
+}
+
+build_context_metrics() {
+  # Bootstrap: framework cost (FLOW.md + b-startup.md)
+  local flow_tokens bstartup_tokens
+  flow_tokens=$(count_tokens_for ".spec/FLOW.md")
+  bstartup_tokens=$(count_tokens_for ".spec/b-startup.md")
+  bootstrap_tokens=$((flow_tokens + bstartup_tokens))
+
+  # Operational: bootstrap + project files
+  local agents_tokens claude_tokens codex_tokens change_tokens=0
+  agents_tokens=$(count_tokens_for "AGENTS.md")
+  claude_tokens=$(count_tokens_for "CLAUDE.md")
+  codex_tokens=$(count_tokens_for "CODEX.md")
+
+  # Find active change file — prefer in-progress (spec|build|verify) over done
+  local active_change=""
+  if [ -d "$ROOT_DIR/.spec/changes" ]; then
+    for f in "$ROOT_DIR/.spec/changes"/*.md; do
+      [ -f "$f" ] || continue
+      local bn
+      bn="$(basename "$f")"
+      case "$bn" in _template.md|_example-*) continue ;; esac
+      local st
+      st="$(awk 'index($0,"status:") == 1 { sub("^status:[[:space:]]*",""); print; exit }' "$f")"
+      case "$st" in
+        spec|build|verify) active_change="$f"; break ;;
+        done) [ -z "$active_change" ] && active_change="$f" ;;
+      esac
+    done
+  fi
+  if [ -n "$active_change" ]; then
+    local ct
+    ct=$(wc -m < "$active_change" | tr -d '[:space:]')
+    change_tokens=$(( (ct + 3) / 4 ))
+  fi
+
+  operational_tokens=$((bootstrap_tokens + agents_tokens + claude_tokens + codex_tokens + change_tokens))
+}
+
 build_report() {
   local version
   version="$(cat "$VERSION_FILE")"
@@ -128,6 +174,8 @@ build_report() {
 - Total words: \`$total_words\`
 - Total characters: \`$total_chars\`
 - Total estimated tokens: \`$total_tokens\`
+- Bootstrap SOD: \`$bootstrap_tokens / 3000 target\`
+- Operational SOD: \`$operational_tokens / 5000 target\`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -150,6 +198,8 @@ build_summary() {
 - Words: \`$total_words\`
 - Characters: \`$total_chars\`
 - Est. tokens: \`$total_tokens\`
+- Bootstrap SOD: \`$bootstrap_tokens / 3000 target\`
+- Operational SOD: \`$operational_tokens / 5000 target\`
 
 See \`.spec/sod-report.md\` for the full per-file breakdown.
 <!-- sod-summary:end -->
@@ -219,6 +269,7 @@ main() {
 
   ensure_readme_markers
   build_metrics
+  build_context_metrics
   build_report
   build_summary
   build_readme

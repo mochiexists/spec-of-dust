@@ -3,11 +3,13 @@
 - Version: `0.0.1`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `47`
-- Total lines: `4150`
-- Total words: `30865`
-- Total characters: `232431`
-- Total estimated tokens: `58125`
+- Total files: `48`
+- Total lines: `4261`
+- Total words: `31983`
+- Total characters: `241155`
+- Total estimated tokens: `60307`
+- Bootstrap SOD: `3377 / 3000 target`
+- Operational SOD: `5230 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -18,7 +20,7 @@
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 23 | 42 | 404 | 101 |
 | `.gitignore` | 4 | 6 | 72 | 18 |
-| `.spec/FLOW.md` | 220 | 1957 | 12589 | 3148 |
+| `.spec/FLOW.md` | 229 | 2015 | 12983 | 3246 |
 | `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -36,9 +38,10 @@
 | `.spec/changes/condensation-review.md` | 109 | 1202 | 7499 | 1875 |
 | `.spec/changes/embed-change-history-in-viewer.md` | 59 | 729 | 4831 | 1208 |
 | `.spec/changes/embed-jsonl-in-viewer.md` | 57 | 655 | 4272 | 1068 |
+| `.spec/changes/operational-context-budget.md` | 50 | 525 | 3506 | 877 |
 | `.spec/changes/scope-aware-commit-gate.md` | 62 | 804 | 5156 | 1289 |
 | `.spec/devlog.jsonl` | 3 | 58 | 827 | 207 |
-| `.spec/flowlog.jsonl` | 7 | 231 | 2536 | 634 |
+| `.spec/flowlog.jsonl` | 8 | 250 | 2823 | 706 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 955 | 239 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |
@@ -47,7 +50,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 618 | 8761 | 76243 | 19061 |
+| `docs/viewer.html` | 618 | 9074 | 78957 | 19740 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |
@@ -55,6 +58,6 @@
 | `scripts/devlog.sh` | 71 | 333 | 2423 | 606 |
 | `scripts/flowlog.sh` | 83 | 395 | 2914 | 729 |
 | `scripts/merge-completed-work.sh` | 129 | 359 | 2843 | 711 |
-| `scripts/update-sod-report.sh` | 246 | 629 | 5331 | 1333 |
+| `scripts/update-sod-report.sh` | 297 | 832 | 7154 | 1789 |
 | `setup.sh` | 99 | 421 | 2649 | 663 |
 | `tests/test-spec-gate.sh` | 344 | 1090 | 9524 | 2381 |

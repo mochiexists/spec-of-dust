@@ -4,6 +4,15 @@ This project uses `spec-of-dust`: a lightweight spec, review, and gate workflow.
 No CLI tools, no slash commands.
 You understand the flow by reading this file. You track state via change files in `.spec/changes/`.
 
+## Context budget
+
+The framework tracks two token budgets in the SOD report:
+
+- **Bootstrap** (target: 3k tokens) — framework cost: `FLOW.md` + `b-startup.md`
+- **Operational** (target: 5k tokens) — bootstrap + project files: `AGENTS.md`, `CLAUDE.md`/`CODEX.md`, active change file
+
+These are visibility targets, not hard gates. Keep the bootstrap tight so the framework stays a spec of dust.
+
 ## B:/ Start Up
 
 On session start, read `.spec/b-startup.md` first if it exists.
