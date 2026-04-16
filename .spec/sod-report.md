@@ -6,7 +6,7 @@
 - Total files: `62`
 - Total lines: `5541`
 - Total words: `44294`
-- Total characters: `338290`
+- Total characters: `338289`
 - Total estimated tokens: `84594`
 - Bootstrap SOD: `1705 / 3000 target`
 - Operational SOD: `3672 / 5000 target`
@@ -49,7 +49,7 @@
 | `.spec/archive/2026-04-17-004339-fix-sod-viewer-rebuild-loop.md` | 46 | 353 | 2479 | 620 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
-| `.spec/changes/create-language-packs.md` | 63 | 688 | 4758 | 1190 |
+| `.spec/changes/create-language-packs.md` | 63 | 688 | 4757 | 1190 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 18 | 544 | 6352 | 1588 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |

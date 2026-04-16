@@ -1,4 +1,4 @@
-status: build
+status: done
 files: packs/index.json, packs/javascript/v0/README.md, packs/swift/v0/README.md, packs/python/v0/README.md, packs/python-research/v0/README.md, packs/rust/v0/README.md, docs/viewer.html
 
 # Create language packs
