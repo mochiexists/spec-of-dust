@@ -3,11 +3,11 @@
 - Version: `0.1.0`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `54`
-- Total lines: `4778`
-- Total words: `38899`
-- Total characters: `296050`
-- Total estimated tokens: `74033`
+- Total files: `55`
+- Total lines: `4858`
+- Total words: `40207`
+- Total characters: `305315`
+- Total estimated tokens: `76349`
 - Bootstrap SOD: `1705 / 3000 target`
 - Operational SOD: `3559 / 5000 target`
 
@@ -46,8 +46,9 @@
 | `.spec/changes/require-commit-after-done.md` | 58 | 783 | 5331 | 1333 |
 | `.spec/changes/scope-aware-commit-gate.md` | 62 | 804 | 5156 | 1289 |
 | `.spec/changes/trim-bootstrap-context.md` | 58 | 575 | 3767 | 942 |
+| `.spec/changes/validate-done-closeout-gate.md` | 79 | 827 | 5373 | 1344 |
 | `.spec/devlog.jsonl` | 3 | 58 | 827 | 207 |
-| `.spec/flowlog.jsonl` | 14 | 465 | 5178 | 1295 |
+| `.spec/flowlog.jsonl` | 15 | 497 | 5560 | 1390 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 957 | 240 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |
@@ -56,7 +57,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 618 | 11555 | 100118 | 25030 |
+| `docs/viewer.html` | 618 | 12004 | 103628 | 25907 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |

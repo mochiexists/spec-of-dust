@@ -12,11 +12,11 @@ and starter repo layouts.
 ## SOD
 
 - Version: `0.1.0`
-- Files: `54`
-- Lines: `4778`
-- Words: `38899`
-- Characters: `296050`
-- Est. tokens: `74033`
+- Files: `55`
+- Lines: `4858`
+- Words: `40207`
+- Characters: `305315`
+- Est. tokens: `76349`
 - Bootstrap SOD: `1705 / 3000 target`
 - Operational SOD: `3559 / 5000 target`
 
