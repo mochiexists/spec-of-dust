@@ -58,13 +58,13 @@ parse_change_file() {
 
   basename_f="$(basename "$file" .md)"
 
-  # Extract date from archive filename prefix (e.g. 2026-04-14-my-feature)
-  if [[ "$basename_f" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})-(.+)$ ]]; then
+  # Extract timestamped archive prefixes before the more generic date-only form.
+  if [[ "$basename_f" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})-([0-9]{2})([0-9]{2})([0-9]{2})-(.+)$ ]]; then
+    ts="${BASH_REMATCH[1]}T${BASH_REMATCH[2]}:${BASH_REMATCH[3]}:${BASH_REMATCH[4]}Z"
+    name="${BASH_REMATCH[5]}"
+  elif [[ "$basename_f" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})-(.+)$ ]]; then
     ts="${BASH_REMATCH[1]}T00:00:00Z"
     name="${BASH_REMATCH[2]}"
-  elif [[ "$basename_f" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})-([0-9]{6})-(.+)$ ]]; then
-    ts="${BASH_REMATCH[1]}T00:00:00Z"
-    name="${BASH_REMATCH[3]}"
   else
     ts=""
     name="$basename_f"

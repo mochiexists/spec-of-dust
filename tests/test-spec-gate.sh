@@ -88,6 +88,16 @@ Synthetic test fixture.
 EOF
 }
 
+commit_isolated_changes_fixture() {
+  find .spec/changes -maxdepth 1 -type f -name '*.md' \
+    ! -name '_template.md' \
+    ! -name '_example-*' \
+    -delete
+
+  git add -A .spec/changes
+  git commit --no-verify -qm 'fixture: isolate changes'
+}
+
 active_change_commit_passes() {
   local repo
   repo="$(make_repo active)"
@@ -161,6 +171,90 @@ EOF
   ) || fail "valid skip commit"
 
   pass "valid skip commit"
+}
+
+setup_scaffold_includes_files_metadata() {
+  local repo
+  repo="$(make_repo setup-template)"
+
+  (
+    cd "$repo"
+    rm -f .spec/changes/_template.md
+    bash setup.sh >/dev/null
+    grep -Fx 'status: spec' .spec/changes/_template.md >/dev/null
+    grep -Fx 'files:' .spec/changes/_template.md >/dev/null
+  ) || fail "setup scaffold includes files metadata"
+
+  pass "setup scaffold includes files metadata"
+}
+
+done_change_commit_passes() {
+  local repo
+  repo="$(make_repo done-closeout)"
+
+  (
+    cd "$repo"
+    commit_isolated_changes_fixture
+    seed_change_file done
+    bash scripts/flowlog.sh --change test-change --agent codex --sentiment smooth >/dev/null
+    git add .spec/changes/test-change.md .spec/flowlog.jsonl docs/viewer.html
+    bash scripts/update-sod-report.sh
+    git add README.md .spec/sod-report.md
+    git commit -qm 'test: done change commit'
+  ) || fail "done change commit"
+
+  pass "done change commit"
+}
+
+done_change_with_additional_work_is_blocked() {
+  local repo
+  repo="$(make_repo done-blocked)"
+
+  (
+    cd "$repo"
+    commit_isolated_changes_fixture
+    seed_change_file done
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    git add .spec/changes/test-change.md CODEX.md
+    expect_blocked_commit "done with additional work" "Completed change must be committed before more work proceeds" git commit -m 'test: done with additional work'
+  ) || fail "done with additional work"
+
+  pass "done with additional work blocked"
+}
+
+multiple_done_changes_are_blocked() {
+  local repo
+  repo="$(make_repo multi-done)"
+
+  (
+    cd "$repo"
+    commit_isolated_changes_fixture
+    seed_change_file done
+    cat > .spec/changes/second-change.md <<'INNER'
+status: done
+
+# Second done change
+## What
+Test fixture for multi-done closeout.
+## Acceptance criteria
+- [ ] closeout test
+## Peer spec review
+test
+## Peer code review
+test
+## Verify
+test
+## Closure
+- Challenges: nothing notable
+- Learnings: nothing notable
+- Outcomes: nothing notable
+- Dust: nothing notable
+INNER
+    git add .spec/changes/test-change.md .spec/changes/second-change.md
+    expect_blocked_commit "multiple done changes" "Multiple completed changes are still uncommitted" git commit -m 'test: multiple done changes'
+  ) || fail "multiple done changes"
+
+  pass "multiple done changes blocked"
 }
 
 scoped_commit_passes() {
@@ -335,6 +429,10 @@ active_change_commit_passes
 missing_change_commit_is_blocked
 invalid_skip_commit_is_blocked
 valid_skip_commit_passes
+setup_scaffold_includes_files_metadata
+done_change_commit_passes
+done_change_with_additional_work_is_blocked
+multiple_done_changes_are_blocked
 scoped_commit_passes
 unscoped_commit_is_blocked
 empty_scope_falls_back

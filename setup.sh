@@ -27,6 +27,7 @@ fi
 if [ ! -f .spec/changes/_template.md ]; then
   cat > .spec/changes/_template.md <<'EOF'
 status: spec
+files:
 
 # {Change name}
 

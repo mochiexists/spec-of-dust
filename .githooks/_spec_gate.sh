@@ -19,6 +19,14 @@ get_staged_files() {
   git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true
 }
 
+list_dirty_files() {
+  {
+    git diff --name-only 2>/dev/null || true
+    git diff --cached --name-only 2>/dev/null || true
+    git ls-files --others --exclude-standard 2>/dev/null || true
+  } | awk 'NF && !seen[$0]++'
+}
+
 is_text_file_path() {
   local path="$1"
 
@@ -73,6 +81,98 @@ has_active_standard_change() {
   done
 
   return 1
+}
+
+collect_dirty_done_changes() {
+  local file status
+
+  [ -d "$SPEC_DIR" ] || return
+
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+
+    case "$file" in
+      "$SPEC_DIR"/*.md) ;;
+      *) continue ;;
+    esac
+
+    [ -f "$file" ] || continue
+    is_reserved_change_file "$file" && continue
+
+    status=$(extract_meta_value "$file" "status")
+    [ "$status" = "done" ] || continue
+
+    printf '%s\n' "$file"
+  done < <(list_dirty_files)
+}
+
+is_allowed_done_closeout_file() {
+  local done_change="$1"
+  local file="$2"
+
+  case "$file" in
+    "$done_change"|".spec/flowlog.jsonl"|".spec/sod-report.md"|"README.md"|"docs/viewer.html")
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
+enforce_done_closeout_gate() {
+  local file done_change
+  local dirty_done_changes=()
+  local extra_dirty_files=()
+
+  while IFS= read -r file; do
+    [ -n "$file" ] && dirty_done_changes+=("$file")
+  done < <(collect_dirty_done_changes)
+
+  if [ "${#dirty_done_changes[@]}" -eq 0 ]; then
+    return 0
+  fi
+
+  if [ "${#dirty_done_changes[@]}" -gt 1 ]; then
+    echo ""
+    echo "⚠️  Multiple completed changes are still uncommitted:"
+    echo ""
+    for file in "${dirty_done_changes[@]}"; do
+      echo "   $file"
+    done
+    echo ""
+    echo "Commit one completed change at a time before continuing more work."
+    echo "If you truly need batching, handle it as an explicit workflow exception."
+    echo ""
+    return 1
+  fi
+
+  done_change="${dirty_done_changes[0]}"
+
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+    if ! is_allowed_done_closeout_file "$done_change" "$file"; then
+      extra_dirty_files+=("$file")
+    fi
+  done < <(list_dirty_files)
+
+  if [ "${#extra_dirty_files[@]}" -gt 0 ]; then
+    echo ""
+    echo "⚠️  Completed change must be committed before more work proceeds:"
+    echo ""
+    echo "   $done_change"
+    echo ""
+    echo "Dirty paths beyond the allowed closeout artifacts were found:"
+    echo ""
+    for file in "${extra_dirty_files[@]}"; do
+      echo "   $file"
+    done
+    echo ""
+    echo "Commit the completed change first, or archive/merge it, before stacking more work."
+    echo ""
+    return 1
+  fi
+
+  return 0
 }
 
 collect_scope_patterns() {
@@ -402,6 +502,7 @@ enforce_sod_gate() {
 
 enforce_commit_policies() {
   enforce_spec_gate || return 1
+  enforce_done_closeout_gate || return 1
   enforce_scope_gate || return 1
   enforce_sod_gate || return 1
 }

@@ -33,6 +33,7 @@ spec → build → verify → done
 1. Fill `## Closure` with `Challenges`, `Learnings`, `Outcomes`, and `Dust` (one short artistic line, <80 chars). Use `nothing notable` if straightforward.
 2. Append a flowlog entry via `bash scripts/flowlog.sh` with `--change`, `--agent`, `--sentiment` (smooth/rough/blocked), and optional `--divergence`, `--friction`, `--suggestion`.
 3. Set `status: done`.
+4. Commit that completed change before starting or stacking more standard work. A `done` change is a closeout boundary, not a parking state.
 
 After `done`, merge behavior applies (see Merge section).
 
@@ -47,6 +48,7 @@ The `status:` line is the state machine. Update it to transition.
 Mechanical checks that block unsafe progress:
 
 - **commit gate**: no code commit without an active change file (status `build|verify|done`), unless skip rules pass
+- **done-closeout gate**: a dirty `done` change can only travel with its closeout artifacts; commit it before more work proceeds
 - **scope gate**: if the active change has a `files:` field, staged non-exempt files must match it
 - **skip gate**: `--no-verify` requires a structured devlog entry and a truly trivial diff
 - **archive gate**: finished change files move to `.spec/archive/` after merge

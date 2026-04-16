@@ -6,7 +6,7 @@ Read @.spec/FLOW.md for the full `spec-of-dust` workflow.
 
 ## Claude Code specific
 
-- When peer-reviewing, shell out to Codex: `cat .spec/changes/{name}.md | codex -q "..."`
+- When peer-reviewing, shell out to Codex: `cat .spec/changes/{name}.md | codex exec "..."`
 - If codex CLI is not available, print the review prompt and ask the human to relay it.
 - If `.spec/b-startup.md` sets `teams: none | some | many`, respect it when deciding how much subagent fan-out to use.
 - Prefer subagents only for clearly parallel exploration or review work; keep the main context clean.
