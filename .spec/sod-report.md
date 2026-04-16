@@ -4,12 +4,12 @@
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
 - Total files: `55`
-- Total lines: `4858`
-- Total words: `40207`
-- Total characters: `305315`
-- Total estimated tokens: `76349`
+- Total lines: `4859`
+- Total words: `40244`
+- Total characters: `305931`
+- Total estimated tokens: `76503`
 - Bootstrap SOD: `1705 / 3000 target`
-- Operational SOD: `3559 / 5000 target`
+- Operational SOD: `2482 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -30,24 +30,24 @@
 | `.spec/archive/2026-04-14-widen-peer-review-context.md` | 57 | 704 | 4346 | 1087 |
 | `.spec/archive/2026-04-15-005156-final-polish-and-ci.md` | 66 | 704 | 4626 | 1157 |
 | `.spec/archive/2026-04-15-005156-merge-and-advance-workflow.md` | 79 | 1061 | 6685 | 1672 |
+| `.spec/archive/2026-04-16-232653-add-jsonl-append-helpers.md` | 52 | 628 | 4307 | 1077 |
+| `.spec/archive/2026-04-16-232653-add-workflow-feedback-log.md` | 54 | 587 | 3975 | 994 |
+| `.spec/archive/2026-04-16-232653-add-workflow-log-viewer.md` | 59 | 675 | 4293 | 1074 |
+| `.spec/archive/2026-04-16-232653-condensation-review.md` | 109 | 1202 | 7499 | 1875 |
+| `.spec/archive/2026-04-16-232653-embed-change-history-in-viewer.md` | 59 | 729 | 4831 | 1208 |
+| `.spec/archive/2026-04-16-232653-embed-jsonl-in-viewer.md` | 57 | 655 | 4272 | 1068 |
+| `.spec/archive/2026-04-16-232653-fix-claude-review-command-drift.md` | 45 | 418 | 2801 | 701 |
+| `.spec/archive/2026-04-16-232653-fix-setup-template-drift.md` | 46 | 470 | 3285 | 822 |
+| `.spec/archive/2026-04-16-232653-fix-viewer-archive-filename-parsing.md` | 45 | 450 | 3368 | 842 |
+| `.spec/archive/2026-04-16-232653-full-repo-evaluation.md` | 169 | 1994 | 14291 | 3573 |
+| `.spec/archive/2026-04-16-232653-operational-context-budget.md` | 50 | 525 | 3506 | 877 |
+| `.spec/archive/2026-04-16-232653-require-commit-after-done.md` | 58 | 783 | 5331 | 1333 |
+| `.spec/archive/2026-04-16-232653-scope-aware-commit-gate.md` | 62 | 804 | 5156 | 1289 |
+| `.spec/archive/2026-04-16-232653-trim-bootstrap-context.md` | 58 | 575 | 3767 | 942 |
+| `.spec/archive/2026-04-16-232653-validate-done-closeout-gate.md` | 79 | 827 | 5373 | 1344 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
-| `.spec/changes/add-jsonl-append-helpers.md` | 52 | 628 | 4307 | 1077 |
-| `.spec/changes/add-workflow-feedback-log.md` | 54 | 587 | 3975 | 994 |
-| `.spec/changes/add-workflow-log-viewer.md` | 59 | 675 | 4293 | 1074 |
-| `.spec/changes/condensation-review.md` | 109 | 1202 | 7499 | 1875 |
-| `.spec/changes/embed-change-history-in-viewer.md` | 59 | 729 | 4831 | 1208 |
-| `.spec/changes/embed-jsonl-in-viewer.md` | 57 | 655 | 4272 | 1068 |
-| `.spec/changes/fix-claude-review-command-drift.md` | 45 | 418 | 2801 | 701 |
-| `.spec/changes/fix-setup-template-drift.md` | 46 | 470 | 3285 | 822 |
-| `.spec/changes/fix-viewer-archive-filename-parsing.md` | 45 | 450 | 3368 | 842 |
-| `.spec/changes/full-repo-evaluation.md` | 169 | 1994 | 14291 | 3573 |
-| `.spec/changes/operational-context-budget.md` | 50 | 525 | 3506 | 877 |
-| `.spec/changes/require-commit-after-done.md` | 58 | 783 | 5331 | 1333 |
-| `.spec/changes/scope-aware-commit-gate.md` | 62 | 804 | 5156 | 1289 |
-| `.spec/changes/trim-bootstrap-context.md` | 58 | 575 | 3767 | 942 |
-| `.spec/changes/validate-done-closeout-gate.md` | 79 | 827 | 5373 | 1344 |
-| `.spec/devlog.jsonl` | 3 | 58 | 827 | 207 |
+| `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 15 | 497 | 5560 | 1390 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 957 | 240 |
@@ -57,7 +57,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 618 | 12004 | 103628 | 25907 |
+| `docs/viewer.html` | 618 | 12022 | 103951 | 25988 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |
