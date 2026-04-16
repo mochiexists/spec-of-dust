@@ -12,11 +12,11 @@ and starter repo layouts.
 ## SOD
 
 - Version: `0.0.1`
-- Files: `35`
-- Lines: `2397`
-- Words: `14031`
-- Characters: `97650`
-- Est. tokens: `24425`
+- Files: `37`
+- Lines: `2472`
+- Words: `14813`
+- Characters: `103321`
+- Est. tokens: `25844`
 
 See `.spec/sod-report.md` for the full per-file breakdown.
 <!-- sod-summary:end -->
@@ -46,6 +46,7 @@ packs/                      # Source definitions for future release packs
   FLOW.md                   # Workflow rules (AI reads this)
   b-startup.md              # Minimal boot brief read on session start
   devlog.jsonl              # Structured audit log for skip-no-verify commits
+  flowlog.jsonl             # Workflow feedback log (beta) for completed changes
   changes/
     _template.md            # Template for new changes
     my-feature.md           # Active change (one per feature)

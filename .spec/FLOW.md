@@ -37,6 +37,20 @@ Before moving a standard change to `done`, add a short closure note with:
 - `Dust` — one short human or artistic line; keep it under 80 characters
 
 Keep closure notes short. If the work was straightforward, write `nothing notable` instead of filler.
+
+After filling closure but before setting `status: done`, append one JSONL line to `.spec/flowlog.jsonl` with workflow feedback:
+
+```json
+{"ts":"2026-04-16T12:00:00Z","agent":"claude|codex","change":"my-feature","flow_divergence":"...","friction":"...","suggestion":"...","sentiment":"smooth|rough|blocked"}
+```
+
+- `ts` — ISO 8601 timestamp
+- `agent` — which model completed the change (`claude` or `codex`)
+- `sentiment` — quick gut-check: `smooth`, `rough`, or `blocked`
+- `ts`, `agent`, `change`, and `sentiment` are always required
+- Use `"nothing notable"` or `""` for the free-text fields (`flow_divergence`, `friction`, `suggestion`) when there is no signal
+- This is beta-phase guidance, not hook-enforced
+
 After `done`, completion moves into merge behavior:
 - `merge: manual` means stop at `done` and wait for a human to merge
 - `merge: confirm` means ask the human before invoking the merge helper; if the answer is no, stay at `done`
@@ -192,6 +206,8 @@ Hard boundaries:
 - Before marking a standard change `done`, fill the `## Closure` section with concise notes for
   `Challenges`, `Learnings`, `Outcomes`, and `Dust`. Capture what actually happened during the work,
   including important peer-review or verification takeaways in `Outcomes`, not a rewritten version of the spec.
+- After closure, append a flowlog entry to `.spec/flowlog.jsonl` before setting `status: done`.
+  This captures workflow-level feedback (friction, divergences, suggestions) separate from the feature closure.
 - If the human says "just do it" or "skip the spec," you can — but note it in `.spec/devlog.jsonl`.
   Some changes are too small for the full flow, but skip commits still need a structured devlog entry.
 - Small changes (< 30 min of work, single-file, obvious intent) can use a minimal spec:

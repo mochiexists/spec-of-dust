@@ -18,6 +18,7 @@ Keep it short. Put deeper context in docs/ or active change files.
 EOF
 fi
 touch .spec/devlog.jsonl
+touch .spec/flowlog.jsonl
 if [ ! -f VERSION ]; then
   printf '0.0.1\n' > VERSION
 fi
