@@ -50,6 +50,7 @@ After filling closure but before setting `status: done`, append one JSONL line t
 - `ts`, `agent`, `change`, and `sentiment` are always required
 - Use `"nothing notable"` or `""` for the free-text fields (`flow_divergence`, `friction`, `suggestion`) when there is no signal
 - This is beta-phase guidance, not hook-enforced
+- Prefer `bash scripts/flowlog.sh` to append entries — it validates fields and handles JSON escaping
 
 After `done`, completion moves into merge behavior:
 - `merge: manual` means stop at `done` and wait for a human to merge
@@ -176,6 +177,8 @@ Skip protocol:
    `command: "git commit --no-verify"`
 4. Stage the devlog entry and commit with `git commit --no-verify`
 5. Do not request peer review for skip commits
+
+Prefer `bash scripts/devlog.sh` to append entries — it validates fields and handles JSON escaping.
 
 Hard boundaries:
 
