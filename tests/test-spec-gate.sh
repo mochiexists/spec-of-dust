@@ -163,7 +163,182 @@ EOF
   pass "valid skip commit"
 }
 
+scoped_commit_passes() {
+  local repo
+  repo="$(make_repo scoped-pass)"
+
+  (
+    cd "$repo"
+    seed_change_file build
+    # Add files: scope to the change file
+    sed -i.bak '1s/^/files: CODEX.md\n/' .spec/changes/test-change.md
+    rm -f .spec/changes/test-change.md.bak
+    git add -A .spec/changes
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    bash scripts/update-sod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    git commit -qm 'test: scoped commit'
+  ) || fail "scoped commit"
+
+  pass "scoped commit"
+}
+
+unscoped_commit_is_blocked() {
+  local repo
+  repo="$(make_repo scoped-block)"
+
+  (
+    cd "$repo"
+    seed_change_file build
+    # Scope only allows setup.sh
+    sed -i.bak '1s/^/files: setup.sh\n/' .spec/changes/test-change.md
+    rm -f .spec/changes/test-change.md.bak
+    git add -A .spec/changes
+    # Edit a non-exempt file NOT in scope (CODEX.md is non-exempt)
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    bash scripts/update-sod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    expect_blocked_commit "unscoped commit" "not listed in any active change" git commit -m 'test: unscoped commit'
+  ) || fail "unscoped commit"
+
+  pass "unscoped commit blocked"
+}
+
+empty_scope_falls_back() {
+  local repo
+  repo="$(make_repo empty-scope)"
+
+  (
+    cd "$repo"
+    seed_change_file build
+    # No files: field — should fall back to current behavior
+    git add -A .spec/changes
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    bash scripts/update-sod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    git commit -qm 'test: empty scope fallback'
+  ) || fail "empty scope fallback"
+
+  pass "empty scope fallback"
+}
+
+skip_mode_ignores_scope() {
+  local repo
+  repo="$(make_repo skip-scope)"
+
+  (
+    cd "$repo"
+    seed_change_file spec
+    # Add scope to the spec-state change (which doesn't count as active for commits)
+    sed -i.bak '1s/^/files: nothing.txt\n/' .spec/changes/test-change.md
+    rm -f .spec/changes/test-change.md.bak
+    source .githooks/_spec_gate.sh
+    has_active_standard_change && exit 1
+    cat >> .spec/devlog.jsonl <<'EOF'
+{"ts":"2026-04-15T10:00:00Z","event":"skip-no-verify","kind":"comment","summary":"Scope skip test","reason":"Single-file skip in scope test","files":["CODEX.md"],"command":"git commit --no-verify"}
+EOF
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    git add .spec/devlog.jsonl CODEX.md
+    git commit --no-verify -qm 'test: skip ignores scope'
+  ) || fail "skip ignores scope"
+
+  pass "skip ignores scope"
+}
+
+multiple_changes_scope_matches() {
+  local repo
+  repo="$(make_repo multi-scope)"
+
+  (
+    cd "$repo"
+    seed_change_file build
+    # First change scopes to setup.sh only
+    sed -i.bak '1s/^/files: setup.sh\n/' .spec/changes/test-change.md
+    rm -f .spec/changes/test-change.md.bak
+
+    # Second change scopes to CODEX.md
+    cat > .spec/changes/second-change.md <<'INNER'
+status: build
+files: CODEX.md
+
+# Second change
+## What
+Test fixture for multi-scope.
+## Acceptance criteria
+- [ ] scope test
+## Peer spec review
+test
+## Peer code review
+test
+## Verify
+test
+## Closure
+- Challenges: nothing notable
+- Learnings: nothing notable
+- Outcomes: nothing notable
+- Dust: nothing notable
+INNER
+
+    git add -A .spec/changes
+    # Edit CODEX.md — should match the second change's scope
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    bash scripts/update-sod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    git commit -qm 'test: multi-scope match'
+  ) || fail "multi-scope match"
+
+  pass "multi-scope match"
+}
+
+blank_files_field_falls_back() {
+  local repo
+  repo="$(make_repo blank-scope)"
+
+  (
+    cd "$repo"
+    seed_change_file build
+    # Add an explicit blank files: line (like the template default)
+    sed -i.bak '1s/^/files:\n/' .spec/changes/test-change.md
+    rm -f .spec/changes/test-change.md.bak
+    git add -A .spec/changes
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    bash scripts/update-sod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    git commit -qm 'test: blank scope fallback'
+  ) || fail "blank scope fallback"
+
+  pass "blank scope fallback"
+}
+
+exempt_passes_under_scope() {
+  local repo
+  repo="$(make_repo exempt-scope)"
+
+  (
+    cd "$repo"
+    seed_change_file build
+    # Scope allows only setup.sh
+    sed -i.bak '1s/^/files: setup.sh\n/' .spec/changes/test-change.md
+    rm -f .spec/changes/test-change.md.bak
+    git add -A .spec/changes
+    # Edit an exempt file (CLAUDE.md) — should pass regardless of scope
+    perl -0pi -e 's/subagents only for/subagents for/' CLAUDE.md
+    bash scripts/update-sod-report.sh
+    git add .spec/changes CLAUDE.md README.md .spec/sod-report.md
+    git commit -qm 'test: exempt under scope'
+  ) || fail "exempt under scope"
+
+  pass "exempt under scope"
+}
+
 active_change_commit_passes
 missing_change_commit_is_blocked
 invalid_skip_commit_is_blocked
 valid_skip_commit_passes
+scoped_commit_passes
+unscoped_commit_is_blocked
+empty_scope_falls_back
+skip_mode_ignores_scope
+multiple_changes_scope_matches
+blank_files_field_falls_back
+exempt_passes_under_scope

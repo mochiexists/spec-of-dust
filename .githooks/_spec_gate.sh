@@ -75,6 +75,100 @@ has_active_standard_change() {
   return 1
 }
 
+collect_scope_patterns() {
+  local file status files_field
+
+  [ -d "$SPEC_DIR" ] || return
+
+  for file in "$SPEC_DIR"/*.md; do
+    [ -f "$file" ] || continue
+    is_reserved_change_file "$file" && continue
+
+    status=$(extract_meta_value "$file" "status")
+    case "$status" in
+      build|verify|done) ;;
+      *) continue ;;
+    esac
+
+    files_field=$(extract_meta_value "$file" "files")
+    [ -n "$files_field" ] || continue
+
+    # Split comma-separated patterns, trim whitespace
+    local IFS=','
+    for pattern in $files_field; do
+      pattern="$(printf '%s' "$pattern" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+      [ -n "$pattern" ] && printf '%s\n' "$pattern"
+    done
+  done
+}
+
+file_matches_scope() {
+  local file="$1"
+  local pattern
+
+  while IFS= read -r pattern; do
+    [ -n "$pattern" ] || continue
+
+    # If pattern has no wildcard, exact match
+    if [[ "$pattern" != *'*'* ]]; then
+      [ "$file" = "$pattern" ] && return 0
+      continue
+    fi
+
+    # For glob patterns: split into directory prefix and filename glob
+    # e.g. "scripts/*.sh" -> dir="scripts", glob="*.sh"
+    local dir="${pattern%/*}"
+    local glob="${pattern##*/}"
+    local file_dir="${file%/*}"
+    local file_name="${file##*/}"
+
+    # Directory must match exactly, filename matches the glob
+    if [ "$file_dir" = "$dir" ] && [[ "$file_name" == $glob ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+has_any_scope_defined() {
+  local patterns
+  patterns="$(collect_scope_patterns)"
+  [ -n "$patterns" ]
+}
+
+enforce_scope_gate() {
+  local patterns file unscoped_files=()
+
+  # If no active change defines files:, fall back to current behavior
+  has_any_scope_defined || return 0
+
+  patterns="$(collect_scope_patterns)"
+
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+    if ! printf '%s\n' "$patterns" | file_matches_scope "$file"; then
+      unscoped_files+=("$file")
+    fi
+  done < <(list_non_exempt_staged_files)
+
+  if [ "${#unscoped_files[@]}" -gt 0 ]; then
+    echo ""
+    echo "⚠️  Staged files not listed in any active change's files: scope:"
+    echo ""
+    for f in "${unscoped_files[@]}"; do
+      echo "   $f"
+    done
+    echo ""
+    echo "Either add these paths to the active change's files: field,"
+    echo "or create a new change file for this work."
+    echo ""
+    return 1
+  fi
+
+  return 0
+}
+
 list_non_exempt_staged_files() {
   local file
 
@@ -308,5 +402,6 @@ enforce_sod_gate() {
 
 enforce_commit_policies() {
   enforce_spec_gate || return 1
+  enforce_scope_gate || return 1
   enforce_sod_gate || return 1
 }
