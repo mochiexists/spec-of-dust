@@ -1,1 +1,2 @@
 {"ts":"2026-04-15T08:00:00Z","event":"skip-no-verify","kind":"comment","summary":"Synthetic example skip entry","reason":"Single-file docs tweak kept in-repo to show the JSONL shape","files":["README.md"],"command":"git commit --no-verify"}
+{"ts":"2026-04-16T09:33:12Z","event":"skip-no-verify","kind":"one-line-fix","summary":"Auto-load JSONL from repo-relative paths in viewer","reason":"Small JS addition to try fetching logs on page load, no design change","files":["docs/viewer.html"],"command":"git commit --no-verify"}

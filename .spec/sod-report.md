@@ -3,11 +3,11 @@
 - Version: `0.0.1`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `42`
-- Total lines: `3291`
-- Total words: `18329`
-- Total characters: `134874`
-- Total estimated tokens: `33736`
+- Total files: `44`
+- Total lines: `3446`
+- Total words: `19492`
+- Total characters: `144423`
+- Total estimated tokens: `36123`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -33,8 +33,9 @@
 | `.spec/changes/add-jsonl-append-helpers.md` | 52 | 628 | 4307 | 1077 |
 | `.spec/changes/add-workflow-feedback-log.md` | 54 | 587 | 3975 | 994 |
 | `.spec/changes/add-workflow-log-viewer.md` | 59 | 675 | 4293 | 1074 |
-| `.spec/devlog.jsonl` | 1 | 15 | 241 | 61 |
-| `.spec/flowlog.jsonl` | 3 | 94 | 1038 | 260 |
+| `.spec/changes/embed-jsonl-in-viewer.md` | 57 | 655 | 4272 | 1068 |
+| `.spec/devlog.jsonl` | 2 | 36 | 526 | 132 |
+| `.spec/flowlog.jsonl` | 4 | 118 | 1337 | 335 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 955 | 239 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |
@@ -43,12 +44,13 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 561 | 1437 | 17089 | 4273 |
+| `docs/viewer.html` | 561 | 1575 | 19042 | 4761 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |
-| `scripts/devlog.sh` | 65 | 318 | 2281 | 571 |
-| `scripts/flowlog.sh` | 77 | 380 | 2772 | 693 |
+| `scripts/build-viewer.sh` | 84 | 295 | 2456 | 614 |
+| `scripts/devlog.sh` | 71 | 333 | 2423 | 606 |
+| `scripts/flowlog.sh` | 83 | 395 | 2914 | 729 |
 | `scripts/merge-completed-work.sh` | 129 | 359 | 2843 | 711 |
 | `scripts/update-sod-report.sh` | 246 | 629 | 5331 | 1333 |
 | `setup.sh` | 99 | 421 | 2649 | 663 |

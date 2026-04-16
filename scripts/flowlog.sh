@@ -75,3 +75,9 @@ printf '{"ts":"%s","agent":"%s","change":"%s","flow_divergence":"%s","friction":
   >> "$FLOWLOG_FILE"
 
 echo "Appended flowlog entry to $FLOWLOG_FILE"
+
+# Refresh viewer with embedded data
+VIEWER_SCRIPT="$ROOT_DIR/scripts/build-viewer.sh"
+if [ -x "$VIEWER_SCRIPT" ]; then
+  "$VIEWER_SCRIPT"
+fi
