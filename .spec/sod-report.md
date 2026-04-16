@@ -4,10 +4,10 @@
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
 - Total files: `46`
-- Total lines: `4039`
-- Total words: `29336`
-- Total characters: `221704`
-- Total estimated tokens: `55444`
+- Total lines: `4040`
+- Total words: `29444`
+- Total characters: `223121`
+- Total estimated tokens: `55798`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -19,15 +19,15 @@
 | `.github/workflows/validate.yml` | 23 | 42 | 404 | 101 |
 | `.gitignore` | 4 | 6 | 72 | 18 |
 | `.spec/FLOW.md` | 220 | 1957 | 12589 | 3148 |
+| `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
+| `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
+| `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
+| `.spec/archive/2026-04-14-follow-up-repo-hygiene.md` | 62 | 674 | 4430 | 1108 |
+| `.spec/archive/2026-04-14-prep-github-site-release.md` | 69 | 644 | 4708 | 1177 |
+| `.spec/archive/2026-04-14-public-release-hygiene.md` | 65 | 753 | 4845 | 1212 |
+| `.spec/archive/2026-04-14-widen-peer-review-context.md` | 57 | 704 | 4346 | 1087 |
 | `.spec/archive/2026-04-15-005156-final-polish-and-ci.md` | 66 | 704 | 4626 | 1157 |
 | `.spec/archive/2026-04-15-005156-merge-and-advance-workflow.md` | 79 | 1061 | 6685 | 1672 |
-| `.spec/archive/add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
-| `.spec/archive/add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
-| `.spec/archive/add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
-| `.spec/archive/follow-up-repo-hygiene.md` | 62 | 674 | 4430 | 1108 |
-| `.spec/archive/prep-github-site-release.md` | 69 | 644 | 4708 | 1177 |
-| `.spec/archive/public-release-hygiene.md` | 65 | 753 | 4845 | 1212 |
-| `.spec/archive/widen-peer-review-context.md` | 57 | 704 | 4346 | 1087 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
 | `.spec/changes/add-jsonl-append-helpers.md` | 52 | 628 | 4307 | 1077 |
@@ -36,7 +36,7 @@
 | `.spec/changes/embed-change-history-in-viewer.md` | 59 | 729 | 4831 | 1208 |
 | `.spec/changes/embed-jsonl-in-viewer.md` | 57 | 655 | 4272 | 1068 |
 | `.spec/changes/scope-aware-commit-gate.md` | 62 | 804 | 5156 | 1289 |
-| `.spec/devlog.jsonl` | 2 | 36 | 526 | 132 |
+| `.spec/devlog.jsonl` | 3 | 58 | 827 | 207 |
 | `.spec/flowlog.jsonl` | 6 | 204 | 2210 | 553 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 955 | 239 |
@@ -46,7 +46,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 618 | 8483 | 73642 | 18411 |
+| `docs/viewer.html` | 618 | 8569 | 74758 | 18690 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |
