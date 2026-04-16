@@ -3,17 +3,17 @@
 - Version: `0.1.1`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `56`
-- Total lines: `5001`
-- Total words: `41405`
-- Total characters: `315313`
-- Total estimated tokens: `78848`
+- Total files: `57`
+- Total lines: `5076`
+- Total words: `42106`
+- Total characters: `321135`
+- Total estimated tokens: `80304`
 - Bootstrap SOD: `1705 / 3000 target`
-- Operational SOD: `2482 / 5000 target`
+- Operational SOD: `3102 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
-| `.githooks/_spec_gate.sh` | 547 | 1588 | 12659 | 3165 |
+| `.githooks/_spec_gate.sh` | 547 | 1588 | 12678 | 3170 |
 | `.githooks/post-merge` | 8 | 23 | 230 | 58 |
 | `.githooks/pre-commit` | 21 | 92 | 636 | 159 |
 | `.githooks/prepare-commit-msg` | 10 | 26 | 250 | 63 |
@@ -48,8 +48,9 @@
 | `.spec/archive/2026-04-17-002150-fix-archive-commit-gate-bypass.md` | 51 | 530 | 3699 | 925 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
+| `.spec/changes/fix-sod-viewer-rebuild-loop.md` | 46 | 353 | 2480 | 620 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
-| `.spec/flowlog.jsonl` | 16 | 521 | 5879 | 1470 |
+| `.spec/flowlog.jsonl` | 17 | 535 | 6124 | 1531 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 957 | 240 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |
@@ -58,7 +59,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 618 | 12342 | 106743 | 26686 |
+| `docs/viewer.html` | 618 | 12585 | 108997 | 27250 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |
@@ -68,4 +69,4 @@
 | `scripts/merge-completed-work.sh` | 129 | 359 | 2843 | 711 |
 | `scripts/update-sod-report.sh` | 297 | 832 | 7154 | 1789 |
 | `setup.sh` | 100 | 422 | 2656 | 664 |
-| `tests/test-spec-gate.sh` | 493 | 1564 | 13895 | 3474 |
+| `tests/test-spec-gate.sh` | 521 | 1655 | 14719 | 3680 |

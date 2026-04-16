@@ -487,7 +487,7 @@ has_sod_relevant_changes() {
     [ -n "$file" ] || continue
 
     case "$file" in
-      "$DEVLOG_FILE"|"$SOD_REPORT_FILE") continue ;;
+      "$DEVLOG_FILE"|"$SOD_REPORT_FILE"|"docs/viewer.html") continue ;;
     esac
 
     if is_text_file_path "$file"; then

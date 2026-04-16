@@ -489,5 +489,33 @@ skip_mode_ignores_scope
 multiple_changes_scope_matches
 blank_files_field_falls_back
 exempt_passes_under_scope
+viewer_only_change_skips_sod_staleness() {
+  local repo
+  repo="$(make_repo viewer-sod)"
+
+  (
+    cd "$repo"
+    seed_change_file build
+    git add -A .spec/changes
+    bash scripts/update-sod-report.sh
+    git add .spec/changes .spec/sod-report.md README.md
+    git commit -qm 'setup: baseline'
+
+    # Simulate a viewer rebuild by touching docs/viewer.html
+    echo "<!-- rebuilt -->" >> docs/viewer.html
+    git add docs/viewer.html
+
+    # The hook should NOT trigger SOD staleness for viewer-only changes
+    # Test by sourcing the gate and checking has_sod_relevant_changes directly
+    source .githooks/_spec_gate.sh
+    if has_sod_relevant_changes; then
+      exit 1
+    fi
+  ) || fail "viewer only change skips SOD staleness"
+
+  pass "viewer only change skips SOD staleness"
+}
+
 archive_only_commit_passes
 archive_mixed_with_code_is_blocked
+viewer_only_change_skips_sod_staleness
