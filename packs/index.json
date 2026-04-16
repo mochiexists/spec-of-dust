@@ -5,9 +5,37 @@
     {
       "slug": "javascript",
       "version": "v0",
-      "summary": "Baseline JavaScript gate-pack scaffold for future releases.",
+      "summary": "JavaScript/TypeScript gate pack: ESLint, Prettier, vitest, tsc, Husky notes.",
       "docs": "packs/javascript/v0/README.md",
       "artifact": "releases/spec-of-dust-pack-javascript-v0.tar.gz"
+    },
+    {
+      "slug": "swift",
+      "version": "v0",
+      "summary": "Swift/iOS gate pack: SwiftLint, swift build/test, xcodebuild alternative.",
+      "docs": "packs/swift/v0/README.md",
+      "artifact": "releases/spec-of-dust-pack-swift-v0.tar.gz"
+    },
+    {
+      "slug": "python",
+      "version": "v0",
+      "summary": "Python gate pack: ruff, mypy, pytest.",
+      "docs": "packs/python/v0/README.md",
+      "artifact": "releases/spec-of-dust-pack-python-v0.tar.gz"
+    },
+    {
+      "slug": "python-research",
+      "version": "v0",
+      "summary": "Python ML/research gate pack: extends python with nbstripout, DVC, experiment tracking, GPU CI.",
+      "docs": "packs/python-research/v0/README.md",
+      "artifact": "releases/spec-of-dust-pack-python-research-v0.tar.gz"
+    },
+    {
+      "slug": "rust",
+      "version": "v0",
+      "summary": "Rust gate pack: clippy, rustfmt, cargo build/test.",
+      "docs": "packs/rust/v0/README.md",
+      "artifact": "releases/spec-of-dust-pack-rust-v0.tar.gz"
     }
   ]
 }
