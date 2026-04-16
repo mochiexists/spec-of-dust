@@ -4,10 +4,10 @@
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
 - Total files: `42`
-- Total lines: `3264`
-- Total words: `18237`
-- Total characters: `133982`
-- Total estimated tokens: `33513`
+- Total lines: `3291`
+- Total words: `18329`
+- Total characters: `134874`
+- Total estimated tokens: `33736`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -43,7 +43,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 534 | 1345 | 16197 | 4050 |
+| `docs/viewer.html` | 561 | 1437 | 17089 | 4273 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |
