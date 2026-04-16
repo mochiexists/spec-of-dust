@@ -6,8 +6,8 @@
 - Total files: `57`
 - Total lines: `5076`
 - Total words: `42106`
-- Total characters: `321135`
-- Total estimated tokens: `80304`
+- Total characters: `321133`
+- Total estimated tokens: `80303`
 - Bootstrap SOD: `1705 / 3000 target`
 - Operational SOD: `3102 / 5000 target`
 
@@ -48,7 +48,7 @@
 | `.spec/archive/2026-04-17-002150-fix-archive-commit-gate-bypass.md` | 51 | 530 | 3699 | 925 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
-| `.spec/changes/fix-sod-viewer-rebuild-loop.md` | 46 | 353 | 2480 | 620 |
+| `.spec/changes/fix-sod-viewer-rebuild-loop.md` | 46 | 353 | 2479 | 620 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 17 | 535 | 6124 | 1531 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -59,7 +59,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 618 | 12585 | 108997 | 27250 |
+| `docs/viewer.html` | 618 | 12585 | 108996 | 27249 |
 | `packs/index.json` | 13 | 27 | 324 | 81 |
 | `packs/javascript/v0/README.md` | 11 | 59 | 381 | 96 |
 | `scripts/archive-done-changes.sh` | 81 | 217 | 1654 | 414 |

@@ -15,8 +15,8 @@ and starter repo layouts.
 - Files: `57`
 - Lines: `5076`
 - Words: `42106`
-- Characters: `321135`
-- Est. tokens: `80304`
+- Characters: `321133`
+- Est. tokens: `80303`
 - Bootstrap SOD: `1705 / 3000 target`
 - Operational SOD: `3102 / 5000 target`
 

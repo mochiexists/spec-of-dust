@@ -1,4 +1,4 @@
-status: build
+status: done
 files: .githooks/_spec_gate.sh, tests/test-spec-gate.sh, docs/viewer.html
 
 # Fix SOD-viewer rebuild loop
