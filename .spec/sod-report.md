@@ -9,7 +9,7 @@
 - Total characters: `315313`
 - Total estimated tokens: `78848`
 - Bootstrap SOD: `1705 / 3000 target`
-- Operational SOD: `3407 / 5000 target`
+- Operational SOD: `2482 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -45,9 +45,9 @@
 | `.spec/archive/2026-04-16-232653-scope-aware-commit-gate.md` | 62 | 804 | 5156 | 1289 |
 | `.spec/archive/2026-04-16-232653-trim-bootstrap-context.md` | 58 | 575 | 3767 | 942 |
 | `.spec/archive/2026-04-16-232653-validate-done-closeout-gate.md` | 79 | 827 | 5373 | 1344 |
+| `.spec/archive/2026-04-17-002150-fix-archive-commit-gate-bypass.md` | 51 | 530 | 3699 | 925 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
-| `.spec/changes/fix-archive-commit-gate-bypass.md` | 51 | 530 | 3699 | 925 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 16 | 521 | 5879 | 1470 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
