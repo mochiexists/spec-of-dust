@@ -49,6 +49,147 @@ jsonl_to_js_array() {
 devlog_js="$(jsonl_to_js_array "$DEVLOG")"
 flowlog_js="$(jsonl_to_js_array "$FLOWLOG")"
 
+# Parse a change file into a JSON object
+parse_change_file() {
+  local file="$1"
+  local basename_f name status ts what dust challenges learnings outcomes
+  local peer_spec_review peer_code_review verify section=""
+  local body=""
+
+  basename_f="$(basename "$file" .md)"
+
+  # Extract date from archive filename prefix (e.g. 2026-04-14-my-feature)
+  if [[ "$basename_f" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})-(.+)$ ]]; then
+    ts="${BASH_REMATCH[1]}T00:00:00Z"
+    name="${BASH_REMATCH[2]}"
+  elif [[ "$basename_f" =~ ^([0-9]{4}-[0-9]{2}-[0-9]{2})-([0-9]{6})-(.+)$ ]]; then
+    ts="${BASH_REMATCH[1]}T00:00:00Z"
+    name="${BASH_REMATCH[3]}"
+  else
+    ts=""
+    name="$basename_f"
+  fi
+
+  status="" what="" dust="" challenges="" learnings="" outcomes=""
+  peer_spec_review="" peer_code_review="" verify=""
+
+  while IFS= read -r line; do
+    # Status from first line
+    if [ -z "$status" ] && [[ "$line" =~ ^status:\ *(.+)$ ]]; then
+      status="${BASH_REMATCH[1]}"
+      continue
+    fi
+
+    # Section headers
+    if [[ "$line" =~ ^##\  ]]; then
+      # Save previous section
+      save_section "$section" "$body"
+      body=""
+      case "$line" in
+        "## What"*) section="what" ;;
+        "## Peer spec review"*) section="peer_spec_review" ;;
+        "## Peer code review"*) section="peer_code_review" ;;
+        "## Verify"*) section="verify" ;;
+        "## Closure"*) section="closure" ;;
+        *) section="other" ;;
+      esac
+      continue
+    fi
+
+    # Closure field extraction
+    if [ "$section" = "closure" ]; then
+      case "$line" in
+        "- Dust:"*) dust="${line#*- Dust: }" ;;
+        "- Challenges:"*) challenges="${line#*- Challenges: }" ;;
+        "- Learnings:"*) learnings="${line#*- Learnings: }" ;;
+        "- Outcomes:"*) outcomes="${line#*- Outcomes: }" ;;
+      esac
+    fi
+
+    # Accumulate body
+    body+="$line"$'\n'
+  done < "$file"
+
+  # Save last section
+  save_section "$section" "$body"
+
+  # If no ts from filename, try to find one from flowlog
+  if [ -z "$ts" ] && [ -f "$FLOWLOG" ]; then
+    local flowlog_ts
+    flowlog_ts="$(grep "\"change\":\"$name\"" "$FLOWLOG" 2>/dev/null | head -1 | sed -n 's/.*"ts":"\([^"]*\)".*/\1/p')"
+    [ -n "$flowlog_ts" ] && ts="$flowlog_ts"
+  fi
+
+  # Build JSON
+  printf '{"name":"%s","status":"%s","ts":"%s","what":"%s","dust":"%s","challenges":"%s","learnings":"%s","outcomes":"%s","peer_spec_review":"%s","peer_code_review":"%s","verify":"%s"}' \
+    "$(escape_str "$name")" \
+    "$(escape_str "$status")" \
+    "$(escape_str "$ts")" \
+    "$(escape_str "$_what")" \
+    "$(escape_str "$dust")" \
+    "$(escape_str "$challenges")" \
+    "$(escape_str "$learnings")" \
+    "$(escape_str "$outcomes")" \
+    "$(escape_str "$_peer_spec_review")" \
+    "$(escape_str "$_peer_code_review")" \
+    "$(escape_str "$_verify")"
+}
+
+# Section accumulator variables
+_what="" _peer_spec_review="" _peer_code_review="" _verify=""
+
+save_section() {
+  local section="$1"
+  local content="$2"
+  # Trim leading/trailing blank lines
+  content="$(printf '%s' "$content" | sed '/^<!--.*-->$/d' | awk 'NF{found=1} found')"
+  case "$section" in
+    what) _what="$content" ;;
+    peer_spec_review) _peer_spec_review="$content" ;;
+    peer_code_review) _peer_code_review="$content" ;;
+    verify) _verify="$content" ;;
+  esac
+}
+
+# Escape a string for embedding in JS
+escape_str() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//\"/\\\"}"
+  s="${s//$'\n'/\\n}"
+  s="${s//$'\r'/}"
+  s="${s//<\/script>/<\\\/script>}"
+  printf '%s' "$s"
+}
+
+# Collect change files
+changes_js="["
+changes_first=true
+
+for dir in "$ROOT_DIR/.spec/archive" "$ROOT_DIR/.spec/changes"; do
+  [ -d "$dir" ] || continue
+  for file in "$dir"/*.md; do
+    [ -f "$file" ] || continue
+    local_basename="$(basename "$file")"
+    case "$local_basename" in
+      _template.md|_example-*) continue ;;
+    esac
+
+    # Reset section vars
+    _what="" _peer_spec_review="" _peer_code_review="" _verify=""
+
+    entry="$(parse_change_file "$file")"
+
+    if [ "$changes_first" = true ]; then
+      changes_first=false
+    else
+      changes_js+=","
+    fi
+    changes_js+="\"$(escape_str "$entry")\""
+  done
+done
+changes_js+="]"
+
 # Write the data block to a temp file for safe insertion
 tmp="$(mktemp)"
 data_tmp="$(mktemp)"
@@ -58,6 +199,7 @@ cat > "$data_tmp" <<DATAEOF
       $MARKER_START
       const EMBEDDED_DEVLOG = $devlog_js;
       const EMBEDDED_FLOWLOG = $flowlog_js;
+      const EMBEDDED_CHANGES = $changes_js;
       $MARKER_END
 DATAEOF
 
