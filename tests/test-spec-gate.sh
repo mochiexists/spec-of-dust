@@ -425,6 +425,55 @@ exempt_passes_under_scope() {
   pass "exempt under scope"
 }
 
+archive_only_commit_passes() {
+  local repo
+  repo="$(make_repo archive-pass)"
+
+  (
+    cd "$repo"
+    # Create a done change, commit it first
+    seed_change_file done
+    git add -A .spec/changes
+    bash scripts/update-sod-report.sh
+    git add .spec/changes .spec/sod-report.md README.md
+    git commit -qm 'setup: done change'
+
+    # Now archive it (mirrors real release flow)
+    mkdir -p .spec/archive
+    git mv .spec/changes/test-change.md .spec/archive/2026-04-17-test-change.md
+    bash scripts/update-sod-report.sh
+    git add .spec/archive .spec/sod-report.md README.md
+    git commit -qm 'test: archive only commit'
+  ) || fail "archive only commit"
+
+  pass "archive only commit"
+}
+
+archive_mixed_with_code_is_blocked() {
+  local repo
+  repo="$(make_repo archive-block)"
+
+  (
+    cd "$repo"
+    # Create a done change, commit it first
+    seed_change_file done
+    git add -A .spec/changes
+    bash scripts/update-sod-report.sh
+    git add .spec/changes .spec/sod-report.md README.md
+    git commit -qm 'setup: done change'
+
+    # Archive it but also touch an unrelated code file
+    mkdir -p .spec/archive
+    git mv .spec/changes/test-change.md .spec/archive/2026-04-17-test-change.md
+    perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
+    bash scripts/update-sod-report.sh
+    git add .spec/archive CODEX.md .spec/sod-report.md README.md
+    expect_blocked_commit "archive mixed with code" "Commit policy failed" git commit -m 'test: archive mixed with code'
+  ) || fail "archive mixed with code"
+
+  pass "archive mixed with code blocked"
+}
+
 active_change_commit_passes
 missing_change_commit_is_blocked
 invalid_skip_commit_is_blocked
@@ -440,3 +489,5 @@ skip_mode_ignores_scope
 multiple_changes_scope_matches
 blank_files_field_falls_back
 exempt_passes_under_scope
+archive_only_commit_passes
+archive_mixed_with_code_is_blocked

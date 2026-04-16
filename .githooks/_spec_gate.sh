@@ -429,8 +429,47 @@ validate_skip_mode() {
   return 0
 }
 
+is_archive_allowed_extra() {
+  case "$1" in
+    "$SOD_REPORT_FILE"|"$README_FILE"|"docs/viewer.html"|"$DEVLOG_FILE"|".spec/flowlog.jsonl") return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+is_archive_only_commit() {
+  local has_archive_rename=false
+  local st file rest
+
+  while IFS=$'\t' read -r st rest; do
+    [ -n "$st" ] || continue
+
+    case "$st" in
+      R*)
+        # Must be a rename from .spec/changes/ to .spec/archive/
+        local src="${rest%%	*}"
+        local dst="${rest##*	}"
+        case "$src" in .spec/changes/*) ;; *) return 1 ;; esac
+        case "$dst" in .spec/archive/*) ;; *) return 1 ;; esac
+        has_archive_rename=true
+        ;;
+      M)
+        is_archive_allowed_extra "$rest" || return 1
+        ;;
+      *)
+        return 1
+        ;;
+    esac
+  done < <(git diff --cached --name-status 2>/dev/null || true)
+
+  $has_archive_rename
+}
+
 enforce_spec_gate() {
   if ! has_code_changes; then
+    return 0
+  fi
+
+  if is_archive_only_commit; then
     return 0
   fi
 
