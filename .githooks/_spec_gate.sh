@@ -111,7 +111,7 @@ is_allowed_done_closeout_file() {
   local file="$2"
 
   case "$file" in
-    "$done_change"|".spec/flowlog.jsonl"|".spec/sod-report.md"|"README.md"|"docs/viewer.html")
+    "$done_change"|".spec/flowlog.jsonl"|".spec/sod-report.md"|"README.md"|"docs/dust.html")
       return 0
       ;;
   esac
@@ -431,7 +431,7 @@ validate_skip_mode() {
 
 is_archive_allowed_extra() {
   case "$1" in
-    "$SOD_REPORT_FILE"|"$README_FILE"|"docs/viewer.html"|"$DEVLOG_FILE"|".spec/flowlog.jsonl") return 0 ;;
+    "$SOD_REPORT_FILE"|"$README_FILE"|"docs/dust.html"|"$DEVLOG_FILE"|".spec/flowlog.jsonl") return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -487,7 +487,7 @@ has_sod_relevant_changes() {
     [ -n "$file" ] || continue
 
     case "$file" in
-      "$DEVLOG_FILE"|"$SOD_REPORT_FILE"|"docs/viewer.html") continue ;;
+      "$DEVLOG_FILE"|"$SOD_REPORT_FILE"|"docs/dust.html") continue ;;
     esac
 
     if is_text_file_path "$file"; then

@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>spec-of-dust &middot; dust</title>
+    <style>
+      :root {
+        --bg: #f4efe6;
+        --fg: #1d1a17;
+        --muted: #5c544c;
+        --line: #cdbfaf;
+        --card: #fffaf2;
+        --accent: #8c4f2f;
+        --smooth: #4a7c59;
+        --rough: #b5762a;
+        --blocked: #a93e2f;
+        --devlog-border: #b8a48e;
+        --flowlog-border: var(--accent);
+      }
+
+      * { box-sizing: border-box; margin: 0; }
+
+      body {
+        font-family: Georgia, "Times New Roman", serif;
+        background:
+          radial-gradient(circle at top left, #fff7ec 0, transparent 35%),
+          linear-gradient(180deg, #f7f1e8 0%, var(--bg) 100%);
+        color: var(--fg);
+        min-height: 100vh;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 48px 24px 80px;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        margin-bottom: 6px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.5;
+        margin-bottom: 32px;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        font-family: inherit;
+        font-size: 0.88rem;
+        padding: 6px 14px;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--fg);
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+
+      .filter-btn:hover { border-color: var(--accent); }
+
+      .filter-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+
+      .entry-count {
+        margin-left: auto;
+        font-size: 0.85rem;
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .entry {
+        border: 1px solid var(--line);
+        background: var(--card);
+        padding: 20px 22px;
+      }
+
+      .entry.devlog { border-left: 4px solid var(--devlog-border); }
+      .entry.flowlog { border-left: 4px solid var(--flowlog-border); }
+
+      .entry-header {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+
+      .entry-ts {
+        font-family: "SF Mono", "Fira Code", monospace;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .entry-source {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 2px 8px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+      }
+
+      .entry-agent {
+        font-size: 0.82rem;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .entry-change {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--fg);
+        margin-bottom: 6px;
+      }
+
+      .badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-family: "SF Mono", "Fira Code", monospace;
+        padding: 2px 10px;
+        border-radius: 3px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+      }
+
+      .badge.smooth {
+        background: rgba(74, 124, 89, 0.12);
+        color: var(--smooth);
+        border: 1px solid rgba(74, 124, 89, 0.3);
+      }
+
+      .badge.rough {
+        background: rgba(181, 118, 42, 0.12);
+        color: var(--rough);
+        border: 1px solid rgba(181, 118, 42, 0.3);
+      }
+
+      .badge.blocked {
+        background: rgba(169, 62, 47, 0.12);
+        color: var(--blocked);
+        border: 1px solid rgba(169, 62, 47, 0.3);
+      }
+
+      .badge.kind {
+        background: rgba(140, 79, 47, 0.08);
+        color: var(--accent);
+        border: 1px solid rgba(140, 79, 47, 0.2);
+      }
+
+      .entry-fields {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 4px 16px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-top: 10px;
+      }
+
+      .field-label {
+        color: var(--muted);
+        font-size: 0.82rem;
+        text-align: right;
+        padding-top: 1px;
+      }
+
+      .field-value { word-break: break-word; }
+      .field-value.empty { color: var(--line); font-style: italic; }
+
+      details.entry-details summary {
+        font-size: 0.85rem;
+        color: var(--muted);
+        cursor: pointer;
+        margin-top: 10px;
+        padding: 4px 0;
+        user-select: none;
+      }
+
+      details.entry-details summary:hover { color: var(--accent); }
+      details .detail-content { margin-top: 8px; }
+
+      .entry.change { border-left: 4px solid var(--accent); }
+
+      .dust-line {
+        font-style: italic;
+        color: var(--accent);
+        font-size: 1.1rem;
+        line-height: 1.5;
+        padding: 12px 0 4px;
+        border-top: 1px solid var(--line);
+        margin-top: 12px;
+      }
+
+      .dust-line::before {
+        content: "\u2756 ";
+        opacity: 0.5;
+      }
+
+      .status-badge {
+        font-size: 0.75rem;
+        font-family: "SF Mono", "Fira Code", monospace;
+        padding: 2px 10px;
+        border-radius: 3px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        background: rgba(140, 79, 47, 0.08);
+        color: var(--accent);
+        border: 1px solid rgba(140, 79, 47, 0.2);
+      }
+
+      .status-badge.done {
+        background: rgba(74, 124, 89, 0.12);
+        color: var(--smooth);
+        border: 1px solid rgba(74, 124, 89, 0.3);
+      }
+
+      .entry-what {
+        font-size: 0.92rem;
+        line-height: 1.5;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      .stats {
+        display: flex;
+        gap: 20px;
+        padding: 14px 20px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        margin-bottom: 24px;
+        font-size: 0.88rem;
+        color: var(--muted);
+        flex-wrap: wrap;
+      }
+
+      .stat-value {
+        font-weight: 600;
+        color: var(--fg);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>dust</h1>
+      <p class="subtitle">
+        Browse workflow logs from spec-of-dust.
+      </p>
+
+      <div id="app" style="display:none">
+        <div class="stats" id="stats"></div>
+
+        <div class="toolbar">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="devlog">Devlog</button>
+          <button class="filter-btn" data-filter="flowlog">Flowlog</button>
+          <button class="filter-btn" data-filter="change">Changes</button>
+          <span class="entry-count" id="entryCount"></span>
+        </div>
+
+        <div class="timeline" id="activeSection" style="display:none"></div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+
+      <div class="empty-state" id="emptyState" style="display:none">
+        <p>No entries found in the loaded files.</p>
+      </div>
+    </main>
+
+    <script>
+      /* embedded-data:start */
+      const EMBEDDED_DEVLOG = [];
+      const EMBEDDED_FLOWLOG = [];
+      const EMBEDDED_CHANGES = [];
+      /* embedded-data:end */
+    </script>
+    <script>
+      (() => {
+        const app = document.getElementById("app");
+        const timeline = document.getElementById("timeline");
+        const statsEl = document.getElementById("stats");
+        const countEl = document.getElementById("entryCount");
+        const emptyState = document.getElementById("emptyState");
+
+        let allEntries = [];
+        let currentFilter = "all";
+
+        function inferSource(obj) {
+          if ("event" in obj) return "devlog";
+          if ("sentiment" in obj) return "flowlog";
+          return "unknown";
+        }
+
+        function el(tag, attrs, children) {
+          const node = document.createElement(tag);
+          if (attrs) {
+            for (const [k, v] of Object.entries(attrs)) {
+              if (k === "className") node.className = v;
+              else if (k === "textContent") node.textContent = v;
+              else node.setAttribute(k, v);
+            }
+          }
+          if (children) {
+            for (const c of children) {
+              if (typeof c === "string") node.appendChild(document.createTextNode(c));
+              else if (c) node.appendChild(c);
+            }
+          }
+          return node;
+        }
+
+        function render() {
+          const filtered =
+            currentFilter === "all"
+              ? allEntries
+              : allEntries.filter((e) => e._source === currentFilter);
+
+          if (allEntries.length === 0) {
+            app.style.display = "none";
+            emptyState.style.display = "";
+            return;
+          }
+
+          emptyState.style.display = "none";
+          app.style.display = "";
+
+          renderStats();
+
+          // Separate active (non-done) changes from the rest
+          const activeSection = document.getElementById("activeSection");
+          const activeChanges = filtered.filter((e) => e._source === "change" && e.status && e.status !== "done");
+          const timelineEntries = filtered.filter((e) => !(e._source === "change" && e.status && e.status !== "done"));
+
+          activeSection.textContent = "";
+          if (activeChanges.length > 0 && (currentFilter === "all" || currentFilter === "change")) {
+            activeSection.style.display = "";
+            const heading = el("div", { className: "entry-change", textContent: "Active Work" });
+            heading.style.marginBottom = "8px";
+            heading.style.fontSize = "1.1rem";
+            heading.style.color = "var(--accent)";
+            activeSection.appendChild(heading);
+            for (const entry of activeChanges) {
+              activeSection.appendChild(buildEntry(entry));
+            }
+          } else {
+            activeSection.style.display = "none";
+          }
+
+          countEl.textContent = filtered.length + " shown";
+          timeline.textContent = "";
+          for (const entry of timelineEntries) {
+            timeline.appendChild(buildEntry(entry));
+          }
+        }
+
+        function renderStats() {
+          statsEl.textContent = "";
+          const devCount = allEntries.filter((e) => e._source === "devlog").length;
+          const flowCount = allEntries.filter((e) => e._source === "flowlog").length;
+          const changeCount = allEntries.filter((e) => e._source === "change").length;
+          const sentiments = {};
+          for (const e of allEntries) {
+            if (e.sentiment) sentiments[e.sentiment] = (sentiments[e.sentiment] || 0) + 1;
+          }
+
+          statsEl.appendChild(statSpan(allEntries.length, "entries"));
+          if (devCount) statsEl.appendChild(statSpan(devCount, "devlog"));
+          if (flowCount) statsEl.appendChild(statSpan(flowCount, "flowlog"));
+          if (changeCount) statsEl.appendChild(statSpan(changeCount, "changes"));
+
+          for (const [s, n] of Object.entries(sentiments)) {
+            const span = document.createElement("span");
+            const badge = el("span", { className: "badge " + s, textContent: s });
+            span.appendChild(badge);
+            span.appendChild(document.createTextNode(" " + n));
+            statsEl.appendChild(span);
+          }
+        }
+
+        function statSpan(value, label) {
+          const span = document.createElement("span");
+          const valEl = el("span", { className: "stat-value", textContent: String(value) });
+          span.appendChild(valEl);
+          span.appendChild(document.createTextNode(" " + label));
+          return span;
+        }
+
+        function buildEntry(entry) {
+          if (entry._source === "change") return buildChangeEntry(entry);
+
+          const source = entry._source;
+          const article = el("article", { className: "entry " + source });
+
+          // Header
+          const header = el("div", { className: "entry-header" });
+          header.appendChild(el("span", { className: "entry-ts", textContent: formatTs(entry.ts) }));
+          header.appendChild(el("span", { className: "entry-source", textContent: source }));
+
+          if (entry.agent) {
+            header.appendChild(el("span", { className: "entry-agent", textContent: entry.agent }));
+          }
+
+          if (source === "flowlog" && entry.sentiment) {
+            header.appendChild(el("span", { className: "badge " + entry.sentiment, textContent: entry.sentiment }));
+          }
+
+          if (source === "devlog" && entry.kind) {
+            header.appendChild(el("span", { className: "badge kind", textContent: entry.kind }));
+          }
+
+          article.appendChild(header);
+
+          // Change name / summary
+          const changeName = entry.change || entry.summary || null;
+          if (changeName) {
+            article.appendChild(el("div", { className: "entry-change", textContent: changeName }));
+          }
+
+          // Fields
+          if (source === "devlog") {
+            const fields = el("div", { className: "entry-fields" });
+            appendField(fields, "event", entry.event);
+            appendField(fields, "kind", entry.kind);
+            appendField(fields, "summary", entry.summary);
+            appendField(fields, "reason", entry.reason);
+            appendField(fields, "file", (entry.files || []).join(", ") || null);
+            appendField(fields, "command", entry.command);
+            appendField(fields, "agent", entry.agent);
+            article.appendChild(fields);
+          } else if (source === "flowlog") {
+            const fields = el("div", { className: "entry-fields" });
+            appendField(fields, "change", entry.change);
+            appendField(fields, "agent", entry.agent);
+            appendField(fields, "sentiment", entry.sentiment);
+            article.appendChild(fields);
+
+            const details = document.createElement("details");
+            details.className = "entry-details";
+            const summary = document.createElement("summary");
+            summary.textContent = "feedback details";
+            details.appendChild(summary);
+
+            const content = el("div", { className: "detail-content" });
+            const detailFields = el("div", { className: "entry-fields" });
+
+            appendField(detailFields, "divergence", entry.flow_divergence);
+            appendField(detailFields, "friction", entry.friction);
+            appendField(detailFields, "suggestion", entry.suggestion);
+
+            content.appendChild(detailFields);
+            details.appendChild(content);
+            article.appendChild(details);
+          }
+
+          return article;
+        }
+
+        function appendField(container, label, value) {
+          const isEmpty = !value || value === "nothing notable" || value === "";
+          container.appendChild(el("span", { className: "field-label", textContent: label }));
+          container.appendChild(el("span", {
+            className: isEmpty ? "field-value empty" : "field-value",
+            textContent: isEmpty ? "\u2014" : value,
+          }));
+        }
+
+        function formatTs(ts) {
+          if (!ts) return "\u2014";
+          try {
+            const d = new Date(ts);
+            return d.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          } catch (_) {
+            return ts;
+          }
+        }
+
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentFilter = btn.dataset.filter;
+            render();
+          });
+        });
+
+        function buildChangeEntry(entry) {
+          const article = el("article", { className: "entry change" });
+
+          const header = el("div", { className: "entry-header" });
+          header.appendChild(el("span", { className: "entry-ts", textContent: formatTs(entry.ts) }));
+          header.appendChild(el("span", { className: "entry-source", textContent: "change" }));
+
+          const statusCls = "status-badge" + (entry.status === "done" ? " done" : "");
+          header.appendChild(el("span", { className: statusCls, textContent: entry.status || "\u2014" }));
+
+          article.appendChild(header);
+
+          if (entry.name) {
+            article.appendChild(el("div", { className: "entry-change", textContent: entry.name }));
+          }
+
+          if (entry.what) {
+            const whatText = entry.what.split("\n\n")[0].replace(/\n/g, " ");
+            article.appendChild(el("div", { className: "entry-what", textContent: whatText }));
+          }
+
+          // Dust line — the star of the show
+          if (entry.dust && entry.dust !== "- Dust:" && entry.dust !== "nothing notable") {
+            article.appendChild(el("div", { className: "dust-line", textContent: entry.dust }));
+          }
+
+          // Closure fields — inline, not collapsible
+          const isReal = (v) => v && !v.startsWith("- ") && v !== "nothing notable";
+          const closureFields = [
+            ["challenges", entry.challenges],
+            ["learnings", entry.learnings],
+            ["outcomes", entry.outcomes],
+          ].filter(([, v]) => isReal(v));
+
+          if (closureFields.length > 0) {
+            const fields = el("div", { className: "entry-fields" });
+            for (const [label, value] of closureFields) {
+              appendField(fields, label, value);
+            }
+            article.appendChild(fields);
+          }
+
+          // Peer review and verify as collapsible
+          const hasReview = entry.peer_spec_review || entry.peer_code_review || entry.verify;
+          if (hasReview) {
+            const details = document.createElement("details");
+            details.className = "entry-details";
+            const summary = document.createElement("summary");
+            summary.textContent = "reviews & verify";
+            details.appendChild(summary);
+
+            const content = el("div", { className: "detail-content" });
+            const fields = el("div", { className: "entry-fields" });
+            if (entry.peer_spec_review) appendField(fields, "spec review", entry.peer_spec_review);
+            if (entry.peer_code_review) appendField(fields, "code review", entry.peer_code_review);
+            if (entry.verify) appendField(fields, "verify", entry.verify);
+            content.appendChild(fields);
+            details.appendChild(content);
+            article.appendChild(details);
+          }
+
+          return article;
+        }
+
+        // Load embedded data on startup
+        (() => {
+          const sources = [
+            [EMBEDDED_DEVLOG, "devlog"],
+            [EMBEDDED_FLOWLOG, "flowlog"],
+          ];
+          for (const [lines, fallbackSource] of sources) {
+            for (const line of lines) {
+              try {
+                const obj = JSON.parse(line);
+                obj._source = inferSource(obj);
+                allEntries.push(obj);
+              } catch (_) {}
+            }
+          }
+
+          // Load embedded changes
+          if (typeof EMBEDDED_CHANGES !== "undefined") {
+            for (const line of EMBEDDED_CHANGES) {
+              try {
+                const obj = JSON.parse(line);
+                obj._source = "change";
+                allEntries.push(obj);
+              } catch (_) {}
+            }
+          }
+
+          if (allEntries.length > 0) {
+            allEntries.sort((a, b) => (b.ts || "").localeCompare(a.ts || ""));
+            render();
+          }
+        })();
+      })();
+    </script>
+  </body>
+</html>

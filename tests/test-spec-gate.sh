@@ -201,7 +201,7 @@ done_change_commit_passes() {
     commit_isolated_changes_fixture
     seed_change_file done
     bash scripts/flowlog.sh --change test-change --agent codex --sentiment smooth >/dev/null
-    git add .spec/changes/test-change.md .spec/flowlog.jsonl docs/viewer.html
+    git add .spec/changes/test-change.md .spec/flowlog.jsonl docs/dust.html
     bash scripts/update-sod-report.sh
     git add README.md .spec/sod-report.md
     git commit -qm 'test: done change commit'
@@ -493,9 +493,9 @@ skip_mode_ignores_scope
 multiple_changes_scope_matches
 blank_files_field_falls_back
 exempt_passes_under_scope
-viewer_only_change_skips_sod_staleness() {
+dust_only_change_skips_sod_staleness() {
   local repo
-  repo="$(make_repo viewer-sod)"
+  repo="$(make_repo dust-sod)"
 
   (
     cd "$repo"
@@ -505,21 +505,21 @@ viewer_only_change_skips_sod_staleness() {
     git add .spec/changes .spec/sod-report.md README.md
     git commit -qm 'setup: baseline'
 
-    # Simulate a viewer rebuild by touching docs/viewer.html
-    echo "<!-- rebuilt -->" >> docs/viewer.html
-    git add docs/viewer.html
+    # Simulate a dust rebuild by touching docs/dust.html
+    echo "<!-- rebuilt -->" >> docs/dust.html
+    git add docs/dust.html
 
-    # The hook should NOT trigger sod staleness for viewer-only changes
+    # The hook should NOT trigger sod staleness for dust-only changes
     # Test by sourcing the gate and checking has_sod_relevant_changes directly
     source .githooks/_spec_gate.sh
     if has_sod_relevant_changes; then
       exit 1
     fi
-  ) || fail "viewer only change skips sod staleness"
+  ) || fail "dust only change skips sod staleness"
 
-  pass "viewer only change skips sod staleness"
+  pass "dust only change skips sod staleness"
 }
 
 archive_only_commit_passes
 archive_mixed_with_code_is_blocked
-viewer_only_change_skips_sod_staleness
+dust_only_change_skips_sod_staleness

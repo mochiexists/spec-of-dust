@@ -19,8 +19,8 @@ jobs:
       - name: Check sod outputs
         run: bash scripts/update-sod-report.sh --check
 
-      - name: Check viewer outputs
-        run: bash scripts/build-viewer.sh --check
+      - name: Check dust outputs
+        run: bash scripts/build-dust.sh --check
 
       - name: Run hook tests
         run: bash tests/test-spec-gate.sh

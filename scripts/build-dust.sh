@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# scripts/build-viewer.sh — embed JSONL log data into docs/viewer.html
+# scripts/build-dust.sh — embed JSONL log data into docs/dust.html
 
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VIEWER="$ROOT_DIR/docs/viewer.html"
+VIEWER="$ROOT_DIR/docs/dust.html"
 DEVLOG="$ROOT_DIR/.spec/devlog.jsonl"
 FLOWLOG="$ROOT_DIR/.spec/flowlog.jsonl"
 MARKER_START='/* embedded-data:start */'
@@ -204,7 +204,7 @@ cat > "$data_tmp" <<DATAEOF
       $MARKER_END
 DATAEOF
 
-# Replace the data block in the viewer using the temp file
+# Replace the data block in dust.html using the temp file
 awk -v start="$MARKER_START" -v end="$MARKER_END" -v datafile="$data_tmp" '
   index($0, start) {
     while ((getline line < datafile) > 0) print line
@@ -222,7 +222,7 @@ awk -v start="$MARKER_START" -v end="$MARKER_END" -v datafile="$data_tmp" '
 case "$mode" in
   --check)
     if ! cmp -s "$tmp" "$VIEWER"; then
-      echo "Viewer output is stale. Run scripts/build-viewer.sh." >&2
+      echo "Dust output is stale. Run scripts/build-dust.sh." >&2
       exit 1
     fi
     ;;
@@ -231,7 +231,7 @@ case "$mode" in
       cp "$tmp" "$VIEWER"
       echo "Updated $VIEWER with embedded log data"
     else
-      echo "Viewer data is already current"
+      echo "Dust data is already current"
     fi
     ;;
   *)

@@ -64,8 +64,8 @@ printf '{"ts":"%s","event":"skip-no-verify","kind":"%s","summary":"%s","reason":
 
 echo "Appended skip entry to $DEVLOG_FILE"
 
-# Refresh viewer with embedded data
-VIEWER_SCRIPT="$ROOT_DIR/scripts/build-viewer.sh"
+# Refresh dust with embedded data
+VIEWER_SCRIPT="$ROOT_DIR/scripts/build-dust.sh"
 if [ -x "$VIEWER_SCRIPT" ]; then
   "$VIEWER_SCRIPT"
 fi

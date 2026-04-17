@@ -72,24 +72,43 @@ Synthetic fixture.
 EOF
 }
 
-viewer_check_detects_stale_viewer() {
+dust_check_detects_stale_output() {
   local repo
-  repo="$(make_repo viewer-check)"
+  repo="$(make_repo dust-check)"
 
   (
     cd "$repo"
     cat >> .spec/devlog.jsonl <<'EOF'
-{"ts":"2026-04-17T08:00:00Z","event":"skip-no-verify","kind":"comment","summary":"stale viewer test","reason":"fixture","files":["README.md"],"command":"git commit --no-verify"}
+{"ts":"2026-04-17T08:00:00Z","event":"skip-no-verify","kind":"comment","summary":"stale dust test","reason":"fixture","files":["README.md"],"command":"git commit --no-verify"}
 EOF
 
-    if bash scripts/build-viewer.sh --check; then
+    if bash scripts/build-dust.sh --check; then
       exit 1
     fi
-  ) || fail "viewer check detects stale viewer"
+  ) || fail "dust check detects stale output"
 
-  pass "viewer check detects stale viewer"
+  pass "dust check detects stale output"
 }
 
+setup_bootstraps_dust_and_scripts_work() {
+  local repo
+  repo="$(make_repo setup-fresh)"
+
+  (
+    cd "$repo"
+    rm -f docs/dust.html
+    bash setup.sh >/dev/null 2>&1
+    [ -f docs/dust.html ] || exit 1
+    bash scripts/build-dust.sh || exit 1
+    bash scripts/devlog.sh --kind typo --summary "test" --reason "test" --file README.md || exit 1
+    bash scripts/flowlog.sh --change test --agent claude --sentiment smooth || exit 1
+  ) || fail "setup bootstraps dust and scripts work"
+
+  pass "setup bootstraps dust and scripts work"
+}
+
+dust_check_detects_stale_output
+setup_bootstraps_dust_and_scripts_work
 archive_script_uses_utc_and_refreshes_outputs() {
   local attempt repo status
 
@@ -99,9 +118,9 @@ archive_script_uses_utc_and_refreshes_outputs() {
     if (
       cd "$repo"
       seed_done_change
-      bash scripts/build-viewer.sh
+      bash scripts/build-dust.sh
       bash scripts/update-sod-report.sh
-      git add .spec/changes docs/viewer.html README.md .spec/sod-report.md
+      git add .spec/changes docs/dust.html README.md .spec/sod-report.md
       git commit --no-verify -qm 'setup: done change'
 
       local utc_hour_before utc_hour_after local_hour archived_file archived_base archived_hour
@@ -124,9 +143,9 @@ archive_script_uses_utc_and_refreshes_outputs() {
       [ "$archived_hour" = "$utc_hour_before" ] || exit 1
       [ "$archived_hour" != "$local_hour" ] || exit 1
 
-      bash scripts/build-viewer.sh --check
+      bash scripts/build-dust.sh --check
       bash scripts/update-sod-report.sh --check
-      git diff --cached --name-only | grep -Fx 'docs/viewer.html' >/dev/null
+      git diff --cached --name-only | grep -Fx 'docs/dust.html' >/dev/null
       git diff --cached --name-only | grep -Fx 'README.md' >/dev/null
       git diff --cached --name-only | grep -Fx '.spec/sod-report.md' >/dev/null
     ); then
@@ -144,5 +163,4 @@ archive_script_uses_utc_and_refreshes_outputs() {
   fail "archive script uses UTC and refreshes outputs"
 }
 
-viewer_check_detects_stale_viewer
 archive_script_uses_utc_and_refreshes_outputs

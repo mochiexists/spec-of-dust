@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STARTUP_FILE="$ROOT_DIR/.spec/b-startup.md"
 ARCHIVE_SCRIPT="$ROOT_DIR/scripts/archive-done-changes.sh"
 SOD_SCRIPT="$ROOT_DIR/scripts/update-sod-report.sh"
-VIEWER_SCRIPT="$ROOT_DIR/scripts/build-viewer.sh"
+VIEWER_SCRIPT="$ROOT_DIR/scripts/build-dust.sh"
 HOOK_TEST_SCRIPT="$ROOT_DIR/tests/test-spec-gate.sh"
 target=""
 auto_mode=0
@@ -98,7 +98,7 @@ check_auto_prerequisites() {
   fi
 
   if [ -x "$VIEWER_SCRIPT" ] && ! "$VIEWER_SCRIPT" --check >/dev/null 2>&1; then
-    echo "Auto merge requires a fresh viewer build." >&2
+    echo "Auto merge requires a fresh dust build." >&2
     exit 1
   fi
 

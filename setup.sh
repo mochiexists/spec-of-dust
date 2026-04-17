@@ -67,6 +67,27 @@ EOF
   echo "  ✓ Created .spec/changes/_template.md"
 fi
 
+# Migrate viewer.html → dust.html for existing repos
+if [ -f docs/viewer.html ] && [ ! -f docs/dust.html ]; then
+  mv docs/viewer.html docs/dust.html
+  echo "  ✓ Migrated docs/viewer.html → docs/dust.html"
+fi
+
+# Migrate build-viewer.sh → build-dust.sh for existing repos
+if [ -f scripts/build-viewer.sh ] && [ ! -f scripts/build-dust.sh ]; then
+  mv scripts/build-viewer.sh scripts/build-dust.sh
+  echo "  ✓ Migrated scripts/build-viewer.sh → scripts/build-dust.sh"
+fi
+
+# Create docs/dust.html from template if missing
+if [ ! -f docs/dust.html ]; then
+  mkdir -p docs
+  if [ -f templates/dust.html ]; then
+    cp templates/dust.html docs/dust.html
+    echo "  ✓ Created docs/dust.html from template"
+  fi
+fi
+
 # Point git at our hooks
 git config core.hooksPath .githooks
 chmod +x .githooks/*

@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SPEC_DIR="$ROOT_DIR/.spec/changes"
 ARCHIVE_DIR="$ROOT_DIR/.spec/archive"
-VIEWER_SCRIPT="$ROOT_DIR/scripts/build-viewer.sh"
+VIEWER_SCRIPT="$ROOT_DIR/scripts/build-dust.sh"
 SOD_SCRIPT="$ROOT_DIR/scripts/update-sod-report.sh"
 require_done=0
 quiet=0
@@ -80,7 +80,7 @@ done
 if [ "$archived" -gt 0 ]; then
   if [ -x "$VIEWER_SCRIPT" ]; then
     "$VIEWER_SCRIPT"
-    stage_if_exists "$ROOT_DIR/docs/viewer.html"
+    stage_if_exists "$ROOT_DIR/docs/dust.html"
   fi
 
   if [ -x "$SOD_SCRIPT" ]; then
