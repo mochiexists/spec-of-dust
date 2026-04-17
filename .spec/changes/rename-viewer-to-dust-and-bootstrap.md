@@ -1,4 +1,4 @@
-status: build
+status: done
 files: docs/dust.html, docs/viewer.html, docs/index.html, scripts/build-viewer.sh, scripts/build-dust.sh, scripts/devlog.sh, scripts/flowlog.sh, scripts/archive-done-changes.sh, scripts/merge-completed-work.sh, scripts/update-sod-report.sh, setup.sh, templates/dust.html, .githooks/_spec_gate.sh, .github/workflows/validate.yml, .spec/sod-report.md, README.md, CLAUDE.md, tests/test-workflow-scripts.sh, VERSION, tests/test-spec-gate.sh
 
 # Rename viewer to dust and bootstrap it in setup

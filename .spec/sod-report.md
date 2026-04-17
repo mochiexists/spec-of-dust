@@ -6,10 +6,10 @@
 - Total files: `71`
 - Total lines: `6786`
 - Total words: `53757`
-- Total characters: `419332`
-- Total estimated tokens: `104855`
+- Total characters: `419331`
+- Total estimated tokens: `104854`
 - bootstrap sod: `2012 / 3000 target`
-- operational sod: `3872 / 5000 target`
+- operational sod: `3871 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -55,7 +55,7 @@
 | `.spec/archive/2026-04-17-073907-clean-up-setup-sod-wording.md` | 62 | 529 | 3696 | 924 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/rename-viewer-to-dust-and-bootstrap.md` | 54 | 573 | 4329 | 1083 |
+| `.spec/changes/rename-viewer-to-dust-and-bootstrap.md` | 54 | 573 | 4328 | 1082 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 24 | 717 | 8532 | 2133 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
