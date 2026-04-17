@@ -1,5 +1,5 @@
-status: verify
-files: .spec/changes/distinguish-advisory-vs-live-delivery.md, .spec/FLOW.md, .spec/changes/_template.md
+status: done
+files: .spec/changes/distinguish-advisory-vs-live-delivery.md, .spec/FLOW.md, .spec/changes/_template.md, .spec/sod-report.md, README.md, docs/viewer.html
 
 # Require live-target verification
 
@@ -44,7 +44,7 @@ Verdict: no blockers.
 
 ## Closure
 <!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: A note is not the site.
+- Challenges: the only real work was resisting a broader taxonomy and keeping the fix pointed at external-target verification instead of inventing new workflow ceremony
+- Learnings: the failure mode is social as much as technical; if the final wording is loose, a local note can still be mistaken for a live update
+- Outcomes: `spec-of-dust` now requires live-target verification for external-update requests before they can be reported as live, and the template now prompts authors to name that target and outcome mode when it matters
+- Dust: The map now has to admit when it is not the city.
