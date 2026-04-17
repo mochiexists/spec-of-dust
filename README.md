@@ -18,7 +18,7 @@ and starter repo layouts.
 - Characters: `419331`
 - Est. tokens: `104854`
 - bootstrap sod: `2012 / 3000 target`
-- operational sod: `3871 / 5000 target`
+- operational sod: `2789 / 5000 target`
 
 See `.spec/sod-report.md` for the full per-file breakdown.
 <!-- sod-summary:end -->
