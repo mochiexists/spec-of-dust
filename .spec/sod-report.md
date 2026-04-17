@@ -6,10 +6,10 @@
 - Total files: `73`
 - Total lines: `7053`
 - Total words: `56463`
-- Total characters: `439203`
+- Total characters: `439202`
 - Total estimated tokens: `109823`
 - bootstrap sod: `2370 / 3000 target`
-- operational sod: `4292 / 5000 target`
+- operational sod: `3147 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -55,9 +55,9 @@
 | `.spec/archive/2026-04-17-073907-clean-up-setup-sod-wording.md` | 62 | 529 | 3696 | 924 |
 | `.spec/archive/2026-04-17-110335-rename-viewer-to-dust-and-bootstrap.md` | 54 | 573 | 4328 | 1082 |
 | `.spec/archive/2026-04-17-123542-testing-guidance-in-flow.md` | 51 | 610 | 4019 | 1005 |
+| `.spec/archive/2026-04-17-134119-add-push-knob.md` | 57 | 715 | 4580 | 1145 |
 | `.spec/b-startup.md` | 14 | 78 | 536 | 134 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/add-push-knob.md` | 57 | 715 | 4580 | 1145 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 26 | 726 | 8896 | 2224 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -67,7 +67,7 @@
 | `README.md` | 183 | 1137 | 7530 | 1883 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 618 | 16207 | 140372 | 35093 |
+| `docs/dust.html` | 618 | 16207 | 140371 | 35093 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
