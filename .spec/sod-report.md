@@ -9,7 +9,7 @@
 - Total characters: `382759`
 - Total estimated tokens: `95711`
 - bootstrap sod: `2012 / 3000 target`
-- operational sod: `3824 / 5000 target`
+- operational sod: `2789 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -51,9 +51,9 @@
 | `.spec/archive/2026-04-17-005658-publish-dust-on-mochiexists.md` | 53 | 563 | 3996 | 999 |
 | `.spec/archive/2026-04-17-011031-distinguish-advisory-vs-live-delivery.md` | 50 | 629 | 4407 | 1102 |
 | `.spec/archive/2026-04-17-013944-create-language-packs.md` | 63 | 688 | 4757 | 1190 |
+| `.spec/archive/2026-04-17-020153-record-git-identity-and-publish-restrictions.md` | 53 | 614 | 4140 | 1035 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/record-git-identity-and-publish-restrictions.md` | 53 | 614 | 4140 | 1035 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 22 | 673 | 7886 | 1972 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
