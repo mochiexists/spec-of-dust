@@ -6,10 +6,10 @@
 - Total files: `64`
 - Total lines: `5804`
 - Total words: `46406`
-- Total characters: `355727`
-- Total estimated tokens: `88954`
+- Total characters: `355723`
+- Total estimated tokens: `88952`
 - bootstrap sod: `1705 / 3000 target`
-- operational sod: `4106 / 5000 target`
+- operational sod: `4105 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -50,7 +50,7 @@
 | `.spec/archive/2026-04-17-013944-create-language-packs.md` | 63 | 688 | 4757 | 1190 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
-| `.spec/changes/fix-viewer-freshness-and-archive-utc.md` | 66 | 864 | 6494 | 1624 |
+| `.spec/changes/fix-viewer-freshness-and-archive-utc.md` | 66 | 864 | 6492 | 1623 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 19 | 576 | 6743 | 1686 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -61,7 +61,7 @@
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/viewer.html` | 618 | 13546 | 117378 | 29345 |
+| `docs/viewer.html` | 618 | 13546 | 117376 | 29344 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
 | `packs/javascript/v0/README.md` | 76 | 214 | 1631 | 408 |
 | `packs/python-research/v0/README.md` | 86 | 309 | 2336 | 584 |

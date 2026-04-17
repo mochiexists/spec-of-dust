@@ -1,4 +1,4 @@
-status: verify
+status: done
 files: .githooks/_spec_gate.sh, .githooks/post-merge, .githooks/pre-commit, .github/workflows/validate.yml, .spec/b-startup.md, .spec/changes/fix-viewer-freshness-and-archive-utc.md, README.md, CODEX.md, CLAUDE.md, VERSION, docs/viewer.html, scripts/archive-done-changes.sh, scripts/build-viewer.sh, scripts/merge-completed-work.sh, scripts/update-sod-report.sh, tests/test-spec-gate.sh, tests/test-workflow-scripts.sh
 
 # Fix viewer freshness and archive UTC
