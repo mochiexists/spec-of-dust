@@ -9,7 +9,7 @@
 - Total characters: `390232`
 - Total estimated tokens: `97580`
 - bootstrap sod: `2012 / 3000 target`
-- operational sod: `3713 / 5000 target`
+- operational sod: `2789 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -52,9 +52,9 @@
 | `.spec/archive/2026-04-17-011031-distinguish-advisory-vs-live-delivery.md` | 50 | 629 | 4407 | 1102 |
 | `.spec/archive/2026-04-17-013944-create-language-packs.md` | 63 | 688 | 4757 | 1190 |
 | `.spec/archive/2026-04-17-020153-record-git-identity-and-publish-restrictions.md` | 53 | 614 | 4140 | 1035 |
+| `.spec/archive/2026-04-17-073907-clean-up-setup-sod-wording.md` | 62 | 529 | 3696 | 924 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/clean-up-setup-sod-wording.md` | 62 | 529 | 3696 | 924 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 23 | 707 | 8289 | 2073 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
