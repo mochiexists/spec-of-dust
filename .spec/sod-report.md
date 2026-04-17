@@ -3,13 +3,13 @@
 - Version: `0.1.2`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `67`
-- Total lines: `5953`
-- Total words: `48816`
-- Total characters: `374016`
-- Total estimated tokens: `93526`
-- bootstrap sod: `1889 / 3000 target`
-- operational sod: `2666 / 5000 target`
+- Total files: `68`
+- Total lines: `6010`
+- Total words: `49476`
+- Total characters: `378462`
+- Total estimated tokens: `94637`
+- bootstrap sod: `2012 / 3000 target`
+- operational sod: `3718 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -20,7 +20,7 @@
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 29 | 60 | 580 | 145 |
 | `.gitignore` | 4 | 6 | 72 | 18 |
-| `.spec/FLOW.md` | 123 | 1073 | 7030 | 1758 |
+| `.spec/FLOW.md` | 126 | 1150 | 7524 | 1881 |
 | `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -52,7 +52,8 @@
 | `.spec/archive/2026-04-17-011031-distinguish-advisory-vs-live-delivery.md` | 50 | 629 | 4407 | 1102 |
 | `.spec/archive/2026-04-17-013944-create-language-packs.md` | 63 | 688 | 4757 | 1190 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
-| `.spec/changes/_template.md` | 38 | 188 | 1164 | 291 |
+| `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/record-git-identity-and-publish-restrictions.md` | 53 | 547 | 3716 | 929 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 21 | 643 | 7496 | 1874 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
