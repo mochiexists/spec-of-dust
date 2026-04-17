@@ -3,13 +3,13 @@
 - Version: `0.1.2`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `66`
-- Total lines: `5897`
-- Total words: `47550`
-- Total characters: `364587`
-- Total estimated tokens: `91169`
-- bootstrap sod: `1705 / 3000 target`
-- operational sod: `2482 / 5000 target`
+- Total files: `67`
+- Total lines: `5952`
+- Total words: `48257`
+- Total characters: `369444`
+- Total estimated tokens: `92383`
+- bootstrap sod: `1889 / 3000 target`
+- operational sod: `3637 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -20,7 +20,7 @@
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 29 | 60 | 580 | 145 |
 | `.gitignore` | 4 | 6 | 72 | 18 |
-| `.spec/FLOW.md` | 119 | 948 | 6296 | 1574 |
+| `.spec/FLOW.md` | 123 | 1073 | 7030 | 1758 |
 | `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -51,7 +51,8 @@
 | `.spec/archive/2026-04-17-005658-publish-dust-on-mochiexists.md` | 53 | 563 | 3996 | 999 |
 | `.spec/archive/2026-04-17-013944-create-language-packs.md` | 63 | 688 | 4757 | 1190 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
-| `.spec/changes/_template.md` | 37 | 152 | 925 | 232 |
+| `.spec/changes/_template.md` | 38 | 188 | 1164 | 291 |
+| `.spec/changes/distinguish-advisory-vs-live-delivery.md` | 50 | 546 | 3884 | 971 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 20 | 608 | 7102 | 1776 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |

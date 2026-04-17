@@ -28,12 +28,15 @@ spec → build → verify → done
 **build** — Implement the spec. When complete, request peer review.
 
 **verify** — Check every acceptance criterion against the implementation. Pass/fail each. If anything fails, return to `build`.
+If the requested outcome is a real update to an external repo, site, or deployed system, verify against that actual target before calling the change complete. If the external target was not changed or checked, say so explicitly and treat the result as local documentation or prep work, not a live update.
 
 **done** — All criteria pass. Before setting `status: done`:
 1. Fill `## Closure` with `Challenges`, `Learnings`, `Outcomes`, and `Dust` (one short artistic line, <80 chars). Use `nothing notable` if straightforward.
 2. Append a flowlog entry via `bash scripts/flowlog.sh` with `--change`, `--agent`, `--sentiment` (smooth/rough/blocked), and optional `--divergence`, `--friction`, `--suggestion`.
 3. Set `status: done`.
 4. Commit that completed change before starting or stacking more standard work. A `done` change is a closeout boundary, not a parking state.
+
+In closure and final reporting, do not say `live`, `published`, or `delivered` for an external target unless that target was actually changed and checked. If the work only produced a note, recommendation, handoff, or local prep, say that plainly.
 
 After `done`, merge behavior applies (see Merge section).
 
@@ -115,5 +118,6 @@ Works in single-project and monorepo layouts. Use `apps/` for services, `package
 - On session start, check `.spec/changes/` for active changes (ignore `_template.md` and `_example-*`). If one exists with status other than `done`, resume from that state.
 - No change file + human request = create one from template, start at `spec`. Don't jump to code.
 - Specs are 10-30 lines, not a PRD. Write mechanically checkable acceptance criteria.
+- If the user wants a real change to an external repo, site, or deployed system, the spec and verify steps must name that target and verify it before reporting the outcome as live.
 - Small changes can use a minimal spec (one-liner + 1-2 criteria). Skip commits are different — trivial only, logged in devlog.
 - "Just do it" from the human = log it in devlog. Skip commits still need a structured entry.
