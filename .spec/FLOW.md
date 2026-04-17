@@ -77,6 +77,16 @@ Configured in `.spec/b-startup.md` via `merge: manual | confirm | auto` and `mer
 
 The merge helper archives done change files on the target branch, or archives then merges with `--no-ff` from a feature branch. It refuses dirty trees, missing Git repos, and missing completed changes. Merge failure keeps the change at `done` and reports the error. Do not auto-delete branches.
 
+## Push
+
+Configured in `.spec/b-startup.md` via `push: never | confirm | auto` (default `never`). Push only applies when the merge helper runs — it has no effect with `merge: manual`.
+
+- **never**: no push after merge/archive (default)
+- **confirm**: the merge helper prints "Push ready. Run `git push origin <target>` to deliver." — the agent or human decides
+- **auto**: the merge helper runs `git push origin <merge-target>` after a successful archive commit
+
+Push failure is reported but does not undo the local archive — the commit is already on the target branch. If no remote `origin` exists, push is skipped with a warning.
+
 ## Agent teams
 
 Respect `teams:` in `.spec/b-startup.md` (`none | some | many`; default `some`).

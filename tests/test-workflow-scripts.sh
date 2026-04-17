@@ -193,4 +193,61 @@ archive_script_uses_utc_and_refreshes_outputs() {
   fail "archive script uses UTC and refreshes outputs"
 }
 
+push_auto_delivers_to_remote() {
+  local repo bare_remote
+  repo="$(make_repo push-auto)"
+  bare_remote="$TMP_DIR/push-auto-remote.git"
+
+  (
+    git init -q --bare "$bare_remote"
+
+    cd "$repo"
+    printf '\npush: auto\n' >> .spec/b-startup.md
+    bash scripts/update-sod-report.sh
+    git add -A
+    git -c core.hooksPath=/dev/null commit -qm 'config: push auto'
+    git remote add origin "$bare_remote"
+    git push -u origin main 2>/dev/null
+
+    seed_done_change
+    bash scripts/build-dust.sh
+    bash scripts/update-sod-report.sh
+    git add -A
+    git -c core.hooksPath=/dev/null commit -qm 'setup: done change'
+
+    bash scripts/merge-completed-work.sh
+
+    # Verify the archive commit arrived at the remote
+    git -C "$bare_remote" log --oneline -1 | grep -q "archive completed specs" || exit 1
+  ) || fail "push auto delivers to remote"
+
+  pass "push auto delivers to remote"
+}
+
+push_skipped_when_no_origin() {
+  local repo output
+  repo="$(make_repo push-no-origin)"
+
+  (
+    cd "$repo"
+    printf '\npush: auto\n' >> .spec/b-startup.md
+    bash scripts/update-sod-report.sh
+    git add -A
+    git -c core.hooksPath=/dev/null commit -qm 'config: push auto'
+
+    seed_done_change
+    bash scripts/build-dust.sh
+    bash scripts/update-sod-report.sh
+    git add -A
+    git -c core.hooksPath=/dev/null commit -qm 'setup: done change'
+
+    output="$(bash scripts/merge-completed-work.sh 2>&1)"
+    printf '%s\n' "$output" | grep -qF "No remote" || exit 1
+  ) || fail "push skipped when no origin"
+
+  pass "push skipped when no origin"
+}
+
 archive_script_uses_utc_and_refreshes_outputs
+push_auto_delivers_to_remote
+push_skipped_when_no_origin

@@ -15,6 +15,10 @@ if [ ! -f .spec/b-startup.md ]; then
 
 Use this as the minimal boot brief.
 Keep it short. Put deeper context in docs/ or active change files.
+
+merge: confirm
+merge-target: main
+push: never
 EOF
 fi
 touch .spec/devlog.jsonl

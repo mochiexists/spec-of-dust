@@ -11,3 +11,4 @@ This repo is `spec-of-dust` itself: a zero-dependency workflow framework, not an
 teams: some
 merge: confirm
 merge-target: main
+push: never

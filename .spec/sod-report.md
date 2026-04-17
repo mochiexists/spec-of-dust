@@ -3,13 +3,13 @@
 - Version: `0.1.3`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `72`
-- Total lines: `6888`
-- Total words: `55000`
-- Total characters: `428361`
-- Total estimated tokens: `107113`
-- bootstrap sod: `2209 / 3000 target`
-- operational sod: `2986 / 5000 target`
+- Total files: `73`
+- Total lines: `7046`
+- Total words: `55989`
+- Total characters: `435238`
+- Total estimated tokens: `108833`
+- bootstrap sod: `2370 / 3000 target`
+- operational sod: `4086 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -20,7 +20,7 @@
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 29 | 60 | 576 | 144 |
 | `.gitignore` | 4 | 6 | 72 | 18 |
-| `.spec/FLOW.md` | 133 | 1280 | 8311 | 2078 |
+| `.spec/FLOW.md` | 143 | 1384 | 8944 | 2236 |
 | `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -55,8 +55,9 @@
 | `.spec/archive/2026-04-17-073907-clean-up-setup-sod-wording.md` | 62 | 529 | 3696 | 924 |
 | `.spec/archive/2026-04-17-110335-rename-viewer-to-dust-and-bootstrap.md` | 54 | 573 | 4328 | 1082 |
 | `.spec/archive/2026-04-17-123542-testing-guidance-in-flow.md` | 51 | 610 | 4019 | 1005 |
-| `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
+| `.spec/b-startup.md` | 14 | 78 | 536 | 134 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/add-push-knob.md` | 51 | 597 | 3754 | 939 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 25 | 718 | 8687 | 2172 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -79,9 +80,9 @@
 | `scripts/build-dust.sh` | 241 | 754 | 6987 | 1747 |
 | `scripts/devlog.sh` | 71 | 333 | 2419 | 605 |
 | `scripts/flowlog.sh` | 83 | 395 | 2910 | 728 |
-| `scripts/merge-completed-work.sh` | 130 | 372 | 2922 | 731 |
+| `scripts/merge-completed-work.sh` | 165 | 475 | 3749 | 938 |
 | `scripts/update-sod-report.sh` | 297 | 832 | 7154 | 1789 |
-| `setup.sh` | 134 | 592 | 3760 | 940 |
+| `setup.sh` | 138 | 598 | 3807 | 952 |
 | `templates/dust.html` | 618 | 1714 | 20044 | 5011 |
 | `tests/test-spec-gate.sh` | 525 | 1673 | 14829 | 3708 |
-| `tests/test-workflow-scripts.sh` | 196 | 593 | 5105 | 1277 |
+| `tests/test-workflow-scripts.sh` | 253 | 770 | 6709 | 1678 |
