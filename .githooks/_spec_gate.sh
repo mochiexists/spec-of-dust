@@ -513,14 +513,14 @@ enforce_sod_gate() {
 
   if [ ! -x "$SOD_SCRIPT" ]; then
     echo ""
-    echo "⚠️  Missing executable SOD generator: ${SOD_SCRIPT}"
+    echo "⚠️  Missing executable sod generator: ${SOD_SCRIPT}"
     echo ""
     return 1
   fi
 
   if ! "$SOD_SCRIPT" --check >/dev/null 2>&1; then
     echo ""
-    echo "⚠️  SOD output is stale."
+    echo "⚠️  sod output is stale."
     echo ""
     echo "Run \`${SOD_SCRIPT}\`, then stage \`${SOD_REPORT_FILE}\` and \`${README_FILE}\`."
     echo ""
@@ -529,7 +529,7 @@ enforce_sod_gate() {
 
   if ! git diff --quiet -- "$SOD_REPORT_FILE" "$README_FILE"; then
     echo ""
-    echo "⚠️  Refreshed SOD files are not fully staged."
+    echo "⚠️  Refreshed sod files are not fully staged."
     echo ""
     echo "Stage \`${SOD_REPORT_FILE}\` and \`${README_FILE}\` before committing."
     echo ""

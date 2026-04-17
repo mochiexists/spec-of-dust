@@ -9,6 +9,7 @@ DEVLOG="$ROOT_DIR/.spec/devlog.jsonl"
 FLOWLOG="$ROOT_DIR/.spec/flowlog.jsonl"
 MARKER_START='/* embedded-data:start */'
 MARKER_END='/* embedded-data:end */'
+mode="${1:-write}"
 
 [ -f "$VIEWER" ] || { echo "Error: $VIEWER not found" >&2; exit 1; }
 
@@ -218,9 +219,23 @@ awk -v start="$MARKER_START" -v end="$MARKER_END" -v datafile="$data_tmp" '
   !in_block { print }
 ' "$VIEWER" > "$tmp"
 
-if ! cmp -s "$tmp" "$VIEWER"; then
-  cp "$tmp" "$VIEWER"
-  echo "Updated $VIEWER with embedded log data"
-else
-  echo "Viewer data is already current"
-fi
+case "$mode" in
+  --check)
+    if ! cmp -s "$tmp" "$VIEWER"; then
+      echo "Viewer output is stale. Run scripts/build-viewer.sh." >&2
+      exit 1
+    fi
+    ;;
+  write)
+    if ! cmp -s "$tmp" "$VIEWER"; then
+      cp "$tmp" "$VIEWER"
+      echo "Updated $VIEWER with embedded log data"
+    else
+      echo "Viewer data is already current"
+    fi
+    ;;
+  *)
+    echo "Usage: $0 [--check]" >&2
+    exit 1
+    ;;
+esac

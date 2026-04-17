@@ -16,8 +16,14 @@ jobs:
       - name: Run setup
         run: bash setup.sh
 
-      - name: Check SOD outputs
+      - name: Check sod outputs
         run: bash scripts/update-sod-report.sh --check
+
+      - name: Check viewer outputs
+        run: bash scripts/build-viewer.sh --check
 
       - name: Run hook tests
         run: bash tests/test-spec-gate.sh
+
+      - name: Run workflow script tests
+        run: bash tests/test-workflow-scripts.sh

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # .githooks/post-merge
-# Stages archive moves for completed change files after merge.
+# Stages archive closeout artifacts for completed change files after merge.
 
 set -euo pipefail
 

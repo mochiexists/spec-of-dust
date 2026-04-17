@@ -164,7 +164,7 @@ build_report() {
   version="$(cat "$VERSION_FILE")"
 
   cat > "$REPORT_TMP" <<EOF
-# SOD Report
+# sod report
 
 - Version: \`$version\`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
@@ -174,8 +174,8 @@ build_report() {
 - Total words: \`$total_words\`
 - Total characters: \`$total_chars\`
 - Total estimated tokens: \`$total_tokens\`
-- Bootstrap SOD: \`$bootstrap_tokens / 3000 target\`
-- Operational SOD: \`$operational_tokens / 5000 target\`
+- bootstrap sod: \`$bootstrap_tokens / 3000 target\`
+- operational sod: \`$operational_tokens / 5000 target\`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -190,7 +190,7 @@ build_summary() {
 
   cat > "$SUMMARY_TMP" <<EOF
 <!-- sod-summary:start -->
-## SOD
+## sod
 
 - Version: \`$version\`
 - Files: \`$total_files\`
@@ -198,8 +198,8 @@ build_summary() {
 - Words: \`$total_words\`
 - Characters: \`$total_chars\`
 - Est. tokens: \`$total_tokens\`
-- Bootstrap SOD: \`$bootstrap_tokens / 3000 target\`
-- Operational SOD: \`$operational_tokens / 5000 target\`
+- bootstrap sod: \`$bootstrap_tokens / 3000 target\`
+- operational sod: \`$operational_tokens / 5000 target\`
 
 See \`.spec/sod-report.md\` for the full per-file breakdown.
 <!-- sod-summary:end -->

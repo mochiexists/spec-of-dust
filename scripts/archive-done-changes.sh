@@ -5,6 +5,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SPEC_DIR="$ROOT_DIR/.spec/changes"
 ARCHIVE_DIR="$ROOT_DIR/.spec/archive"
+VIEWER_SCRIPT="$ROOT_DIR/scripts/build-viewer.sh"
+SOD_SCRIPT="$ROOT_DIR/scripts/update-sod-report.sh"
 require_done=0
 quiet=0
 
@@ -47,6 +49,13 @@ extract_status() {
   ' "$1"
 }
 
+stage_if_exists() {
+  local path="$1"
+
+  [ -e "$path" ] || return 0
+  git add "$path"
+}
+
 for f in "$SPEC_DIR"/*.md; do
   [ -f "$f" ] || continue
 
@@ -56,7 +65,7 @@ for f in "$SPEC_DIR"/*.md; do
 
   if [ "$(extract_status "$f")" = "done" ]; then
     basename_f="$(basename "$f")"
-    timestamp="$(date +%Y-%m-%d-%H%M%S)"
+    timestamp="$(date -u +%Y-%m-%d-%H%M%S)"
     dest="$ARCHIVE_DIR/${timestamp}-${basename_f}"
 
     if [ -f "$dest" ]; then
@@ -67,6 +76,19 @@ for f in "$SPEC_DIR"/*.md; do
     archived=$((archived + 1))
   fi
 done
+
+if [ "$archived" -gt 0 ]; then
+  if [ -x "$VIEWER_SCRIPT" ]; then
+    "$VIEWER_SCRIPT"
+    stage_if_exists "$ROOT_DIR/docs/viewer.html"
+  fi
+
+  if [ -x "$SOD_SCRIPT" ]; then
+    "$SOD_SCRIPT"
+    stage_if_exists "$ROOT_DIR/README.md"
+    stage_if_exists "$ROOT_DIR/.spec/sod-report.md"
+  fi
+fi
 
 if [ "$archived" -eq 0 ] && [ "$require_done" -eq 1 ]; then
   echo "No completed standard change files found in .spec/changes/." >&2

@@ -6,6 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STARTUP_FILE="$ROOT_DIR/.spec/b-startup.md"
 ARCHIVE_SCRIPT="$ROOT_DIR/scripts/archive-done-changes.sh"
 SOD_SCRIPT="$ROOT_DIR/scripts/update-sod-report.sh"
+VIEWER_SCRIPT="$ROOT_DIR/scripts/build-viewer.sh"
 HOOK_TEST_SCRIPT="$ROOT_DIR/tests/test-spec-gate.sh"
 target=""
 auto_mode=0
@@ -80,11 +81,6 @@ current_branch="$(git branch --show-current)"
 run_archive_commit() {
   "$ARCHIVE_SCRIPT" --require-done --quiet
 
-  if [ -x "$SOD_SCRIPT" ]; then
-    "$SOD_SCRIPT"
-    git add "$ROOT_DIR/README.md" "$ROOT_DIR/.spec/sod-report.md"
-  fi
-
   if git diff --cached --quiet; then
     echo "Archive step produced no staged changes." >&2
     exit 1
@@ -97,7 +93,12 @@ check_auto_prerequisites() {
   [ "$auto_mode" -eq 1 ] || return 0
 
   if [ -x "$SOD_SCRIPT" ] && ! "$SOD_SCRIPT" --check >/dev/null 2>&1; then
-    echo "Auto merge requires fresh SOD outputs." >&2
+    echo "Auto merge requires fresh sod outputs." >&2
+    exit 1
+  fi
+
+  if [ -x "$VIEWER_SCRIPT" ] && ! "$VIEWER_SCRIPT" --check >/dev/null 2>&1; then
+    echo "Auto merge requires a fresh viewer build." >&2
     exit 1
   fi
 

@@ -40,6 +40,10 @@ make_repo() {
   rsync -a --exclude '.git' "$ROOT_DIR/" "$repo/"
   (
     cd "$repo"
+    find .spec/changes -maxdepth 1 -type f -name '*.md' \
+      ! -name '_template.md' \
+      ! -name '_example-*' \
+      -delete
     git init -q
     git config user.name 'Test User'
     git config user.email 'test@example.com'
@@ -505,15 +509,15 @@ viewer_only_change_skips_sod_staleness() {
     echo "<!-- rebuilt -->" >> docs/viewer.html
     git add docs/viewer.html
 
-    # The hook should NOT trigger SOD staleness for viewer-only changes
+    # The hook should NOT trigger sod staleness for viewer-only changes
     # Test by sourcing the gate and checking has_sod_relevant_changes directly
     source .githooks/_spec_gate.sh
     if has_sod_relevant_changes; then
       exit 1
     fi
-  ) || fail "viewer only change skips SOD staleness"
+  ) || fail "viewer only change skips sod staleness"
 
-  pass "viewer only change skips SOD staleness"
+  pass "viewer only change skips sod staleness"
 }
 
 archive_only_commit_passes

@@ -15,7 +15,7 @@ if ! enforce_commit_policies; then
   echo "You may need:"
   echo "   - a standard change file in 'build', 'verify', or 'done'"
   echo "   - or a staged .spec/devlog.jsonl entry for a truly trivial skip-no-verify change"
-  echo "   - and a refreshed/staged SOD report plus README summary"
+  echo "   - and a refreshed/staged sod report plus README summary"
   echo ""
   exit 1
 fi

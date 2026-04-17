@@ -9,16 +9,16 @@ to grow into GitHub Pages docs, GitHub Release artifacts, language-specific gate
 and starter repo layouts.
 
 <!-- sod-summary:start -->
-## SOD
+## sod
 
-- Version: `0.1.1`
-- Files: `62`
-- Lines: `5541`
-- Words: `44294`
-- Characters: `338289`
-- Est. tokens: `84594`
-- Bootstrap SOD: `1705 / 3000 target`
-- Operational SOD: `2482 / 5000 target`
+- Version: `0.1.2`
+- Files: `64`
+- Lines: `5804`
+- Words: `46406`
+- Characters: `355727`
+- Est. tokens: `88954`
+- bootstrap sod: `1705 / 3000 target`
+- operational sod: `4106 / 5000 target`
 
 See `.spec/sod-report.md` for the full per-file breakdown.
 <!-- sod-summary:end -->
@@ -34,7 +34,7 @@ spec → build → verify → done
 3. **Build** — Implement. The spec's acceptance criteria guide the work.
 4. **Peer review** — The other AI model reviews the code against the spec.
 5. **Verify** — Walk through every acceptance criterion. Pass/fail each one.
-6. **Done** — Archived automatically on merge.
+6. **Done** — The merge helper archives and commits completed changes; a plain merge stages the archive closeout via `post-merge`.
 
 ## Root Layout
 
@@ -52,16 +52,16 @@ packs/                      # Source definitions for future release packs
   changes/
     _template.md            # Template for new changes
     my-feature.md           # Active change (one per feature)
-  archive/                  # Completed changes (auto-moved on merge)
+  archive/                  # Completed changes after archive closeout
 .githooks/
   pre-commit                # Blocks code commits without an active change file
   prepare-commit-msg        # Enforces trivial-only skip logging, even with --no-verify
-  post-merge                # Archives completed changes
+  post-merge                # Stages archive closeout after plain merges
 AGENTS.md                   # Agent-agnostic project context
 CODEX.md                    # Codex-specific notes
 CLAUDE.md                   # Claude Code specific config
 VERSION                     # Current project version
-scripts/                    # Repo-local automation such as SOD generation
+scripts/                    # Repo-local automation such as sod generation
 ```
 
 ## Setup
@@ -126,14 +126,14 @@ The built-in local gates are intentionally small and local-first.
 
 You should extend these gates inline with your repo's real engineering policy.
 
-## SOD
+## sod
 
 `sod` is the short name for `spec-of-dust` repo metrics.
 
 - run `bash scripts/update-sod-report.sh` to refresh the committed report
 - the detailed report lives at `.spec/sod-report.md`
 - the README block near the top is generated from the same script
-- commit hooks expect the SOD report and README summary to be fresh and staged when tracked text files change
+- commit hooks expect the sod report and README summary to be fresh and staged when tracked text files change
 
 ## Release Packs
 
