@@ -74,11 +74,11 @@ chmod +x .githooks/*
 echo "  ✓ Git hooks configured (.githooks/)"
 echo "  ✓ pre-commit: blocks code commits without an active change file"
 echo "  ✓ prepare-commit-msg: enforces trivial-only skip logging even with --no-verify"
-echo "  ✓ post-merge: archives completed change files"
+echo "  ✓ post-merge: stages archive closeout after plain merges"
 echo "  ✓ .spec/b-startup.md: created for minimal startup ingest"
 echo "  ✓ .spec/devlog.jsonl: created for skip-no-verify audit entries"
 echo "  ✓ VERSION: initialized to 0.0.1 if missing"
-echo "  ✓ SOD flow: use scripts/update-sod-report.sh to refresh repo metrics"
+echo "  ✓ sod flow: use scripts/update-sod-report.sh to refresh repo metrics"
 
 # Verify AGENTS.md exists
 if [ -f AGENTS.md ]; then
