@@ -107,8 +107,38 @@ setup_bootstraps_dust_and_scripts_work() {
   pass "setup bootstraps dust and scripts work"
 }
 
+setup_detects_test_harness() {
+  local repo output
+  repo="$(make_repo setup-tests-found)"
+
+  (
+    cd "$repo"
+    output="$(bash setup.sh 2>&1)"
+    printf '%s\n' "$output" | grep -qF "Test files detected" || exit 1
+  ) || fail "setup detects test harness"
+
+  pass "setup detects test harness"
+}
+
+setup_warns_no_test_harness() {
+  local repo output
+  repo="$(make_repo setup-no-tests)"
+
+  (
+    cd "$repo"
+    rm -rf tests test
+    find . -maxdepth 3 -type f \( -name '*.test.*' -o -name '*_test.*' \) -delete 2>/dev/null || true
+    output="$(bash setup.sh 2>&1)"
+    printf '%s\n' "$output" | grep -qF "No test directory or test files found" || exit 1
+  ) || fail "setup warns no test harness"
+
+  pass "setup warns no test harness"
+}
+
 dust_check_detects_stale_output
 setup_bootstraps_dust_and_scripts_work
+setup_detects_test_harness
+setup_warns_no_test_harness
 archive_script_uses_utc_and_refreshes_outputs() {
   local attempt repo status
 

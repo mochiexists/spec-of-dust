@@ -101,6 +101,19 @@ echo "  ✓ .spec/devlog.jsonl: created for skip-no-verify audit entries"
 echo "  ✓ VERSION: initialized to 0.0.1 if missing"
 echo "  ✓ sod flow: use scripts/update-sod-report.sh to refresh repo metrics"
 
+# Test readiness advisory
+has_tests=false
+if [ -d tests ] || [ -d test ]; then
+  has_tests=true
+elif find . -maxdepth 3 -type f \( -name '*.test.*' -o -name '*_test.*' \) 2>/dev/null | grep -q .; then
+  has_tests=true
+fi
+if [ "$has_tests" = true ]; then
+  echo "  ✓ Test files detected"
+else
+  echo "  ⚠ No test directory or test files found — consider setting up a test harness"
+fi
+
 # Verify AGENTS.md exists
 if [ -f AGENTS.md ]; then
   echo "  ✓ AGENTS.md found"

@@ -3,13 +3,13 @@
 - Version: `0.1.3`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `71`
-- Total lines: `6786`
-- Total words: `53757`
-- Total characters: `419331`
-- Total estimated tokens: `104854`
-- bootstrap sod: `2012 / 3000 target`
-- operational sod: `2789 / 5000 target`
+- Total files: `72`
+- Total lines: `6884`
+- Total words: `54606`
+- Total characters: `424823`
+- Total estimated tokens: `106228`
+- bootstrap sod: `2209 / 3000 target`
+- operational sod: `3868 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -20,7 +20,7 @@
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 29 | 60 | 576 | 144 |
 | `.gitignore` | 4 | 6 | 72 | 18 |
-| `.spec/FLOW.md` | 126 | 1150 | 7524 | 1881 |
+| `.spec/FLOW.md` | 133 | 1280 | 8311 | 2078 |
 | `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -56,6 +56,7 @@
 | `.spec/archive/2026-04-17-110335-rename-viewer-to-dust-and-bootstrap.md` | 54 | 573 | 4328 | 1082 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/testing-guidance-in-flow.md` | 48 | 543 | 3528 | 882 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 24 | 717 | 8532 | 2133 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -80,7 +81,7 @@
 | `scripts/flowlog.sh` | 83 | 395 | 2910 | 728 |
 | `scripts/merge-completed-work.sh` | 130 | 372 | 2922 | 731 |
 | `scripts/update-sod-report.sh` | 297 | 832 | 7154 | 1789 |
-| `setup.sh` | 121 | 521 | 3376 | 844 |
+| `setup.sh` | 134 | 592 | 3760 | 940 |
 | `templates/dust.html` | 618 | 1714 | 20044 | 5011 |
 | `tests/test-spec-gate.sh` | 525 | 1673 | 14829 | 3708 |
-| `tests/test-workflow-scripts.sh` | 166 | 488 | 4312 | 1078 |
+| `tests/test-workflow-scripts.sh` | 196 | 593 | 5105 | 1277 |

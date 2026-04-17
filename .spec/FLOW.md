@@ -25,7 +25,7 @@ spec → build → verify → done
 
 **spec** — Define what and why. Capture acceptance criteria as checkboxes (these become the verify checklist). Do NOT write code. When ready, request peer review.
 
-**build** — Implement the spec. When complete, request peer review.
+**build** — Implement the spec. Follow testing guidance (see Testing section). When complete, request peer review.
 
 **verify** — Check every acceptance criterion against the implementation. Pass/fail each. If anything fails, return to `build`.
 If the requested outcome is a real update to an external repo, site, or deployed system, verify against that actual target before calling the change complete. If the external target was not changed or checked, say so explicitly and treat the result as local documentation or prep work, not a live update.
@@ -59,6 +59,13 @@ Mechanical checks that block unsafe progress:
 - **archive gate**: finished change files move to `.spec/archive/` after merge
 
 Extend these gates with your repo's engineering policy. Keep local gates fast; let CI run the strict superset.
+
+## Testing
+
+- **Bug fixes**: write a failing test that reproduces the bug first. Fix the code. Observe green. Don't edit test logic to force the pass.
+- **New behavior**: ACs that describe observable behavior should have a corresponding test where the project has a test harness. If no harness exists, note that in the change file's Notes section.
+- **Test integrity**: updating expectations or fixtures for intentional behavior changes is fine. Changing test control flow or weakening assertions to make a failing test pass is not — that's either a wrong fix or a separate change that needs its own spec.
+- These are guidance, not mechanical gates. The project decides what to test and how. sod just steers toward testability by default.
 
 ## Merge
 
