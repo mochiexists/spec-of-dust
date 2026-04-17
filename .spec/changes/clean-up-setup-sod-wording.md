@@ -1,4 +1,4 @@
-status: verify
+status: done
 files: .spec/changes/clean-up-setup-sod-wording.md, setup.sh, README.md, .spec/sod-report.md, docs/viewer.html
 
 # Clean up setup sod wording
@@ -57,6 +57,6 @@ Advisory only:
 
 ## Closure
 - Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: The label finally matches the work.
+- Learnings: release-facing wording drift can survive in setup surfaces even after the docs and hooks are corrected
+- Outcomes: `setup.sh` now matches the current archive lifecycle language, `sod` is consistently lowercase on live setup output, and the generated repo artifacts were refreshed with passing local validation
+- Dust: The setup script now says what the repo actually does.
