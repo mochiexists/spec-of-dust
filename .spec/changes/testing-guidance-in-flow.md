@@ -1,4 +1,4 @@
-status: build
+status: done
 files: .spec/FLOW.md, setup.sh, tests/test-workflow-scripts.sh
 
 # Add testing guidance to flow and bootstrap
@@ -37,12 +37,15 @@ No blockers. FLOW.md section, build-state reference, and "guidance not gates" wo
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] FLOW.md has standalone `## Testing` section (6 lines including header) with test-first bug fix rule
+- [pass] Testing section includes general steer about ACs → tests where harness exists
+- [pass] Testing section includes test-integrity rule distinguishing expectation updates from control-flow weakening
+- [pass] FLOW.md build state references Testing section
+- [pass] `setup.sh` prints advisory — "Test files detected" when `tests/` exists, "No test directory" when absent; both paths tested
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
+- Challenges: pipe + pipefail interaction in test subshells required capturing output to variable
 - Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Outcomes: FLOW.md now steers toward testability; setup.sh nudges projects without tests
+- Dust: test first, fix second, green third
