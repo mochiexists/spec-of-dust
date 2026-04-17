@@ -1,4 +1,4 @@
-status: build
+status: done
 files: .spec/FLOW.md, scripts/merge-completed-work.sh, .spec/b-startup.md, tests/test-workflow-scripts.sh, setup.sh
 
 # Add push knob to post-done phase
@@ -40,12 +40,18 @@ After a change reaches `done` and the merge/archive step completes, there's no m
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] `setup.sh` b-startup template includes `push: never` default
+- [pass] FLOW.md documents push section with all three modes, states push only applies when merge helper runs
+- [pass] `merge-completed-work.sh` reads push value, runs `git push origin <target>` for auto, prints prompt for confirm, skips for never
+- [pass] Push runs after archive commit, failure is non-fatal (exits 0), EXIT trap unaffected (runs after completed=1)
+- [pass] Missing origin skipped with warning — tested in `push_skipped_when_no_origin`
+- [pass] Auto push tested end-to-end in `push_auto_delivers_to_remote` with local bare remote
+- [pass] Missing remote test verifies warning message and successful exit
+- [pass] This repo's b-startup.md has `push: never`
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: prepare-commit-msg hook enforces gates even with --no-verify, complicating test setup
+- Learnings: tests that modify b-startup.md need to bypass hooks or refresh sod for the config commit
+- Outcomes: push knob ships with auto, confirm, never modes — tested end-to-end with local bare remote
+- Dust: done means delivered, not just committed
