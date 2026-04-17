@@ -1,4 +1,4 @@
-status: verify
+status: done
 files: .spec/changes/record-git-identity-and-publish-restrictions.md, .spec/FLOW.md, .spec/changes/_template.md, .spec/sod-report.md, README.md, docs/viewer.html
 
 # Record git identity and publish restrictions
@@ -47,7 +47,7 @@ Verdict: no blockers.
 
 ## Closure
 <!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
+- Challenges: the only real design risk was turning a simple account/permission note into heavy workflow policy instead of keeping it as reporting discipline
+- Learnings: live-target verification is not enough on its own; the workflow also needs to know who is actually allowed to perform the publish step
+- Outcomes: external-target specs can now name the expected Git identity and human-only restrictions, and final reporting must say when a local implementation exists but authorized publishing did not happen
 - Dust: The key should be named before the door is tried.

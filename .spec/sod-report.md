@@ -4,12 +4,12 @@
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
 - Total files: `68`
-- Total lines: `6010`
-- Total words: `49476`
-- Total characters: `378462`
-- Total estimated tokens: `94637`
+- Total lines: `6011`
+- Total words: `50001`
+- Total characters: `382759`
+- Total estimated tokens: `95711`
 - bootstrap sod: `2012 / 3000 target`
-- operational sod: `3718 / 5000 target`
+- operational sod: `3824 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -53,9 +53,9 @@
 | `.spec/archive/2026-04-17-013944-create-language-packs.md` | 63 | 688 | 4757 | 1190 |
 | `.spec/b-startup.md` | 13 | 76 | 524 | 131 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/record-git-identity-and-publish-restrictions.md` | 53 | 547 | 3716 | 929 |
+| `.spec/changes/record-git-identity-and-publish-restrictions.md` | 53 | 614 | 4140 | 1035 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
-| `.spec/flowlog.jsonl` | 21 | 643 | 7496 | 1874 |
+| `.spec/flowlog.jsonl` | 22 | 673 | 7886 | 1972 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 957 | 240 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |
@@ -65,7 +65,7 @@
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
-| `docs/viewer.html` | 618 | 14377 | 124421 | 31106 |
+| `docs/viewer.html` | 618 | 14805 | 127904 | 31976 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
 | `packs/javascript/v0/README.md` | 76 | 214 | 1631 | 408 |
 | `packs/python-research/v0/README.md` | 86 | 309 | 2336 | 584 |
