@@ -1,5 +1,5 @@
-status: verify
-files: .spec/changes/publish-dust-on-mochiexists.md, docs/publish-dust-on-mochiexists.md, .spec/sod-report.md, README.md
+status: done
+files: .spec/changes/publish-dust-on-mochiexists.md, docs/publish-dust-on-mochiexists.md, .spec/sod-report.md, README.md, docs/viewer.html
 
 # Publish dust on mochiexists
 
@@ -47,7 +47,7 @@ Verdict: no blockers. The diff is clean and matches the spec.
 
 ## Closure
 <!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
+- Challenges: the only real wrinkle was that `sod` had to be regenerated after staging the new docs file because the report counts tracked files, not unstaged additions
+- Learnings: for docs-only additions in this repo, stage the new tracked file before rerunning `scripts/update-sod-report.sh`
+- Outcomes: the repo now has a dated publishing note recommending `mochiexists.com/dust`, a homepage label change from `clawpost` to `post`, and a public evidence trail for the `mochiexists` GitHub owner
 - Dust: A small name can still carry the whole workflow.
