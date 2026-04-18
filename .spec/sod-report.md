@@ -1,15 +1,15 @@
 # sod report
 
-- Version: `0.1.3`
+- Version: `0.2.0`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `76`
-- Total lines: `7479`
-- Total words: `61245`
-- Total characters: `476776`
-- Total estimated tokens: `119220`
+- Total files: `77`
+- Total lines: `7512`
+- Total words: `61455`
+- Total characters: `478259`
+- Total estimated tokens: `119591`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `3525 / 5000 target`
+- operational sod: `3896 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -61,6 +61,7 @@
 | `.spec/archive/2026-04-18-133345-build-dust-full-regen.md` | 57 | 758 | 5529 | 1383 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/bump-to-0-2-0.md` | 33 | 210 | 1483 | 371 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 29 | 763 | 9631 | 2408 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
