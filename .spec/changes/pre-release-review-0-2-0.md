@@ -1,5 +1,5 @@
 status: build
-files: README.md, .spec/sod-report.md
+files: README.md, .spec/sod-report.md, LICENSE
 
 # Pre-release review and experimental disclaimer for 0.2.0
 
@@ -11,14 +11,14 @@ Before tagging 0.2.0 and making the repo OSS-ready, do a full pre-release review
 - [ ] Email scan: `git log --all -p | grep -iE "[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}"` returns only `atlascodesai` noreply, `example.com`/`test@test.com` test placeholders. No personal or third-party emails.
 - [ ] Absolute-path scan: `git log --all -p | grep -E "/Users/[a-zA-Z]+/"` returns only a single placeholder string (`/Users/me/...`) used intentionally in a spec. No real home paths leaked from dev machines.
 - [ ] Tree scan: `grep -rl` for `simcity` or `timapple` across tracked text files (`*.md`, `*.sh`, `*.yml`) returns empty.
-- [ ] Author audit: `git log --format='%an <%ae>' | sort -u` returns exactly one identity (`atlascodesai <76924051+atlascodesai@users.noreply.github.com>`).
+- [ ] Author audit: `git log --format='%an <%ae>' | sort -u` returns exactly one identity (`mochiexists <259077624+mochiexists@users.noreply.github.com>`). If history shows any other identity, rewrite with `git filter-repo` before tagging.
+- [ ] LICENSE copyright holder is `mochiexists` (not the prior `Tim Apple` placeholder) — matches the repo's intended OSS identity.
 - [ ] README.md adds a short "Experimental" banner immediately after the title (4-6 lines max): warns this is early-stage, API/flow not stable, may turn out to be a bad idea, no support commitment. Written honestly, not apologetically. Must not bury the existing concise overview.
-- [ ] LICENSE signoff: the author confirms in `## Verify` that they are comfortable with their real name appearing in `LICENSE` in an OSS context. Verify blocks until this confirmation is recorded.
 - [ ] `bash scripts/update-sod-report.sh --check` passes after README edit; `.spec/sod-report.md` refreshed and staged (workflow requires it after README change).
 
 ## Notes
 - This is a review + a README doc change. Touches `.spec/sod-report.md` too because the workflow requires refreshing sod after tracked text-file edits.
-- Author identity is `atlascodesai <76924051+atlascodesai@users.noreply.github.com>` — a GitHub noreply, not a direct personal address. Clean for OSS.
+- Author identity is `mochiexists <259077624+mochiexists@users.noreply.github.com>` — the intended mochi GitHub noreply. Historic commits (originally authored by `atlascodesai`) were rewritten via `git filter-repo` before the repo had any remote, which is the correct window for that operation.
 - Scan scope: `--all` refs (all branches including dangling), full patch contents (`git log -p`), not just the working tree. If any scan returns a real-looking secret, the change blocks and drops back to build for history cleanup.
 - After this change: tag `v0.2.0`, add a git remote, push. Those are separate actions driven by the human because they're publish-level.
 
@@ -40,7 +40,14 @@ Advisory: banner copy approved (immediately after title, <5 lines, covers instab
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] Secrets scan: all `token` matches are sod-report budget text (Est. tokens, bootstrap/operational sod targets, ceil(characters / 4)). No `api_key`, `bearer`, `password`, or `secret` value hits outside review text.
+- [pass] Email scan: filtered output empty when excluding `noreply`, `example.com`, `test@test`, `actions@github`. Only identity leakage is the GitHub noreply.
+- [pass] Absolute-path scan: single hit `/Users/me/Documents/mochi/dust/spec-of-dust` — placeholder in a spec, intentional. No dev-machine home paths.
+- [pass] Tree scan: only match is `.spec/changes/pre-release-review-0-2-0.md` (this file's own AC referencing the terms it scans for). Self-reference, not a leak.
+- [pass] Author audit after history rewrite: `git log --format='%an <%ae>' | sort -u` returns one identity — `mochiexists <259077624+mochiexists@users.noreply.github.com>`. All 66 commits re-authored via `git filter-repo` while the repo has no remote (safe rewrite window).
+- [pass] LICENSE copyright updated to `mochiexists`.
+- [pass] README.md has a 4-line Experimental banner immediately after the title; does not bury the overview.
+- [pass] `bash scripts/update-sod-report.sh --check` clean after final refresh.
 
 
 ## Closure
