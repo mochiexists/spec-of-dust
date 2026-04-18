@@ -9,7 +9,7 @@
 - Total characters: `451797`
 - Total estimated tokens: `112974`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `4855 / 5000 target`
+- operational sod: `3525 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -56,9 +56,9 @@
 | `.spec/archive/2026-04-17-110335-rename-viewer-to-dust-and-bootstrap.md` | 54 | 573 | 4328 | 1082 |
 | `.spec/archive/2026-04-17-123542-testing-guidance-in-flow.md` | 51 | 610 | 4019 | 1005 |
 | `.spec/archive/2026-04-17-134119-add-push-knob.md` | 57 | 715 | 4580 | 1145 |
+| `.spec/archive/2026-04-18-125840-agent-driven-sod-updates.md` | 59 | 803 | 5319 | 1330 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/agent-driven-sod-updates.md` | 59 | 803 | 5319 | 1330 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 27 | 743 | 9163 | 2291 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
