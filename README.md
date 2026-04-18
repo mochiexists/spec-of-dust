@@ -1,5 +1,10 @@
 # spec-of-dust
 
+> **Experimental.** This is an early experiment in AI-collaborative workflow design.
+> The flow, file shapes, and gates will change. It might turn out to be a bad idea.
+> No support commitment, no stability promise — use at your own risk and fork freely.
+> Feedback welcome, but this isn't a product yet.
+
 `spec-of-dust` is a zero-dependency spec, review, and gate workflow for AI-assisted
 development. No CLI tools, no slash commands, no npm packages. Just markdown files,
 plain Git hooks, and a root layout that stays clean as a repo grows.
@@ -12,13 +17,13 @@ and starter repo layouts.
 ## sod
 
 - Version: `0.2.0`
-- Files: `77`
-- Lines: `7513`
-- Words: `61553`
-- Characters: `479583`
-- Est. tokens: `119922`
+- Files: `78`
+- Lines: `7569`
+- Words: `62201`
+- Characters: `483897`
+- Est. tokens: `121000`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `3525 / 5000 target`
+- operational sod: `4527 / 5000 target`
 
 See `.spec/sod-report.md` for the full per-file breakdown.
 <!-- sod-summary:end -->

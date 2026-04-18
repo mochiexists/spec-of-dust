@@ -3,13 +3,13 @@
 - Version: `0.2.0`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `77`
-- Total lines: `7513`
-- Total words: `61553`
-- Total characters: `479583`
-- Total estimated tokens: `119922`
+- Total files: `78`
+- Total lines: `7569`
+- Total words: `62201`
+- Total characters: `483897`
+- Total estimated tokens: `121000`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `3525 / 5000 target`
+- operational sod: `4527 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -62,13 +62,14 @@
 | `.spec/archive/2026-04-18-141632-bump-to-0-2-0.md` | 33 | 210 | 1482 | 371 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/pre-release-review-0-2-0.md` | 51 | 594 | 4008 | 1002 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 30 | 764 | 9775 | 2444 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 957 | 240 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |
 | `LICENSE` | 21 | 169 | 1066 | 267 |
-| `README.md` | 183 | 1137 | 7530 | 1883 |
+| `README.md` | 188 | 1191 | 7836 | 1959 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
 | `docs/dust.html` | 655 | 17670 | 153568 | 38392 |
