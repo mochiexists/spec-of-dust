@@ -1,4 +1,4 @@
-status: build
+status: done
 files: README.md, .spec/sod-report.md, LICENSE
 
 # Pre-release review and experimental disclaimer for 0.2.0
@@ -51,8 +51,7 @@ Advisory: banner copy approved (immediately after title, <5 lines, covers instab
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: misunderstood "mochi only" on first pass as "single identity" rather than the actual mochi identity — needed a full git history rewrite mid-change
+- Learnings: git filter-repo --force touches all refs including backup branches; pre-rewrite backups don't survive. Safe here because no remote existed, but the correct window for identity rewrites is a one-time opportunity
+- Outcomes: git history clean, single identity (mochiexists), LICENSE matches, experimental banner up. Ready to tag 0.2.0 and push once remote is added.
+- Dust: the dust learned its own name

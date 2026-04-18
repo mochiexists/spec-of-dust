@@ -28,3 +28,4 @@
 {"ts":"2026-04-18T13:14:23Z","agent":"claude","change":"dust-filter-view","flow_divergence":"","friction":"","suggestion":"consider making build-dust.sh a full template-based regenerator so structural changes don't need double-application","sentiment":"smooth"}
 {"ts":"2026-04-18T13:33:15Z","agent":"claude","change":"build-dust-full-regen","flow_divergence":"","friction":"grep -c exit-1-on-zero-matches interacting with set -e","suggestion":"","sentiment":"smooth"}
 {"ts":"2026-04-18T14:15:58Z","agent":"claude","change":"bump-to-0-2-0","flow_divergence":"","friction":"","suggestion":"","sentiment":"smooth"}
+{"ts":"2026-04-18T22:54:19Z","agent":"claude","change":"pre-release-review-0-2-0","flow_divergence":"initially misread 'mochi only' as single-identity; corrected mid-flow via filter-repo","friction":"","suggestion":"pre-release review specs should explicitly name the target identity upfront","sentiment":"smooth"}

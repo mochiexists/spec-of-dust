@@ -5,11 +5,11 @@
 - Token estimate: `ceil(characters / 4)`
 - Total files: `78`
 - Total lines: `7576`
-- Total words: `62366`
-- Total characters: `485199`
-- Total estimated tokens: `121325`
+- Total words: `62442`
+- Total characters: `485900`
+- Total estimated tokens: `121501`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `4852 / 5000 target`
+- operational sod: `4949 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -62,9 +62,9 @@
 | `.spec/archive/2026-04-18-141632-bump-to-0-2-0.md` | 33 | 210 | 1482 | 371 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/pre-release-review-0-2-0.md` | 58 | 760 | 5308 | 1327 |
+| `.spec/changes/pre-release-review-0-2-0.md` | 57 | 817 | 5694 | 1424 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
-| `.spec/flowlog.jsonl` | 30 | 764 | 9775 | 2444 |
+| `.spec/flowlog.jsonl` | 31 | 783 | 10090 | 2523 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 957 | 240 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |
