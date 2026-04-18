@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# scripts/build-dust.sh — embed JSONL log data into docs/dust.html
+# scripts/build-dust.sh — regenerate docs/dust.html from templates/dust.html + embedded data
 
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TEMPLATE="$ROOT_DIR/templates/dust.html"
 VIEWER="$ROOT_DIR/docs/dust.html"
 DEVLOG="$ROOT_DIR/.spec/devlog.jsonl"
 FLOWLOG="$ROOT_DIR/.spec/flowlog.jsonl"
@@ -11,13 +12,28 @@ MARKER_START='/* embedded-data:start */'
 MARKER_END='/* embedded-data:end */'
 mode="${1:-write}"
 
-[ -f "$VIEWER" ] || { echo "Error: $VIEWER not found" >&2; exit 1; }
+# Template is the source of truth
+if [ ! -f "$TEMPLATE" ]; then
+  echo "Error: $TEMPLATE not found." >&2
+  if [ -f "$VIEWER" ]; then
+    echo "This repo has docs/dust.html but is missing templates/dust.html." >&2
+    echo "Copy templates/dust.html from the spec-of-dust distribution (or from your upstream sod repo) and run this script again." >&2
+  else
+    echo "templates/dust.html is part of the spec-of-dust distribution — fetch it or re-run the bootstrap before building dust." >&2
+  fi
+  exit 1
+fi
 
-# Verify markers exist exactly once
-start_count="$(grep -cF "$MARKER_START" "$VIEWER")"
-end_count="$(grep -cF "$MARKER_END" "$VIEWER")"
-[ "$start_count" -eq 1 ] || { echo "Error: expected 1 '$MARKER_START' marker, found $start_count" >&2; exit 1; }
-[ "$end_count" -eq 1 ] || { echo "Error: expected 1 '$MARKER_END' marker, found $end_count" >&2; exit 1; }
+# Verify markers exist exactly once in the template (grep returns 1 on zero matches under set -e)
+start_count="$(grep -cF "$MARKER_START" "$TEMPLATE" || true)"
+end_count="$(grep -cF "$MARKER_END" "$TEMPLATE" || true)"
+[ "$start_count" = "1" ] || { echo "Error: expected 1 '$MARKER_START' marker in $TEMPLATE, found $start_count" >&2; exit 1; }
+[ "$end_count" = "1" ] || { echo "Error: expected 1 '$MARKER_END' marker in $TEMPLATE, found $end_count" >&2; exit 1; }
+
+# Verify start marker appears before end marker
+start_line="$(grep -nF "$MARKER_START" "$TEMPLATE" | head -1 | cut -d: -f1)"
+end_line="$(grep -nF "$MARKER_END" "$TEMPLATE" | head -1 | cut -d: -f1)"
+[ "$start_line" -lt "$end_line" ] || { echo "Error: '$MARKER_START' must appear before '$MARKER_END' in $TEMPLATE" >&2; exit 1; }
 
 # Read JSONL lines into a JS array literal, escaping for safe embedding
 jsonl_to_js_array() {
@@ -204,7 +220,7 @@ cat > "$data_tmp" <<DATAEOF
       $MARKER_END
 DATAEOF
 
-# Replace the data block in dust.html using the temp file
+# Regenerate docs/dust.html from template with data block substituted in
 awk -v start="$MARKER_START" -v end="$MARKER_END" -v datafile="$data_tmp" '
   index($0, start) {
     while ((getline line < datafile) > 0) print line
@@ -217,21 +233,22 @@ awk -v start="$MARKER_START" -v end="$MARKER_END" -v datafile="$data_tmp" '
     next
   }
   !in_block { print }
-' "$VIEWER" > "$tmp"
+' "$TEMPLATE" > "$tmp"
 
 case "$mode" in
   --check)
-    if ! cmp -s "$tmp" "$VIEWER"; then
+    if [ ! -f "$VIEWER" ] || ! cmp -s "$tmp" "$VIEWER"; then
       echo "Dust output is stale. Run scripts/build-dust.sh." >&2
       exit 1
     fi
     ;;
   write)
-    if ! cmp -s "$tmp" "$VIEWER"; then
+    if [ ! -f "$VIEWER" ] || ! cmp -s "$tmp" "$VIEWER"; then
+      mkdir -p "$(dirname "$VIEWER")"
       cp "$tmp" "$VIEWER"
-      echo "Updated $VIEWER with embedded log data"
+      echo "Regenerated $VIEWER from templates/dust.html"
     else
-      echo "Dust data is already current"
+      echo "Dust output is already current"
     fi
     ;;
   *)

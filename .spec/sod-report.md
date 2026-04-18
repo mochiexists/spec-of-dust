@@ -3,13 +3,13 @@
 - Version: `0.1.3`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `75`
-- Total lines: `7320`
-- Total words: `59653`
-- Total characters: `463824`
-- Total estimated tokens: `115982`
+- Total files: `76`
+- Total lines: `7472`
+- Total words: `60899`
+- Total characters: `473607`
+- Total estimated tokens: `118428`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `3525 / 5000 target`
+- operational sod: `4592 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -60,6 +60,7 @@
 | `.spec/archive/2026-04-18-131448-dust-filter-view.md` | 57 | 772 | 5273 | 1319 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/build-dust-full-regen.md` | 51 | 601 | 4268 | 1067 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 28 | 756 | 9425 | 2357 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -69,7 +70,7 @@
 | `README.md` | 183 | 1137 | 7530 | 1883 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 17189 | 148853 | 37214 |
+| `docs/dust.html` | 655 | 17391 | 150685 | 37672 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
@@ -79,7 +80,7 @@
 | `packs/rust/v0/README.md` | 67 | 194 | 1426 | 357 |
 | `packs/swift/v0/README.md` | 80 | 217 | 1632 | 408 |
 | `scripts/archive-done-changes.sh` | 103 | 265 | 2139 | 535 |
-| `scripts/build-dust.sh` | 241 | 754 | 6987 | 1747 |
+| `scripts/build-dust.sh` | 258 | 903 | 8034 | 2009 |
 | `scripts/devlog.sh` | 71 | 333 | 2419 | 605 |
 | `scripts/flowlog.sh` | 83 | 395 | 2910 | 728 |
 | `scripts/merge-completed-work.sh` | 165 | 475 | 3749 | 938 |
@@ -87,4 +88,4 @@
 | `setup.sh` | 151 | 662 | 4341 | 1086 |
 | `templates/dust.html` | 655 | 1857 | 21516 | 5379 |
 | `tests/test-spec-gate.sh` | 525 | 1673 | 14829 | 3708 |
-| `tests/test-workflow-scripts.sh` | 290 | 938 | 8138 | 2035 |
+| `tests/test-workflow-scripts.sh` | 374 | 1232 | 10774 | 2694 |

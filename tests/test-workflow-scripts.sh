@@ -284,7 +284,91 @@ setup_configures_self_update_scaffolding() {
   pass "setup configures self-update scaffolding"
 }
 
+build_dust_regenerates_from_template() {
+  local repo marker
+  repo="$(make_repo build-dust-template-regen)"
+  marker="MARKER_PROPAGATION_TEST_$$"
+
+  (
+    cd "$repo"
+    # Edit the template: add a unique marker comment into the HTML structure
+    awk -v m="$marker" '
+      /<main>/ { print; print "      <!-- " m " -->"; next }
+      { print }
+    ' templates/dust.html > templates/dust.html.tmp
+    mv templates/dust.html.tmp templates/dust.html
+
+    bash scripts/build-dust.sh >/dev/null 2>&1 || exit 1
+
+    # docs/dust.html should now contain the marker
+    grep -qF "$marker" docs/dust.html || exit 1
+
+    # --check should be clean after regen
+    bash scripts/build-dust.sh --check || exit 1
+  ) || fail "build-dust regenerates from template"
+
+  pass "build-dust regenerates from template"
+}
+
+build_dust_errors_on_missing_markers() {
+  local repo output
+  repo="$(make_repo build-dust-bad-markers)"
+
+  (
+    cd "$repo"
+    # Corrupt the template by removing the start marker
+    awk '!/embedded-data:start/' templates/dust.html > templates/dust.html.tmp
+    mv templates/dust.html.tmp templates/dust.html
+
+    output="$(bash scripts/build-dust.sh 2>&1)" && exit 1
+    printf '%s\n' "$output" | grep -qF "marker" || exit 1
+  ) || fail "build-dust errors on missing markers"
+
+  pass "build-dust errors on missing markers"
+}
+
+build_dust_errors_on_missing_template() {
+  local repo output
+  repo="$(make_repo build-dust-missing-template)"
+
+  (
+    cd "$repo"
+    rm -f templates/dust.html
+
+    output="$(bash scripts/build-dust.sh 2>&1)" && exit 1
+    printf '%s\n' "$output" | grep -qF "templates/dust.html" || exit 1
+    printf '%s\n' "$output" | grep -qF "distribution" || exit 1
+  ) || fail "build-dust errors on missing template"
+
+  pass "build-dust errors on missing template"
+}
+
+build_dust_errors_on_reversed_markers() {
+  local repo output
+  repo="$(make_repo build-dust-reversed-markers)"
+
+  (
+    cd "$repo"
+    # Swap start/end markers so end appears first
+    awk '
+      /embedded-data:start/ { print "      /* embedded-data:end */"; next }
+      /embedded-data:end/   { print "      /* embedded-data:start */"; next }
+      { print }
+    ' templates/dust.html > templates/dust.html.tmp
+    mv templates/dust.html.tmp templates/dust.html
+
+    output="$(bash scripts/build-dust.sh 2>&1)" && exit 1
+    printf '%s\n' "$output" | grep -qF "must appear before" || exit 1
+  ) || fail "build-dust errors on reversed markers"
+
+  pass "build-dust errors on reversed markers"
+}
+
 archive_script_uses_utc_and_refreshes_outputs
 push_auto_delivers_to_remote
 push_skipped_when_no_origin
 setup_configures_self_update_scaffolding
+build_dust_regenerates_from_template
+build_dust_errors_on_missing_markers
+build_dust_errors_on_missing_template
+build_dust_errors_on_reversed_markers
