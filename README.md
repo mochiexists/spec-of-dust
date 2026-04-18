@@ -13,12 +13,12 @@ and starter repo layouts.
 
 - Version: `0.1.3`
 - Files: `75`
-- Lines: `7314`
-- Words: `59328`
-- Characters: `461055`
-- Est. tokens: `115288`
+- Lines: `7320`
+- Words: `59653`
+- Characters: `463824`
+- Est. tokens: `115982`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `4594 / 5000 target`
+- operational sod: `4844 / 5000 target`
 
 See `.spec/sod-report.md` for the full per-file breakdown.
 <!-- sod-summary:end -->

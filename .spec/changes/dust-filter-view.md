@@ -1,4 +1,4 @@
-status: build
+status: done
 files: templates/dust.html, docs/dust.html
 
 # Add dust filter view to show only the poetic closure lines
@@ -41,12 +41,17 @@ The viewer already renders the "Dust" closure line for each completed change as 
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] Filter button added after "Changes" — confirmed in both `templates/dust.html` and `docs/dust.html` toolbar
+- [pass] Membership: filter shows only `_source === "change"` AND `status === "done"` AND `hasRealDust(entry)` — verified via simulation with test data (excludes "nothing notable", empty, non-done)
+- [pass] Shared `hasRealDust(entry)` helper at module scope, used by filter AND `buildChangeEntry` dust-line render
+- [pass] Dust cards show only ts, name, dust line (no source badge, no closure fields, no peer review)
+- [pass] "Active Work" section hidden when Dust filter active (status=done filter excludes active)
+- [pass] Count reflects visible cards — timelineEntries + activeChanges when active shown, otherwise timelineEntries
+- [pass] Both `templates/dust.html` and `docs/dust.html` updated with identical structural changes; `build-dust.sh --check` passes
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: surfaced an architectural gap — build-dust.sh only updates data, not HTML structure, so template edits need manual mirroring to docs/dust.html
+- Learnings: template and docs are loosely coupled by design; a future change could make build-dust.sh a full regenerator
+- Outcomes: Dust view lets you browse the poetic body of work on its own
+- Dust: the dust finds its own shelf
