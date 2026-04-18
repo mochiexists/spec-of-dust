@@ -1,4 +1,4 @@
-status: build
+status: done
 files: .spec/FLOW.md, .spec/b-startup.md, setup.sh, .gitignore, tests/test-workflow-scripts.sh, docs/dust.html
 
 # Agent-driven sod updates with vibes-based check interval
@@ -42,12 +42,18 @@ sod has no update mechanism today — downstream repos drift from upstream and o
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] `b-startup.md` template includes `sod-upstream:` and `sod-check-interval: 30d` — confirmed in setup.sh and fresh-setup test
+- [pass] `.spec/sod-last-checked` is gitignored — verified in .gitignore of this repo and produced by setup.sh in downstream repos
+- [pass] `.gitignore` includes the entry; setup.sh is idempotent — confirmed by `setup_configures_self_update_scaffolding` test
+- [pass] FLOW.md "Self-update" section describes the six-step protocol with explicit skip conditions and timestamp semantics
+- [pass] v1 is local filesystem paths only — documented in FLOW.md and Notes
+- [pass] Skip conditions (empty upstream, missing path, active non-done change) specified in FLOW.md
+- [pass] Semver comparison specified (major.minor.patch numeric)
+- [pass] This repo's b-startup.md has `sod-upstream:` empty — no-op here since this IS upstream
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: surfaced a latent bug in push-auto test when b-startup.md already had a push: line; BSD vs GNU sed broke CI portability
+- Learnings: cross-platform shell edits need awk or tmp-file patterns, not sed -i
+- Outcomes: sod can now propose updates to itself through its own workflow, vibes-based check-every-30-days style
+- Dust: the framework learns to check its own VERSION

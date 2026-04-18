@@ -24,3 +24,4 @@
 {"ts":"2026-04-17T10:58:55Z","agent":"claude","change":"rename-viewer-to-dust-and-bootstrap","flow_divergence":"","friction":"codex review caught upgrade-safety gap","suggestion":"add migration checklist to rename specs","sentiment":"smooth"}
 {"ts":"2026-04-17T12:34:33Z","agent":"claude","change":"testing-guidance-in-flow","flow_divergence":"","friction":"","suggestion":"","sentiment":"smooth"}
 {"ts":"2026-04-17T13:40:59Z","agent":"claude","change":"add-push-knob","flow_divergence":"","friction":"prepare-commit-msg hook complicates test setup for config changes","suggestion":"","sentiment":"smooth"}
+{"ts":"2026-04-18T12:57:47Z","agent":"claude","change":"agent-driven-sod-updates","flow_divergence":"","friction":"BSD vs GNU sed portability gotcha in tests","suggestion":"prefer awk+tmp-file or perl for cross-platform in-place edits in tests","sentiment":"smooth"}
