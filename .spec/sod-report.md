@@ -9,7 +9,7 @@
 - Total characters: `476776`
 - Total estimated tokens: `119220`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `4908 / 5000 target`
+- operational sod: `3525 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -58,9 +58,9 @@
 | `.spec/archive/2026-04-17-134119-add-push-knob.md` | 57 | 715 | 4580 | 1145 |
 | `.spec/archive/2026-04-18-125840-agent-driven-sod-updates.md` | 59 | 803 | 5319 | 1330 |
 | `.spec/archive/2026-04-18-131448-dust-filter-view.md` | 57 | 772 | 5273 | 1319 |
+| `.spec/archive/2026-04-18-133345-build-dust-full-regen.md` | 57 | 758 | 5529 | 1383 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/build-dust-full-regen.md` | 57 | 758 | 5529 | 1383 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 29 | 763 | 9631 | 2408 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
