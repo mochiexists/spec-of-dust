@@ -26,3 +26,4 @@
 {"ts":"2026-04-17T13:40:59Z","agent":"claude","change":"add-push-knob","flow_divergence":"","friction":"prepare-commit-msg hook complicates test setup for config changes","suggestion":"","sentiment":"smooth"}
 {"ts":"2026-04-18T12:57:47Z","agent":"claude","change":"agent-driven-sod-updates","flow_divergence":"","friction":"BSD vs GNU sed portability gotcha in tests","suggestion":"prefer awk+tmp-file or perl for cross-platform in-place edits in tests","sentiment":"smooth"}
 {"ts":"2026-04-18T13:14:23Z","agent":"claude","change":"dust-filter-view","flow_divergence":"","friction":"","suggestion":"consider making build-dust.sh a full template-based regenerator so structural changes don't need double-application","sentiment":"smooth"}
+{"ts":"2026-04-18T13:33:15Z","agent":"claude","change":"build-dust-full-regen","flow_divergence":"","friction":"grep -c exit-1-on-zero-matches interacting with set -e","suggestion":"","sentiment":"smooth"}

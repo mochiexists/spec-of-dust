@@ -1,4 +1,4 @@
-status: build
+status: done
 files: scripts/build-dust.sh, tests/test-workflow-scripts.sh, docs/dust.html
 
 # Make build-dust.sh a full template-based regenerator
@@ -40,12 +40,18 @@ Today `scripts/build-dust.sh` only rewrites the embedded-data block between mark
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] `build-dust.sh` reads from `templates/dust.html`, writes full output to `docs/dust.html` — confirmed by inspection and by `build_dust_regenerates_from_template` test
+- [pass] Marker logic preserved: data block replacement still uses the `/* embedded-data:start */` / `/* embedded-data:end */` sentinels via awk
+- [pass] `--check` regenerates to temp and cmps against docs/dust.html — non-zero if different. Handles missing viewer case too.
+- [pass] Missing template → clear error naming `templates/dust.html` and "distribution" in message (covered by `build_dust_errors_on_missing_template`)
+- [pass] Missing markers → non-zero exit with marker-count message (covered by `build_dust_errors_on_missing_markers`)
+- [pass] Reversed marker order → non-zero exit with "must appear before" message (covered by `build_dust_errors_on_reversed_markers`)
+- [pass] Existing call sites (devlog.sh, flowlog.sh, archive-done-changes.sh, merge-completed-work.sh, CI) unchanged — full test suite green
+- [pass] `bash scripts/build-dust.sh --check` clean in this repo post-change
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: grep -c returns exit 1 on zero matches under set -e; tripped the validation before error could print
+- Learnings: every template-side contract (existence, marker presence, marker ordering) deserves a fail-fast check with a test — these are cheap and catch regressions free
+- Outcomes: template is now true source of truth; docs/dust.html is generated output; structural changes propagate automatically
+- Dust: the template pours itself into place
