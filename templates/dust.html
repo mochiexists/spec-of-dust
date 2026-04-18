@@ -282,6 +282,7 @@
           <button class="filter-btn" data-filter="devlog">Devlog</button>
           <button class="filter-btn" data-filter="flowlog">Flowlog</button>
           <button class="filter-btn" data-filter="change">Changes</button>
+          <button class="filter-btn" data-filter="dust">Dust</button>
           <span class="entry-count" id="entryCount"></span>
         </div>
 
@@ -318,6 +319,13 @@
           return "unknown";
         }
 
+        function hasRealDust(entry) {
+          const d = entry && entry.dust;
+          if (!d) return false;
+          const trimmed = d.trim();
+          return trimmed !== "" && trimmed !== "- Dust:" && trimmed !== "nothing notable";
+        }
+
         function el(tag, attrs, children) {
           const node = document.createElement(tag);
           if (attrs) {
@@ -337,10 +345,16 @@
         }
 
         function render() {
-          const filtered =
-            currentFilter === "all"
-              ? allEntries
-              : allEntries.filter((e) => e._source === currentFilter);
+          let filtered;
+          if (currentFilter === "all") {
+            filtered = allEntries;
+          } else if (currentFilter === "dust") {
+            filtered = allEntries.filter(
+              (e) => e._source === "change" && e.status === "done" && hasRealDust(e)
+            );
+          } else {
+            filtered = allEntries.filter((e) => e._source === currentFilter);
+          }
 
           if (allEntries.length === 0) {
             app.style.display = "none";
@@ -373,10 +387,17 @@
             activeSection.style.display = "none";
           }
 
-          countEl.textContent = filtered.length + " shown";
+          // Count reflects what's actually visible: timeline + active work (when shown)
+          const activeShown =
+            activeChanges.length > 0 && (currentFilter === "all" || currentFilter === "change")
+              ? activeChanges.length
+              : 0;
+          countEl.textContent = (timelineEntries.length + activeShown) + " shown";
           timeline.textContent = "";
           for (const entry of timelineEntries) {
-            timeline.appendChild(buildEntry(entry));
+            timeline.appendChild(
+              currentFilter === "dust" ? buildDustEntry(entry) : buildEntry(entry)
+            );
           }
         }
 
@@ -516,6 +537,22 @@
           });
         });
 
+        function buildDustEntry(entry) {
+          const article = el("article", { className: "entry change" });
+
+          const header = el("div", { className: "entry-header" });
+          header.appendChild(el("span", { className: "entry-ts", textContent: formatTs(entry.ts) }));
+          article.appendChild(header);
+
+          if (entry.name) {
+            article.appendChild(el("div", { className: "entry-change", textContent: entry.name }));
+          }
+
+          article.appendChild(el("div", { className: "dust-line", textContent: entry.dust }));
+
+          return article;
+        }
+
         function buildChangeEntry(entry) {
           const article = el("article", { className: "entry change" });
 
@@ -538,7 +575,7 @@
           }
 
           // Dust line — the star of the show
-          if (entry.dust && entry.dust !== "- Dust:" && entry.dust !== "nothing notable") {
+          if (hasRealDust(entry)) {
             article.appendChild(el("div", { className: "dust-line", textContent: entry.dust }));
           }
 

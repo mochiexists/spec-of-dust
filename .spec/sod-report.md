@@ -3,13 +3,13 @@
 - Version: `0.1.3`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `74`
-- Total lines: `7188`
-- Total words: `58170`
-- Total characters: `451797`
-- Total estimated tokens: `112974`
+- Total files: `75`
+- Total lines: `7314`
+- Total words: `59328`
+- Total characters: `461055`
+- Total estimated tokens: `115288`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `3525 / 5000 target`
+- operational sod: `4594 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -59,6 +59,7 @@
 | `.spec/archive/2026-04-18-125840-agent-driven-sod-updates.md` | 59 | 803 | 5319 | 1330 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/dust-filter-view.md` | 52 | 632 | 4276 | 1069 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 27 | 743 | 9163 | 2291 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -68,7 +69,7 @@
 | `README.md` | 183 | 1137 | 7530 | 1883 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 618 | 16634 | 143833 | 35959 |
+| `docs/dust.html` | 655 | 17017 | 147343 | 36836 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
@@ -84,6 +85,6 @@
 | `scripts/merge-completed-work.sh` | 165 | 475 | 3749 | 938 |
 | `scripts/update-sod-report.sh` | 297 | 832 | 7154 | 1789 |
 | `setup.sh` | 151 | 662 | 4341 | 1086 |
-| `templates/dust.html` | 618 | 1714 | 20044 | 5011 |
+| `templates/dust.html` | 655 | 1857 | 21516 | 5379 |
 | `tests/test-spec-gate.sh` | 525 | 1673 | 14829 | 3708 |
 | `tests/test-workflow-scripts.sh` | 290 | 938 | 8138 | 2035 |
