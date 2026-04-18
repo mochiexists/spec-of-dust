@@ -87,6 +87,26 @@ Configured in `.spec/b-startup.md` via `push: never | confirm | auto` (default `
 
 Push failure is reported but does not undo the local archive — the commit is already on the target branch. If no remote `origin` exists, push is skipped with a warning.
 
+## Self-update
+
+sod updates itself through its own workflow. On session start, the agent checks whether it should look upstream for a newer version.
+
+Configured in `.spec/b-startup.md`:
+- `sod-upstream:` — local filesystem path to the spec-of-dust source repo. Empty means skip the check. (Git URLs are not supported in v1.)
+- `sod-check-interval: 30d` — how often to check. Format is `Nd` (days).
+
+State lives in `.spec/sod-last-checked` (ISO date, one line). This file is gitignored — it's per-clone local state, not tracked.
+
+**Protocol** (runs once on session start):
+1. Skip if any other change is active (status `spec`, `build`, or `verify`). Don't interrupt work in progress.
+2. Skip if `sod-upstream:` is empty or the path doesn't exist.
+3. Skip if `.spec/sod-last-checked` exists and is newer than `sod-check-interval`.
+4. Read upstream `VERSION` from `$sod-upstream/VERSION`. Compare to local `VERSION` using semver (major.minor.patch numeric).
+5. If upstream > local, create a change file at `.spec/changes/update-sod-to-v{X}.md` describing what's changing (diff the framework files). Normal spec→build→verify→done flow applies.
+6. Once the check actually ran (steps 4-5 completed, regardless of whether an update was needed), write today's date to `.spec/sod-last-checked`. If the check was skipped at steps 1-3, do not touch the timestamp.
+
+The agent doesn't auto-apply updates — it just proposes the change. Peer review and the human decide what to merge.
+
 ## Agent teams
 
 Respect `teams:` in `.spec/b-startup.md` (`none | some | many`; default `some`).

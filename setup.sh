@@ -19,12 +19,25 @@ Keep it short. Put deeper context in docs/ or active change files.
 merge: confirm
 merge-target: main
 push: never
+sod-upstream:
+sod-check-interval: 30d
 EOF
 fi
 touch .spec/devlog.jsonl
 touch .spec/flowlog.jsonl
 if [ ! -f VERSION ]; then
   printf '0.0.1\n' > VERSION
+fi
+
+# Ensure sod-last-checked is gitignored (local self-update state)
+if [ -f .gitignore ]; then
+  if ! grep -qF '.spec/sod-last-checked' .gitignore; then
+    printf '\n# Self-update state (local per clone, not tracked)\n.spec/sod-last-checked\n' >> .gitignore
+    echo "  ✓ Added .spec/sod-last-checked to .gitignore"
+  fi
+else
+  printf '# Self-update state (local per clone, not tracked)\n.spec/sod-last-checked\n' > .gitignore
+  echo "  ✓ Created .gitignore with .spec/sod-last-checked entry"
 fi
 
 # Copy template if not present

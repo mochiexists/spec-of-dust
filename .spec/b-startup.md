@@ -12,3 +12,5 @@ teams: some
 merge: confirm
 merge-target: main
 push: never
+sod-upstream:
+sod-check-interval: 30d

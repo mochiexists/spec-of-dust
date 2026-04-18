@@ -2,3 +2,6 @@
 .DS_Store
 CLAUDE.local.md
 .spec/changes/_example-*.md
+
+# Self-update state (local per clone, not tracked)
+.spec/sod-last-checked

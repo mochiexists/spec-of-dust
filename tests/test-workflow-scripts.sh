@@ -202,7 +202,13 @@ push_auto_delivers_to_remote() {
     git init -q --bare "$bare_remote"
 
     cd "$repo"
-    printf '\npush: auto\n' >> .spec/b-startup.md
+    # Set push: auto — replace any existing push: line or append if none (cross-platform)
+    if grep -q '^push:' .spec/b-startup.md; then
+      awk '/^push:/ { print "push: auto"; next } { print }' .spec/b-startup.md > .spec/b-startup.md.tmp
+      mv .spec/b-startup.md.tmp .spec/b-startup.md
+    else
+      printf '\npush: auto\n' >> .spec/b-startup.md
+    fi
     bash scripts/update-sod-report.sh
     git add -A
     git -c core.hooksPath=/dev/null commit -qm 'config: push auto'
@@ -230,7 +236,12 @@ push_skipped_when_no_origin() {
 
   (
     cd "$repo"
-    printf '\npush: auto\n' >> .spec/b-startup.md
+    if grep -q '^push:' .spec/b-startup.md; then
+      awk '/^push:/ { print "push: auto"; next } { print }' .spec/b-startup.md > .spec/b-startup.md.tmp
+      mv .spec/b-startup.md.tmp .spec/b-startup.md
+    else
+      printf '\npush: auto\n' >> .spec/b-startup.md
+    fi
     bash scripts/update-sod-report.sh
     git add -A
     git -c core.hooksPath=/dev/null commit -qm 'config: push auto'
@@ -248,6 +259,32 @@ push_skipped_when_no_origin() {
   pass "push skipped when no origin"
 }
 
+setup_configures_self_update_scaffolding() {
+  local repo
+  repo="$(make_repo self-update-fresh)"
+
+  (
+    cd "$repo"
+    # Remove existing b-startup and gitignore to simulate a truly fresh setup
+    rm -f .spec/b-startup.md .gitignore
+    bash setup.sh >/dev/null 2>&1
+
+    # b-startup.md should have both self-update keys
+    grep -qF 'sod-upstream:' .spec/b-startup.md || exit 1
+    grep -qF 'sod-check-interval: 30d' .spec/b-startup.md || exit 1
+
+    # .gitignore should list sod-last-checked
+    grep -qF '.spec/sod-last-checked' .gitignore || exit 1
+
+    # Running setup again should be idempotent (no duplicate gitignore entries)
+    bash setup.sh >/dev/null 2>&1
+    [ "$(grep -cF '.spec/sod-last-checked' .gitignore)" = "1" ] || exit 1
+  ) || fail "setup configures self-update scaffolding"
+
+  pass "setup configures self-update scaffolding"
+}
+
 archive_script_uses_utc_and_refreshes_outputs
 push_auto_delivers_to_remote
 push_skipped_when_no_origin
+setup_configures_self_update_scaffolding
