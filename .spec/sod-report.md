@@ -5,11 +5,11 @@
 - Token estimate: `ceil(characters / 4)`
 - Total files: `77`
 - Total lines: `7513`
-- Total words: `61456`
-- Total characters: `478402`
-- Total estimated tokens: `119627`
+- Total words: `61553`
+- Total characters: `479583`
+- Total estimated tokens: `119922`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `3896 / 5000 target`
+- operational sod: `3525 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -59,9 +59,9 @@
 | `.spec/archive/2026-04-18-125840-agent-driven-sod-updates.md` | 59 | 803 | 5319 | 1330 |
 | `.spec/archive/2026-04-18-131448-dust-filter-view.md` | 57 | 772 | 5273 | 1319 |
 | `.spec/archive/2026-04-18-133345-build-dust-full-regen.md` | 57 | 758 | 5529 | 1383 |
+| `.spec/archive/2026-04-18-141632-bump-to-0-2-0.md` | 33 | 210 | 1482 | 371 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/bump-to-0-2-0.md` | 33 | 210 | 1482 | 371 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 30 | 764 | 9775 | 2444 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -71,7 +71,7 @@
 | `README.md` | 183 | 1137 | 7530 | 1883 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 17573 | 152387 | 38097 |
+| `docs/dust.html` | 655 | 17670 | 153568 | 38392 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
