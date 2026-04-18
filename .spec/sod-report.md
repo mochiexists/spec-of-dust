@@ -5,11 +5,11 @@
 - Token estimate: `ceil(characters / 4)`
 - Total files: `78`
 - Total lines: `7576`
-- Total words: `62442`
-- Total characters: `485900`
-- Total estimated tokens: `121501`
+- Total words: `62873`
+- Total characters: `489540`
+- Total estimated tokens: `122411`
 - bootstrap sod: `2748 / 3000 target`
-- operational sod: `4949 / 5000 target`
+- operational sod: `3525 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -60,9 +60,9 @@
 | `.spec/archive/2026-04-18-131448-dust-filter-view.md` | 57 | 772 | 5273 | 1319 |
 | `.spec/archive/2026-04-18-133345-build-dust-full-regen.md` | 57 | 758 | 5529 | 1383 |
 | `.spec/archive/2026-04-18-141632-bump-to-0-2-0.md` | 33 | 210 | 1482 | 371 |
+| `.spec/archive/2026-04-18-225455-pre-release-review-0-2-0.md` | 57 | 817 | 5694 | 1424 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/pre-release-review-0-2-0.md` | 57 | 817 | 5694 | 1424 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 31 | 783 | 10090 | 2523 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
@@ -72,7 +72,7 @@
 | `README.md` | 188 | 1191 | 7836 | 1959 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 17670 | 153568 | 38392 |
+| `docs/dust.html` | 655 | 18101 | 157208 | 39302 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
