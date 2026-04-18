@@ -4,10 +4,10 @@
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
 - Total files: `77`
-- Total lines: `7512`
-- Total words: `61455`
-- Total characters: `478259`
-- Total estimated tokens: `119591`
+- Total lines: `7513`
+- Total words: `61456`
+- Total characters: `478402`
+- Total estimated tokens: `119627`
 - bootstrap sod: `2748 / 3000 target`
 - operational sod: `3896 / 5000 target`
 
@@ -61,9 +61,9 @@
 | `.spec/archive/2026-04-18-133345-build-dust-full-regen.md` | 57 | 758 | 5529 | 1383 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/bump-to-0-2-0.md` | 33 | 210 | 1483 | 371 |
+| `.spec/changes/bump-to-0-2-0.md` | 33 | 210 | 1482 | 371 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
-| `.spec/flowlog.jsonl` | 29 | 763 | 9631 | 2408 |
+| `.spec/flowlog.jsonl` | 30 | 764 | 9775 | 2444 |
 | `AGENTS.md` | 24 | 162 | 1165 | 292 |
 | `CLAUDE.md` | 15 | 145 | 957 | 240 |
 | `CODEX.md` | 15 | 148 | 977 | 245 |

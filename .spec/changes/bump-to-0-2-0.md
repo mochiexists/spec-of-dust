@@ -1,4 +1,4 @@
-status: build
+status: done
 files: VERSION, .spec/sod-report.md, README.md
 
 # Bump VERSION to 0.2.0
