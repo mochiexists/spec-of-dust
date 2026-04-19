@@ -1,4 +1,4 @@
-status: build
+status: done
 files: scripts/update-sod-report.sh, tests/test-workflow-scripts.sh, .spec/sod-report.md, README.md
 
 # Fix locale-name matching + add --check diagnostics
@@ -54,12 +54,19 @@ Note: real-world Ubuntu-docker validation confirmed the locale probe now matches
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] Locale normalization works: `C.utf8` matches `C.UTF-8` candidate after normalization
+- [pass] Exact system name preserved: test asserts `UTF8_LOCALE=C.utf8` when system reports `C.utf8` (not canonical `C.UTF-8`)
+- [pass] Hard-fail message unchanged: still lists the tried canonical names exactly
+- [pass] `--check` diff emission: unified diff format to stderr, per-file, 200-line truncation with clean notice, no SIGPIPE hazards
+- [pass] Test seam `SOD_LOCALE_LIST_CMD` injects fake locale listings; defaults to `locale -a`
+- [pass] Three regression tests covering match, hard-fail, and diff emission
+- [pass] Script guarded with `[ "${BASH_SOURCE[0]}" = "$0" ]` so sourcing in tests doesn't execute main
+- [pass] All 22 workflow tests green; 22 hook tests green
+- [pass] Real Ubuntu validation via docker: `update-sod-report.sh --check` now correctly matches `C.utf8`, character counts identical to macOS. Remaining word-count discrepancy (BSD vs GNU `wc -w`) is visible in the new diff output — next sod's territory.
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: locale name spellings are inconsistent across systems (macOS en_US.UTF-8 vs Ubuntu C.utf8); `set -o pipefail` + `head` truncation is a subtle SIGPIPE trap that only bites on large inputs; user convinced me not to skip peer review (correctly) — Codex caught 3 real issues including the SIGPIPE hazard that I wouldn't have caught myself
+- Learnings: when implementing "warn/truncate on large inputs," write output to a temp file first to avoid pipefail interactions with head/tail; always guard main invocation with `[ "${BASH_SOURCE[0]}" = "$0" ]` so tests can source the script; exact-string assertions in tests catch things substring matches miss
+- Outcomes: CI check now debuggable via diff output even on silent failures; locale probe tolerant of spelling variations; found the remaining BSD vs GNU `wc -w` divergence as a result, already scoped as the next fix
+- Dust: the framework looks at itself and tells us exactly what's different now

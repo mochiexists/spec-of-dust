@@ -4,12 +4,12 @@
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
 - Total files: `84`
-- Total lines: `8669`
-- Total words: `73453`
-- Total characters: `568217`
-- Total estimated tokens: `142082`
+- Total lines: `8677`
+- Total words: `73736`
+- Total characters: `570260`
+- Total estimated tokens: `142593`
 - bootstrap sod: `3222 / 3000 target`
-- operational sod: `6259 / 5000 target`
+- operational sod: `6688 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -67,9 +67,9 @@
 | `.spec/archive/2026-04-19-153936-fix-ci-sod-locale.md` | 74 | 1079 | 7578 | 1895 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/fix-ci-locale-matching-and-diagnostics.md` | 65 | 982 | 6552 | 1638 |
+| `.spec/changes/fix-ci-locale-matching-and-diagnostics.md` | 72 | 1239 | 8267 | 2067 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
-| `.spec/flowlog.jsonl` | 34 | 857 | 11020 | 2755 |
+| `.spec/flowlog.jsonl` | 35 | 883 | 11348 | 2837 |
 | `AGENTS.md` | 32 | 288 | 2032 | 508 |
 | `CLAUDE.md` | 23 | 265 | 1773 | 444 |
 | `CODEX.md` | 23 | 267 | 1787 | 447 |
