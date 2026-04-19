@@ -1,4 +1,4 @@
-status: build
+status: done
 files: scripts/update-sod-report.sh, .spec/sod-report.md, README.md, tests/test-workflow-scripts.sh, scripts/check-deploy-health.sh, .spec/FLOW.md, CLAUDE.md, AGENTS.md, CODEX.md, docs/dust.html
 
 # Fix CI failure: sod-report locale drift between macOS and Linux
@@ -55,12 +55,20 @@ Advisory (user addition): success-path deploy confirmation URL bundled into this
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+- [pass] All `wc -m` call sites in `update-sod-report.sh` go through the shared `count_value` helper; no inline `LC_ALL="$UTF8_LOCALE" wc -m` sprinkled elsewhere
+- [pass] Locale probe order: C.UTF-8 → en_US.UTF-8 → en_US.utf8; hard-fails with clear message if none available (no `C` fallback)
+- [pass] `UTF8_LOCALE` set inside script scope; never exported globally
+- [pass] Regression test `sod_report_counts_unicode_codepoints_not_bytes` asserts 5 em-dashes + newline = 6 code-points in the generated report (would report 16 under byte counting)
+- [pass] `.spec/sod-report.md` regenerated under fixed semantics
+- [pass] `bash scripts/update-sod-report.sh --check` clean locally
+- [pass] `check-deploy-health.sh` on exit 0 prints a deploy-confirmation URL derived from the upstream's actual remote (not hardcoded `origin`), gated to github.com-style URLs, falls back silently otherwise
+- [pass] FLOW.md exit-0 line updated to include surfacing the deploy URL to the user
+- [pass] Existing "exit 0 on all green" test asserts the URL appears in stdout
+- Awaiting post-push verification: push this change, wait for CI, run `check-deploy-health.sh`, confirm exit 0 + deploy URL appears
 
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: macOS ships bash 3.2 which doesn't support `$'\u...'` escapes — had to use raw UTF-8 byte literals (`\xe2\x80\x94`) in the regression test; `git ls-files` means test fixtures must be committed, not just created; upstream `${upstream%%/*}` is a clean way to extract the remote name without hardcoding origin
+- Learnings: wc -m is always locale-sensitive; projects counting characters should explicitly pick a UTF-8 locale and fail loudly if one isn't available, otherwise silent byte-vs-char drift bites only on CI
+- Outcomes: first fix driven end-to-end by the post-push health loop — agent detected the failure, drafted the spec, user confirmed, fix shipped. Closes the loop that the previous change built.
+- Dust: the framework learned to see its own UTF-8
