@@ -6,7 +6,7 @@
 - Total files: `80`
 - Total lines: `7839`
 - Total words: `65594`
-- Total characters: `509912`
+- Total characters: `509911`
 - Total estimated tokens: `127504`
 - bootstrap sod: `2974 / 3000 target`
 - operational sod: `6028 / 5000 target`
@@ -64,7 +64,7 @@
 | `.spec/archive/2026-04-18-225455-pre-release-review-0-2-0.md` | 57 | 817 | 5694 | 1424 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/guard-external-publishing.md` | 66 | 1141 | 7579 | 1895 |
+| `.spec/changes/guard-external-publishing.md` | 66 | 1141 | 7578 | 1895 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 32 | 819 | 10496 | 2624 |
 | `AGENTS.md` | 28 | 243 | 1712 | 428 |

@@ -20,7 +20,7 @@ and starter repo layouts.
 - Files: `80`
 - Lines: `7839`
 - Words: `65594`
-- Characters: `509912`
+- Characters: `509911`
 - Est. tokens: `127504`
 - bootstrap sod: `2974 / 3000 target`
 - operational sod: `6028 / 5000 target`

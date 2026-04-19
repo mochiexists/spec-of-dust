@@ -1,4 +1,4 @@
-status: build
+status: done
 files: .githooks/pre-push, .spec/FLOW.md, CLAUDE.md, AGENTS.md, CODEX.md, setup.sh, tests/test-spec-gate.sh, docs/dust.html
 
 # Guard external publishing actions so sod can't be bypassed silently
