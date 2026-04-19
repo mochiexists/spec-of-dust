@@ -4,12 +4,12 @@
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
 - Total files: `85`
-- Total lines: `8821`
-- Total words: `76754`
-- Total characters: `593060`
-- Total estimated tokens: `148293`
+- Total lines: `8825`
+- Total words: `76930`
+- Total characters: `594399`
+- Total estimated tokens: `148628`
 - bootstrap sod: `3222 / 3000 target`
-- operational sod: `6378 / 5000 target`
+- operational sod: `6602 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -68,9 +68,9 @@
 | `.spec/archive/2026-04-19-160507-fix-ci-locale-matching-and-diagnostics.md` | 72 | 1239 | 8267 | 2067 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/fix-ci-wc-w-vs16-strip.md` | 59 | 994 | 7025 | 1757 |
+| `.spec/changes/fix-ci-wc-w-vs16-strip.md` | 62 | 1130 | 7921 | 1981 |
 | `.spec/devlog.jsonl` | 5 | 93 | 1419 | 355 |
-| `.spec/flowlog.jsonl` | 35 | 883 | 11348 | 2837 |
+| `.spec/flowlog.jsonl` | 36 | 923 | 11792 | 2948 |
 | `AGENTS.md` | 32 | 288 | 2032 | 508 |
 | `CLAUDE.md` | 23 | 265 | 1773 | 444 |
 | `CODEX.md` | 23 | 267 | 1787 | 447 |
@@ -78,7 +78,7 @@
 | `README.md` | 188 | 1191 | 7836 | 1959 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 21425 | 183658 | 45915 |
+| `docs/dust.html` | 655 | 21425 | 183657 | 45915 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |

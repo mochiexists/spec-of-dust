@@ -1,4 +1,4 @@
-status: verify
+status: done
 files: scripts/update-sod-report.sh, tests/test-workflow-scripts.sh, .spec/sod-report.md, README.md, docs/dust.html
 
 # Fix CI: strip U+FE0F before wc so BSD and GNU agree on word counts
@@ -56,4 +56,7 @@ Detected via the `--check` diagnostics feature added in the previous sod — the
 - [ ] Deferred: CI run on Ubuntu after push (real-world verification).
 
 ## Closure
-<!-- Filled on done transition. -->
+- Challenges: first-pass `tr` fix was byte-oriented, silently corrupting non-VS-16 characters sharing any of the bytes `ef`/`b8`/`8f`. Caught by codex peer review. Replacement regression fixture initially used U+F80F but that codepoint itself has independent BSD/GNU `wc -w` divergence — swapped for U+270F.
+- Learnings: `tr` is treacherous for multi-byte UTF-8 sequences even under a UTF-8 locale (BSD does multi-byte, GNU does not). `LC_ALL=C sed "s/<raw bytes>//g"` is the portable way to match an exact byte sequence; use `printf` to construct the bytes. Also: PUA codepoints (U+E000–U+F8FF) are handled inconsistently by BSD vs GNU `wc` — avoid them in test fixtures.
+- Outcomes: sod report now byte-identical between macOS and Ubuntu. `--check` is green on both platforms. Two regression tests guard the happy path and the byte-strip failure mode.
+- Dust: three bytes hide behind a warning sign; scrub lightly, keep the pencil.
