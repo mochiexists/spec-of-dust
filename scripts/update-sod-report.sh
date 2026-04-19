@@ -12,14 +12,28 @@ SUMMARY_END="<!-- sod-summary:end -->"
 # Pick a UTF-8 locale for wc -m so character counts are Unicode code-points,
 # not bytes. Without this, macOS (UTF-8 default) and Linux CI (often C/POSIX)
 # disagree on multibyte-character counts and --check fails on CI.
+#
+# System locale name spellings vary: macOS has "en_US.UTF-8", Ubuntu has
+# "C.utf8". We normalize both the candidate list and the system listing
+# (lowercase + strip hyphens) before comparing, then use the exact system
+# spelling as the locale name so LC_ALL assignments work as reported by
+# `locale -a`. `SOD_LOCALE_LIST_CMD` env var can override `locale -a` for
+# tests (default: the real `locale -a`).
 pick_utf8_locale() {
-  local available
-  available="$(locale -a 2>/dev/null || true)"
-  for candidate in C.UTF-8 en_US.UTF-8 en_US.utf8; do
-    if printf '%s\n' "$available" | grep -Fxq "$candidate"; then
-      printf '%s' "$candidate"
-      return 0
-    fi
+  local available candidate candidate_norm avail avail_norm
+  local locale_cmd="${SOD_LOCALE_LIST_CMD:-locale -a}"
+  available="$($locale_cmd 2>/dev/null || true)"
+
+  for candidate in C.UTF-8 en_US.UTF-8; do
+    candidate_norm="$(printf '%s' "$candidate" | tr 'A-Z' 'a-z' | tr -d '-')"
+    while IFS= read -r avail; do
+      [ -n "$avail" ] || continue
+      avail_norm="$(printf '%s' "$avail" | tr 'A-Z' 'a-z' | tr -d '-')"
+      if [ "$candidate_norm" = "$avail_norm" ]; then
+        printf '%s' "$avail"
+        return 0
+      fi
+    done <<< "$available"
   done
   echo "Error: no UTF-8 locale available (tried C.UTF-8, en_US.UTF-8, en_US.utf8). Character counts would be unreliable." >&2
   return 1
@@ -274,9 +288,44 @@ write_outputs() {
   fi
 }
 
+DIFF_MAX_LINES=200
+
+emit_bounded_diff() {
+  local label="$1" expected="$2" actual="$3"
+  local diff_file line_count
+  diff_file="$(mktemp)"
+  # Write full diff to a file first; avoids SIGPIPE/141 under `set -o pipefail`
+  # when we later truncate via head.
+  diff -u --label "$label (committed)" --label "$label (generated)" "$actual" "$expected" >"$diff_file" 2>/dev/null || true
+  if [ ! -s "$diff_file" ]; then
+    rm -f "$diff_file"
+    return 0
+  fi
+  line_count="$(wc -l < "$diff_file" | tr -d '[:space:]')"
+  if [ "$line_count" -gt "$DIFF_MAX_LINES" ]; then
+    head -n "$DIFF_MAX_LINES" "$diff_file" >&2
+    echo "[diff truncated at ${DIFF_MAX_LINES} lines — run \`bash scripts/update-sod-report.sh\` to see the full generated output]" >&2
+  else
+    cat "$diff_file" >&2
+  fi
+  echo "" >&2
+  rm -f "$diff_file"
+}
+
 check_outputs() {
-  cmp -s "$REPORT_TMP" "$REPORT_FILE" &&
-    cmp -s "$README_TMP" "$README_FILE"
+  local report_ok=0 readme_ok=0
+  cmp -s "$REPORT_TMP" "$REPORT_FILE" && report_ok=1
+  cmp -s "$README_TMP" "$README_FILE" && readme_ok=1
+
+  if [ "$report_ok" -eq 1 ] && [ "$readme_ok" -eq 1 ]; then
+    return 0
+  fi
+
+  echo "sod outputs are stale. Run \`bash scripts/update-sod-report.sh\` to regenerate." >&2
+  echo "" >&2
+  [ "$report_ok" -eq 0 ] && emit_bounded_diff ".spec/sod-report.md" "$REPORT_TMP" "$REPORT_FILE"
+  [ "$readme_ok" -eq 0 ] && emit_bounded_diff "README.md (summary block)" "$README_TMP" "$README_FILE"
+  return 1
 }
 
 main() {
@@ -315,4 +364,7 @@ main() {
   esac
 }
 
-main "${1:-write}"
+# Only run main when invoked directly (not when sourced by tests)
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+  main "${1:-write}"
+fi

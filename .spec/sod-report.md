@@ -3,13 +3,13 @@
 - Version: `0.2.0`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `83`
-- Total lines: `8470`
-- Total words: `71821`
-- Total characters: `556561`
-- Total estimated tokens: `139168`
+- Total files: `84`
+- Total lines: `8669`
+- Total words: `73453`
+- Total characters: `568217`
+- Total estimated tokens: `142082`
 - bootstrap sod: `3222 / 3000 target`
-- operational sod: `4621 / 5000 target`
+- operational sod: `6259 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -67,6 +67,7 @@
 | `.spec/archive/2026-04-19-153936-fix-ci-sod-locale.md` | 74 | 1079 | 7578 | 1895 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/fix-ci-locale-matching-and-diagnostics.md` | 65 | 982 | 6552 | 1638 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 34 | 857 | 11020 | 2755 |
 | `AGENTS.md` | 32 | 288 | 2032 | 508 |
@@ -91,8 +92,8 @@
 | `scripts/devlog.sh` | 71 | 333 | 2419 | 605 |
 | `scripts/flowlog.sh` | 83 | 395 | 2910 | 728 |
 | `scripts/merge-completed-work.sh` | 165 | 475 | 3749 | 938 |
-| `scripts/update-sod-report.sh` | 318 | 943 | 7991 | 1998 |
+| `scripts/update-sod-report.sh` | 370 | 1238 | 10112 | 2528 |
 | `setup.sh` | 151 | 662 | 4341 | 1086 |
 | `templates/dust.html` | 655 | 1857 | 21516 | 5379 |
 | `tests/test-spec-gate.sh` | 625 | 2012 | 18125 | 4532 |
-| `tests/test-workflow-scripts.sh` | 626 | 2328 | 20743 | 5186 |
+| `tests/test-workflow-scripts.sh` | 708 | 2683 | 23726 | 5932 |

@@ -284,6 +284,85 @@ setup_configures_self_update_scaffolding() {
   pass "setup configures self-update scaffolding"
 }
 
+sod_report_matches_ubuntu_style_locale_name() {
+  # Reproduces the exact Ubuntu failure: `locale -a` prints `C.utf8`
+  # (lowercase, no hyphen). Script must normalize and succeed, AND use
+  # the exact system-reported name C.utf8 (not the canonical C.UTF-8).
+  local repo fake_locale_cmd selected
+  repo="$(make_repo sod-ubuntu-locale)"
+  fake_locale_cmd="$TMP_DIR/fake-locale.sh"
+
+  cat > "$fake_locale_cmd" <<'EOF'
+#!/usr/bin/env bash
+echo "C.utf8"
+EOF
+  chmod +x "$fake_locale_cmd"
+
+  (
+    cd "$repo"
+    export SOD_LOCALE_LIST_CMD="$fake_locale_cmd"
+    # Source the script's locale picker by invoking `pick_utf8_locale` from a
+    # subshell — avoids running the full report. We import the script and call
+    # only the function we want to test.
+    selected="$(bash -c "
+      set -euo pipefail
+      export SOD_LOCALE_LIST_CMD='$fake_locale_cmd'
+      # Extract and run only pick_utf8_locale + its invocation
+      source scripts/update-sod-report.sh 2>/dev/null || true
+      printf '%s' \"\$UTF8_LOCALE\"
+    " 2>/dev/null || true)"
+    [ "$selected" = "C.utf8" ] || { echo "expected UTF8_LOCALE=C.utf8, got '$selected'" >&2; exit 1; }
+    # Also confirm the full run succeeds with this locale
+    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
+  ) || fail "sod-report uses exact system locale name (C.utf8)"
+
+  pass "sod-report uses exact system locale name (C.utf8)"
+}
+
+sod_report_hard_fails_when_no_utf8_locale() {
+  local repo fake_locale_cmd output
+  repo="$(make_repo sod-no-utf8)"
+  fake_locale_cmd="$TMP_DIR/fake-locale-empty.sh"
+
+  # A fake `locale -a` that only emits non-UTF-8 entries
+  cat > "$fake_locale_cmd" <<'EOF'
+#!/usr/bin/env bash
+echo "C"
+echo "POSIX"
+EOF
+  chmod +x "$fake_locale_cmd"
+
+  (
+    cd "$repo"
+    export SOD_LOCALE_LIST_CMD="$fake_locale_cmd"
+    output="$(bash scripts/update-sod-report.sh 2>&1)" && exit 1
+    printf '%s\n' "$output" | grep -qF "no UTF-8 locale available" || exit 1
+  ) || fail "sod-report hard-fails when no UTF-8 locale"
+
+  pass "sod-report hard-fails when no UTF-8 locale"
+}
+
+sod_check_emits_diff_on_stale_output() {
+  local repo output
+  repo="$(make_repo sod-diff-diag)"
+
+  (
+    cd "$repo"
+    # Ensure a clean baseline first
+    bash scripts/update-sod-report.sh >/dev/null 2>&1
+    # Now corrupt the committed report so --check fails
+    echo "SYNTHETIC STALE MARKER — should-appear-in-diff" >> .spec/sod-report.md
+
+    output="$(bash scripts/update-sod-report.sh --check 2>&1)" && exit 1
+    # Diff markers should appear (unified diff format)
+    printf '%s\n' "$output" | grep -qE '^(---|\+\+\+|@@) ' || exit 1
+    # The stale-only line should appear in the diff, confirming diff is meaningful
+    printf '%s\n' "$output" | grep -qF "SYNTHETIC STALE MARKER" || exit 1
+  ) || fail "sod --check emits diff on stale output"
+
+  pass "sod --check emits diff on stale output"
+}
+
 sod_report_counts_unicode_codepoints_not_bytes() {
   local repo report
   repo="$(make_repo sod-unicode)"
@@ -613,6 +692,9 @@ check_deploy_health_failure_takes_precedence_over_in_progress() {
 }
 
 setup_configures_self_update_scaffolding
+sod_report_matches_ubuntu_style_locale_name
+sod_report_hard_fails_when_no_utf8_locale
+sod_check_emits_diff_on_stale_output
 sod_report_counts_unicode_codepoints_not_bytes
 build_dust_regenerates_from_template
 build_dust_errors_on_missing_markers
