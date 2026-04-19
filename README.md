@@ -19,9 +19,9 @@ and starter repo layouts.
 - Version: `0.2.0`
 - Files: `82`
 - Lines: `8302`
-- Words: `69476`
-- Characters: `539088`
-- Est. tokens: `134799`
+- Words: `68731`
+- Characters: `533448`
+- Est. tokens: `133389`
 - bootstrap sod: `3188 / 3000 target`
 - operational sod: `6859 / 5000 target`
 

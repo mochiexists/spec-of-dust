@@ -1,4 +1,4 @@
-status: build
+status: done
 files: scripts/check-deploy-health.sh, .spec/FLOW.md, CLAUDE.md, AGENTS.md, CODEX.md, tests/test-workflow-scripts.sh
 
 # Post-push health check and error-to-sod loop

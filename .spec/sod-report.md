@@ -5,9 +5,9 @@
 - Token estimate: `ceil(characters / 4)`
 - Total files: `82`
 - Total lines: `8302`
-- Total words: `69476`
-- Total characters: `539088`
-- Total estimated tokens: `134799`
+- Total words: `68731`
+- Total characters: `533448`
+- Total estimated tokens: `133389`
 - bootstrap sod: `3188 / 3000 target`
 - operational sod: `6859 / 5000 target`
 
@@ -65,7 +65,7 @@
 | `.spec/archive/2026-04-19-132448-guard-external-publishing.md` | 66 | 1141 | 7578 | 1895 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/post-push-health-check.md` | 79 | 1411 | 9086 | 2272 |
+| `.spec/changes/post-push-health-check.md` | 79 | 1411 | 9085 | 2272 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
 | `.spec/flowlog.jsonl` | 33 | 840 | 10784 | 2696 |
 | `AGENTS.md` | 32 | 288 | 2032 | 508 |
@@ -75,7 +75,7 @@
 | `README.md` | 188 | 1191 | 7836 | 1959 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 19412 | 167383 | 41846 |
+| `docs/dust.html` | 655 | 18667 | 161744 | 40436 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
