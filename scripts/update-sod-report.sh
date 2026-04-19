@@ -9,6 +9,24 @@ VERSION_FILE="$ROOT_DIR/VERSION"
 SUMMARY_START="<!-- sod-summary:start -->"
 SUMMARY_END="<!-- sod-summary:end -->"
 
+# Pick a UTF-8 locale for wc -m so character counts are Unicode code-points,
+# not bytes. Without this, macOS (UTF-8 default) and Linux CI (often C/POSIX)
+# disagree on multibyte-character counts and --check fails on CI.
+pick_utf8_locale() {
+  local available
+  available="$(locale -a 2>/dev/null || true)"
+  for candidate in C.UTF-8 en_US.UTF-8 en_US.utf8; do
+    if printf '%s\n' "$available" | grep -Fxq "$candidate"; then
+      printf '%s' "$candidate"
+      return 0
+    fi
+  done
+  echo "Error: no UTF-8 locale available (tried C.UTF-8, en_US.UTF-8, en_US.utf8). Character counts would be unreliable." >&2
+  return 1
+}
+
+UTF8_LOCALE="$(pick_utf8_locale)"
+
 cleanup() {
   rm -f "${FILE_LIST:-}" "${ROWS_FILE:-}" "${REPORT_TMP:-}" "${SUMMARY_TMP:-}" "${README_TMP:-}"
   if [ "${TEMP_COUNT_FILES+x}" = x ] && [ "${#TEMP_COUNT_FILES[@]}" -gt 0 ]; then
@@ -51,7 +69,10 @@ count_value() {
   local mode="$1"
   local path="$2"
 
-  wc "$mode" < "$path" | tr -d '[:space:]'
+  # -m (character count) is locale-sensitive; force a UTF-8 locale so the
+  # result is Unicode code-points on both macOS and Linux. -l and -w are
+  # wrapped too for consistency.
+  LC_ALL="$UTF8_LOCALE" wc "$mode" < "$path" | tr -d '[:space:]'
 }
 
 normalized_count_path() {
@@ -117,7 +138,7 @@ count_tokens_for() {
   local file="$ROOT_DIR/$1"
   [ -f "$file" ] || { echo 0; return; }
   local chars
-  chars=$(wc -m < "$file" | tr -d '[:space:]')
+  chars=$(count_value -m "$file")
   echo $(( (chars + 3) / 4 ))
 }
 
@@ -152,7 +173,7 @@ build_context_metrics() {
   fi
   if [ -n "$active_change" ]; then
     local ct
-    ct=$(wc -m < "$active_change" | tr -d '[:space:]')
+    ct=$(count_value -m "$active_change")
     change_tokens=$(( (ct + 3) / 4 ))
   fi
 

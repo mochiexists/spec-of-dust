@@ -161,5 +161,22 @@ if [ "$completed_count" -eq 0 ]; then
   exit 3
 fi
 
+# Resolve a deploy-confirmation URL (GitHub Actions runs for this branch).
+# Use the remote associated with the upstream (the "origin/<branch>" prefix
+# from @{upstream}) rather than hardcoding `origin`. Only emit a URL when
+# the remote is clearly a GitHub remote; falls back silently otherwise.
+upstream_remote="${upstream%%/*}"
+remote_url=""
+if [ -n "$upstream_remote" ]; then
+  remote_url="$(git remote get-url "$upstream_remote" 2>/dev/null || true)"
+fi
+repo_slug=""
+if printf '%s' "$remote_url" | grep -Eq '^(git@github\.com:|https?://github\.com/)'; then
+  repo_slug="$(printf '%s' "$remote_url" | sed -E 's#^(git@github\.com:|https?://github\.com/)##; s#\.git$##')"
+fi
+
 echo "✓ All $completed_count workflow(s) green on branch '$branch'."
+if [ -n "$repo_slug" ]; then
+  echo "  deploy:  https://github.com/$repo_slug/actions?query=branch:$branch"
+fi
 exit 0

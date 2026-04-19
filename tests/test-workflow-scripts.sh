@@ -284,6 +284,46 @@ setup_configures_self_update_scaffolding() {
   pass "setup configures self-update scaffolding"
 }
 
+sod_report_counts_unicode_codepoints_not_bytes() {
+  local repo report
+  repo="$(make_repo sod-unicode)"
+
+  (
+    cd "$repo"
+    # Replace any existing repo content with a tiny file whose length is only
+    # predictable at the character-count level: 5 em-dashes + newline = 6 code-points,
+    # but 16 bytes in UTF-8 (each em-dash is 3 bytes).
+    # Use `git ls-files -z` + rm so we don't fight git's view of the repo, then
+    # commit a known fixture.
+    mkdir -p fixtures
+    # Write 5 em-dashes + newline using raw UTF-8 bytes (E2 80 94 per em-dash).
+    # Using bytes rather than $'\u...' keeps this working on bash 3.2 (macOS default).
+    # 5 code-points + newline = 6 chars, 15 bytes + newline = 16 bytes.
+    # The discriminator 6-vs-16 is how we detect locale drift.
+    printf '\xe2\x80\x94\xe2\x80\x94\xe2\x80\x94\xe2\x80\x94\xe2\x80\x94\n' > fixtures/mbchars.md
+    # The sod script lists files via `git ls-files`, so stage the fixture
+    git add fixtures/mbchars.md
+    git -c core.hooksPath=/dev/null commit -qm "add mbchars fixture"
+
+    # Run the script and inspect the generated row for fixtures/mbchars.md
+    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
+    report="$(cat .spec/sod-report.md)"
+
+    # Extract the character count column for the fixture file's row
+    # Format: | `path` | lines | words | chars | tokens |
+    local row chars
+    row="$(printf '%s\n' "$report" | grep -F "fixtures/mbchars.md" || true)"
+    [ -n "$row" ] || exit 1
+    # chars is the 4th pipe-delimited field after the leading " | "
+    chars="$(printf '%s' "$row" | awk -F'|' '{gsub(/ /,"",$5); print $5}')"
+    # Expected: 6 code-points (5 em-dashes + 1 newline). If we were counting
+    # bytes we'd see 16. The assertion discriminates the two.
+    [ "$chars" = "6" ] || { echo "expected 6 code-points, got '$chars'" >&2; exit 1; }
+  ) || fail "sod-report counts unicode code-points not bytes"
+
+  pass "sod-report counts unicode code-points not bytes"
+}
+
 build_dust_regenerates_from_template() {
   local repo marker
   repo="$(make_repo build-dust-template-regen)"
@@ -418,26 +458,35 @@ GHEOF
 }
 
 make_git_upstream_repo() {
-  # Creates a minimal git repo with an upstream configured, so the script can
-  # resolve @{upstream} without needing a real remote. Prints the HEAD sha so
-  # tests can embed it in their shim fixtures (the check script scopes runs to HEAD).
+  # Creates a minimal git repo with an upstream on a real (bare) remote named
+  # `origin`, so the script can resolve @{upstream} AND derive a GitHub-style
+  # URL from the origin remote. Prints the HEAD sha so tests can embed it in
+  # their shim fixtures (the check script scopes runs to HEAD).
   local repo="$1"
+  local bare="${repo}.git"
   mkdir -p "$repo"
+  git init -q --bare "$bare"
   (
     cd "$repo"
     git init -q
     git config user.name 'Test User'
     git config user.email 'test@example.com'
     git commit -q --allow-empty -m "initial"
-    git branch fake-origin main
-    git config "branch.main.remote" "."
-    git config "branch.main.merge" "refs/heads/fake-origin"
+    # Point origin at the bare repo using a GitHub-looking URL so the deploy-URL
+    # resolver is exercised. The bare repo lives at $bare; we set the remote's
+    # URL to a GitHub-style string and push using $bare as the actual target.
+    git remote add origin "git@github.com:test-owner/test-repo.git"
+    git config --replace-all remote.origin.url "git@github.com:test-owner/test-repo.git"
+    git config --add remote.origin.pushurl "$bare"
+    git config --add remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git push -q origin main
+    git branch --set-upstream-to=origin/main main >/dev/null
     git rev-parse HEAD
   )
 }
 
 check_deploy_health_exit_0_all_green() {
-  local repo shim head_sha
+  local repo shim head_sha output
   repo="$TMP_DIR/health-green"
   shim="$TMP_DIR/shim-green"
   head_sha="$(make_git_upstream_repo "$repo")"
@@ -445,11 +494,16 @@ check_deploy_health_exit_0_all_green() {
 
   (
     cd "$repo"
+    # Add an origin remote so the success path can build a deploy URL
+    git remote add origin "git@github.com:test-owner/test-repo.git"
     cp "$ROOT_DIR/scripts/check-deploy-health.sh" ./check.sh
     chmod +x check.sh
     export PATH="$shim:$PATH"
     export SHIM_RUN_LIST_JSON="[{\"databaseId\":1,\"name\":\"Validate\",\"status\":\"completed\",\"conclusion\":\"success\",\"workflowName\":\"Validate\",\"url\":\"u1\",\"headSha\":\"$head_sha\"}]"
-    bash ./check.sh >/dev/null 2>&1
+    output="$(bash ./check.sh 2>&1)" || exit 1
+    printf '%s\n' "$output" | grep -qF "All 1 workflow(s) green" || exit 1
+    # Deploy URL should be present for user-visible confirmation
+    printf '%s\n' "$output" | grep -qF "https://github.com/test-owner/test-repo/actions?query=branch:" || exit 1
   ) || fail "check-deploy-health exit 0 on all green"
 
   pass "check-deploy-health exit 0 on all green"
@@ -559,6 +613,7 @@ check_deploy_health_failure_takes_precedence_over_in_progress() {
 }
 
 setup_configures_self_update_scaffolding
+sod_report_counts_unicode_codepoints_not_bytes
 build_dust_regenerates_from_template
 build_dust_errors_on_missing_markers
 build_dust_errors_on_missing_template
