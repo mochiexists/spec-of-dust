@@ -6,6 +6,10 @@ This project uses `spec-of-dust`. Read `.spec/FLOW.md` before starting any featu
 
 On session start, read `.spec/b-startup.md` if it exists, then check `.spec/changes/` for active change files. Ignore `_template.md` and `_example-*`. If a real change file exists, resume from its current status. If none exist and the user requests a change, create one from `.spec/changes/_template.md`.
 
+## External actions rule (load-bearing)
+
+Before invoking any command that writes to an external system — `gh repo create`, `gh release create`, `gh api` (POST/PUT/DELETE), `curl` that posts/pushes, SSH deploys, `git push --tags` — check for an active change file in `.spec/changes/` with status `spec|build|verify`. If none exists, STOP and create one that names the external target before proceeding. No mechanical commit gate covers these actions; this rule is the main line of defence. See FLOW.md "External actions (not mechanically gated)".
+
 ## Peer review
 
 Two AI models work this repo: Claude Code and Codex. You are one of them.

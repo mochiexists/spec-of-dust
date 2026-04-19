@@ -60,6 +60,14 @@ Mechanical checks that block unsafe progress:
 
 Extend these gates with your repo's engineering policy. Keep local gates fast; let CI run the strict superset.
 
+### External actions (not mechanically gated)
+
+The commit-time gates above cannot see `gh` CLI calls, `curl` writes, or other external API actions. A partial mechanical check exists for git pushes (see below), but most external publishing escapes gating entirely.
+
+**Load-bearing advisory rule:** before running any command that writes to an external system — `gh repo create`, `gh release create`, `gh api` (POST/PUT/DELETE), `curl` to deploy/publish, SSH-based deploys — you MUST have an active change file naming the target. No active change = stop and create one.
+
+**Mechanical backstop:** `.githooks/pre-push` warns (does not block) when a *publishing-pattern push* (tag push, or new remote branch) happens with no active change. Bypass with `SOD_PUBLISH_ACK=1` when you've intentionally acknowledged the absence. Warning-only so legitimate flows aren't blocked; the signal exists to catch drift.
+
 ## Testing
 
 - **Bug fixes**: write a failing test that reproduces the bug first. Fix the code. Observe green. Don't edit test logic to force the pass.

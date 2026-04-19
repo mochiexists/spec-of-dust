@@ -4,6 +4,10 @@ Read `.spec/b-startup.md` on session start if it exists.
 Read `AGENTS.md` for project context and workflow.
 Read `.spec/FLOW.md` for the full `spec-of-dust` workflow.
 
+## External actions rule (load-bearing)
+
+Before invoking any command that writes to an external system — `gh repo create`, `gh release create`, `gh api` (POST/PUT/DELETE), `curl` that posts/pushes, SSH deploys, `git push --tags` — check for an active change file in `.spec/changes/` with status `spec|build|verify`. If none exists, STOP and create one that names the external target before proceeding. No mechanical commit gate covers these actions; this rule is the main line of defence.
+
 ## Codex specific
 
 - When peer-reviewing, shell out to Claude: `cat .spec/changes/{name}.md | claude -p "..."`

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# .githooks/pre-push
+# Warns (never blocks) when a publishing-pattern push happens without an active change file.
+# Publishing pattern: pushing a tag ref, or pushing to a brand-new remote branch.
+# Bypass: SOD_PUBLISH_ACK=1
+
+set -euo pipefail
+
+# Honor explicit bypass — caller is acknowledging this is intentional
+if [ "${SOD_PUBLISH_ACK:-0}" = "1" ]; then
+  exit 0
+fi
+
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SPEC_DIR="$(cd "$HOOK_DIR/.." && pwd)/.spec/changes"
+
+# Check for a change file with status spec|build|verify (includes spec for in-progress intent)
+has_active_change_for_push() {
+  local file status
+
+  [ -d "$SPEC_DIR" ] || return 1
+
+  for file in "$SPEC_DIR"/*.md; do
+    [ -f "$file" ] || continue
+    local name
+    name="$(basename "$file")"
+    [ "$name" = "_template.md" ] && continue
+    case "$name" in _example-*) continue ;; esac
+
+    status="$(awk '
+      index($0, "status:") == 1 {
+        sub("^status:[[:space:]]*", "", $0)
+        print $0
+        exit
+      }
+    ' "$file")"
+
+    case "$status" in
+      spec|build|verify) return 0 ;;
+    esac
+  done
+
+  return 1
+}
+
+# Detect publishing-pattern push from stdin:
+# Each line: <local-ref> <local-sha> <remote-ref> <remote-sha>
+# Publishing = (a) tag push (refs/tags/*), OR (b) new remote branch (refs/heads/* with zero remote-sha)
+is_publishing_push() {
+  local local_ref _local_sha remote_ref remote_sha
+  local zeros="0000000000000000000000000000000000000000"
+
+  while read -r local_ref _local_sha remote_ref remote_sha; do
+    [ -n "$local_ref" ] || continue
+
+    # Tag push = publishing
+    case "$remote_ref" in
+      refs/tags/*) return 0 ;;
+    esac
+
+    # Brand-new remote branch (not notes, not custom refs) = publishing
+    if [ "$remote_sha" = "$zeros" ]; then
+      case "$remote_ref" in
+        refs/heads/*) return 0 ;;
+      esac
+    fi
+  done
+
+  return 1
+}
+
+if is_publishing_push && ! has_active_change_for_push; then
+  echo "⚠️  Publishing push with no active change file. FLOW.md requires a spec naming the external target. Set SOD_PUBLISH_ACK=1 to bypass intentionally." >&2
+fi
+
+exit 0

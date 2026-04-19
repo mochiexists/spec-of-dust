@@ -520,6 +520,106 @@ dust_only_change_skips_sod_staleness() {
   pass "dust only change skips sod staleness"
 }
 
+EXPECTED_PREPUSH_WARNING='⚠️  Publishing push with no active change file. FLOW.md requires a spec naming the external target. Set SOD_PUBLISH_ACK=1 to bypass intentionally.'
+
+pre_push_warns_on_tag_push_without_active_change() {
+  local repo output
+  repo="$(make_repo pre-push-tag)"
+
+  (
+    cd "$repo"
+    local zeros="0000000000000000000000000000000000000000"
+    local sha
+    sha="$(git rev-parse HEAD)"
+    output="$(printf 'refs/tags/v9.9.9 %s refs/tags/v9.9.9 %s\n' "$sha" "$zeros" | bash .githooks/pre-push 2>&1)"
+    [ "$output" = "$EXPECTED_PREPUSH_WARNING" ] || exit 1
+  ) || fail "pre-push warns on tag push without active change"
+
+  pass "pre-push warns on tag push without active change"
+}
+
+pre_push_warns_on_new_branch_push_without_active_change() {
+  local repo output
+  repo="$(make_repo pre-push-new-branch)"
+
+  (
+    cd "$repo"
+    local zeros="0000000000000000000000000000000000000000"
+    local sha
+    sha="$(git rev-parse HEAD)"
+    output="$(printf 'refs/heads/main %s refs/heads/main %s\n' "$sha" "$zeros" | bash .githooks/pre-push 2>&1)"
+    [ "$output" = "$EXPECTED_PREPUSH_WARNING" ] || exit 1
+  ) || fail "pre-push warns on new remote branch push without active change"
+
+  pass "pre-push warns on new remote branch push without active change"
+}
+
+pre_push_silent_on_non_branch_zero_sha_ref() {
+  local repo output
+  repo="$(make_repo pre-push-custom-ref)"
+
+  (
+    cd "$repo"
+    local zeros="0000000000000000000000000000000000000000"
+    local sha
+    sha="$(git rev-parse HEAD)"
+    # refs/notes/* with zero remote sha should NOT trigger the warning
+    output="$(printf 'refs/notes/commits %s refs/notes/commits %s\n' "$sha" "$zeros" | bash .githooks/pre-push 2>&1)"
+    if [ -n "$output" ]; then
+      printf '%s\n' "$output" >&2
+      exit 1
+    fi
+  ) || fail "pre-push silent on non-branch zero-sha ref"
+
+  pass "pre-push silent on non-branch zero-sha ref"
+}
+
+pre_push_silent_with_publish_ack() {
+  local repo output
+  repo="$(make_repo pre-push-ack)"
+
+  (
+    cd "$repo"
+    local zeros="0000000000000000000000000000000000000000"
+    local sha
+    sha="$(git rev-parse HEAD)"
+    # Even with no active change, SOD_PUBLISH_ACK=1 should suppress
+    output="$(SOD_PUBLISH_ACK=1 printf 'refs/tags/v9.9.9 %s refs/tags/v9.9.9 %s\n' "$sha" "$zeros" | SOD_PUBLISH_ACK=1 bash .githooks/pre-push 2>&1)"
+    if [ -n "$output" ]; then
+      printf '%s\n' "$output" >&2
+      exit 1
+    fi
+  ) || fail "pre-push silent with SOD_PUBLISH_ACK=1"
+
+  pass "pre-push silent with SOD_PUBLISH_ACK=1"
+}
+
+pre_push_silent_with_active_change() {
+  local repo output
+  repo="$(make_repo pre-push-active)"
+
+  (
+    cd "$repo"
+    seed_change_file "build"
+
+    local zeros="0000000000000000000000000000000000000000"
+    local sha
+    sha="$(git rev-parse HEAD)"
+    output="$(printf 'refs/tags/v9.9.9 %s refs/tags/v9.9.9 %s\n' "$sha" "$zeros" | bash .githooks/pre-push 2>&1)"
+    if [ -n "$output" ]; then
+      printf '%s\n' "$output" >&2
+      exit 1
+    fi
+  ) || fail "pre-push silent when active change exists"
+
+  pass "pre-push silent when active change exists"
+}
+
 archive_only_commit_passes
 archive_mixed_with_code_is_blocked
 dust_only_change_skips_sod_staleness
+pre_push_warns_on_tag_push_without_active_change
+pre_push_warns_on_new_branch_push_without_active_change
+pre_push_silent_on_non_branch_zero_sha_ref
+pre_push_silent_with_publish_ack
+pre_push_silent_with_active_change
