@@ -284,6 +284,72 @@ setup_configures_self_update_scaffolding() {
   pass "setup configures self-update scaffolding"
 }
 
+sod_report_strips_vs16_for_word_count() {
+  # Regression: before the fix, wc -w counted the warning emoji as 2 words on BSD (macOS)
+  # and 1 on GNU (Linux). With U+FE0F stripped, both platforms agree on
+  # word count. The fixture contains: warning-emoji + 2 spaces + "test" + newline.
+  # After strip: warning-sign + 2 spaces + "test" + newline -> wc -w should report 2.
+  local repo row words
+  repo="$(make_repo sod-vs16-strip)"
+
+  (
+    cd "$repo"
+    mkdir -p fixtures
+    # Bytes: warning-sign (e2 9a a0) + VS-16 (ef b8 8f) + "  test\n"
+    printf '\xe2\x9a\xa0\xef\xb8\x8f  test\n' > fixtures/emoji.md
+    git add fixtures/emoji.md
+    git -c core.hooksPath=/dev/null commit -qm "add emoji fixture"
+
+    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
+
+    row="$(grep -F "fixtures/emoji.md" .spec/sod-report.md || true)"
+    [ -n "$row" ] || exit 1
+    # Format: | `path` | lines | words | chars | tokens |
+    # Extract column 4 (words)
+    words="$(printf '%s' "$row" | awk -F'|' '{gsub(/ /,"",$4); print $4}')"
+    [ "$words" = "2" ] || { echo "expected words=2 (warning-sign + test), got '$words'" >&2; exit 1; }
+  ) || fail "sod-report strips VS-16 for deterministic word count"
+
+  pass "sod-report strips VS-16 for deterministic word count"
+}
+
+sod_report_preserves_non_vs16_chars_sharing_bytes() {
+  # Regression: a byte-oriented strip (e.g. `tr -d $'\357\270\217'` under
+  # LC_ALL=C, or GNU tr's always-byte behavior) would strip standalone
+  # 0xef, 0xb8, or 0x8f bytes, corrupting unrelated UTF-8 characters that
+  # happen to share any of those bytes. The real fix uses sed with a
+  # 3-byte literal pattern that only matches the full VS-16 sequence.
+  #
+  # Fixture: U+270F PENCIL (bytes e2 9c 8f) — shares 0x8f with VS-16 but
+  # is a complete unrelated codepoint. Expected counts on both macOS and
+  # Ubuntu (under the script's picked UTF-8 locale): 1 line, 2 words, 7
+  # characters. A byte-strip bug would change characters and/or words.
+  local repo row lines words chars
+  repo="$(make_repo sod-vs16-bytesafe)"
+
+  (
+    cd "$repo"
+    mkdir -p fixtures
+    # Bytes: U+270F (e2 9c 8f) + " test" + newline
+    printf '\xe2\x9c\x8f test\n' > fixtures/pencil.md
+    git add fixtures/pencil.md
+    git -c core.hooksPath=/dev/null commit -qm "add pencil fixture"
+
+    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
+
+    row="$(grep -F "fixtures/pencil.md" .spec/sod-report.md || true)"
+    [ -n "$row" ] || exit 1
+    lines="$(printf '%s' "$row" | awk -F'|' '{gsub(/ /,"",$3); print $3}')"
+    words="$(printf '%s' "$row" | awk -F'|' '{gsub(/ /,"",$4); print $4}')"
+    chars="$(printf '%s' "$row" | awk -F'|' '{gsub(/ /,"",$5); print $5}')"
+    [ "$lines" = "1" ] || { echo "expected lines=1, got '$lines'" >&2; exit 1; }
+    [ "$words" = "2" ] || { echo "expected words=2 (U+270F + test), got '$words' — bytes may have been stripped" >&2; exit 1; }
+    [ "$chars" = "7" ] || { echo "expected chars=7, got '$chars' — U+270F codepoint likely corrupted" >&2; exit 1; }
+  ) || fail "sod-report preserves non-VS-16 chars that share bytes"
+
+  pass "sod-report preserves non-VS-16 chars that share bytes"
+}
+
 sod_report_matches_ubuntu_style_locale_name() {
   # Reproduces the exact Ubuntu failure: `locale -a` prints `C.utf8`
   # (lowercase, no hyphen). Script must normalize and succeed, AND use
@@ -692,6 +758,8 @@ check_deploy_health_failure_takes_precedence_over_in_progress() {
 }
 
 setup_configures_self_update_scaffolding
+sod_report_strips_vs16_for_word_count
+sod_report_preserves_non_vs16_chars_sharing_bytes
 sod_report_matches_ubuntu_style_locale_name
 sod_report_hard_fails_when_no_utf8_locale
 sod_check_emits_diff_on_stale_output

@@ -40,6 +40,7 @@ pick_utf8_locale() {
 }
 
 UTF8_LOCALE="$(pick_utf8_locale)"
+VS16_BYTES="$(printf '\xef\xb8\x8f')"
 
 cleanup() {
   rm -f "${FILE_LIST:-}" "${ROWS_FILE:-}" "${REPORT_TMP:-}" "${SUMMARY_TMP:-}" "${README_TMP:-}"
@@ -86,7 +87,19 @@ count_value() {
   # -m (character count) is locale-sensitive; force a UTF-8 locale so the
   # result is Unicode code-points on both macOS and Linux. -l and -w are
   # wrapped too for consistency.
-  LC_ALL="$UTF8_LOCALE" wc "$mode" < "$path" | tr -d '[:space:]'
+  #
+  # Also strip U+FE0F (VARIATION SELECTOR-16, UTF-8 bytes ef b8 8f) before
+  # wc sees it. VS-16 is zero-width and invisible but BSD wc -w (macOS) and
+  # GNU wc -w (Linux) disagree on whether the preceding base character plus
+  # VS-16 is one word or two. Stripping it makes counts deterministic across
+  # platforms. Affects warning-emoji messages throughout the scripts.
+  #
+  # Use sed with LC_ALL=C and an exact 3-byte literal pattern so only the
+  # consecutive `ef b8 8f` sequence is matched. GNU tr and BSD tr are
+  # byte-oriented and would also strip standalone 0xef/0xb8/0x8f bytes,
+  # corrupting other UTF-8 characters that happen to share any of those
+  # bytes (e.g. U+F80F = `ef a0 8f`).
+  LC_ALL=C sed "s/$VS16_BYTES//g" < "$path" | LC_ALL="$UTF8_LOCALE" wc "$mode" | tr -d '[:space:]'
 }
 
 normalized_count_path() {
