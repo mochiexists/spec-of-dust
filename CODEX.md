@@ -8,6 +8,10 @@ Read `.spec/FLOW.md` for the full `spec-of-dust` workflow.
 
 Before invoking any command that writes to an external system — `gh repo create`, `gh release create`, `gh api` (POST/PUT/DELETE), `curl` that posts/pushes, SSH deploys, `git push --tags` — check for an active change file in `.spec/changes/` with status `spec|build|verify`. If none exists, STOP and create one that names the external target before proceeding. No mechanical commit gate covers these actions; this rule is the main line of defence.
 
+## Post-push health check (load-bearing)
+
+After any `git push` (direct or via `merge-completed-work.sh`), run `bash scripts/check-deploy-health.sh` and act per the exit-code semantics in FLOW.md (`## Post-push health`). On exit 1, draft a `fix-ci-*` change file and surface to the user before proceeding with new work.
+
 ## Codex specific
 
 - When peer-reviewing, shell out to Claude: `cat .spec/changes/{name}.md | claude -p "..."`

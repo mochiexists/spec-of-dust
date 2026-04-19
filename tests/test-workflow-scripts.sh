@@ -367,8 +367,205 @@ build_dust_errors_on_reversed_markers() {
 archive_script_uses_utc_and_refreshes_outputs
 push_auto_delivers_to_remote
 push_skipped_when_no_origin
+make_gh_shim() {
+  # Creates a shim that intercepts `gh` calls. Behavior driven by env vars:
+  #   SHIM_AUTH_STATUS       — 0 or 1, controls `gh auth status` exit
+  #   SHIM_RUN_LIST_JSON     — JSON returned for `gh run list ... --json` (default: [])
+  #   SHIM_RUN_VIEW_JSON     — JSON returned for `gh run view ... --json jobs` (default: empty jobs)
+  #   SHIM_RUN_LIST_FAIL     — if set to 1, `gh run list` exits non-zero (simulate network error)
+  local shim_dir="$1"
+  mkdir -p "$shim_dir"
+  cat > "$shim_dir/gh" <<'GHEOF'
+#!/usr/bin/env bash
+case "$1" in
+  auth)
+    if [ "${SHIM_AUTH_STATUS:-0}" = "0" ]; then exit 0; fi
+    exit 1
+    ;;
+  run)
+    case "$2" in
+      list)
+        if [ "${SHIM_RUN_LIST_FAIL:-0}" = "1" ]; then
+          echo "network error" >&2
+          exit 1
+        fi
+        if [ -n "${SHIM_RUN_LIST_JSON:-}" ]; then
+          printf '%s' "$SHIM_RUN_LIST_JSON"
+        else
+          printf '%s' "[]"
+        fi
+        ;;
+      view)
+        if [ -n "${SHIM_RUN_VIEW_JSON:-}" ]; then
+          printf '%s' "$SHIM_RUN_VIEW_JSON"
+        else
+          printf '%s' '{"jobs":[]}'
+        fi
+        ;;
+      *)
+        echo "unexpected gh run subcommand: $2" >&2
+        exit 1
+        ;;
+    esac
+    ;;
+  *)
+    echo "unexpected gh command: $1" >&2
+    exit 1
+    ;;
+esac
+GHEOF
+  chmod +x "$shim_dir/gh"
+}
+
+make_git_upstream_repo() {
+  # Creates a minimal git repo with an upstream configured, so the script can
+  # resolve @{upstream} without needing a real remote. Prints the HEAD sha so
+  # tests can embed it in their shim fixtures (the check script scopes runs to HEAD).
+  local repo="$1"
+  mkdir -p "$repo"
+  (
+    cd "$repo"
+    git init -q
+    git config user.name 'Test User'
+    git config user.email 'test@example.com'
+    git commit -q --allow-empty -m "initial"
+    git branch fake-origin main
+    git config "branch.main.remote" "."
+    git config "branch.main.merge" "refs/heads/fake-origin"
+    git rev-parse HEAD
+  )
+}
+
+check_deploy_health_exit_0_all_green() {
+  local repo shim head_sha
+  repo="$TMP_DIR/health-green"
+  shim="$TMP_DIR/shim-green"
+  head_sha="$(make_git_upstream_repo "$repo")"
+  make_gh_shim "$shim"
+
+  (
+    cd "$repo"
+    cp "$ROOT_DIR/scripts/check-deploy-health.sh" ./check.sh
+    chmod +x check.sh
+    export PATH="$shim:$PATH"
+    export SHIM_RUN_LIST_JSON="[{\"databaseId\":1,\"name\":\"Validate\",\"status\":\"completed\",\"conclusion\":\"success\",\"workflowName\":\"Validate\",\"url\":\"u1\",\"headSha\":\"$head_sha\"}]"
+    bash ./check.sh >/dev/null 2>&1
+  ) || fail "check-deploy-health exit 0 on all green"
+
+  pass "check-deploy-health exit 0 on all green"
+}
+
+check_deploy_health_exit_1_on_failure() {
+  local repo shim output rc head_sha
+  repo="$TMP_DIR/health-fail"
+  shim="$TMP_DIR/shim-fail"
+  head_sha="$(make_git_upstream_repo "$repo")"
+  make_gh_shim "$shim"
+
+  (
+    cd "$repo"
+    cp "$ROOT_DIR/scripts/check-deploy-health.sh" ./check.sh
+    chmod +x check.sh
+    export PATH="$shim:$PATH"
+    export SHIM_RUN_LIST_JSON="[{\"databaseId\":42,\"name\":\"Validate\",\"status\":\"completed\",\"conclusion\":\"failure\",\"workflowName\":\"Validate\",\"url\":\"https://example.com/42\",\"headSha\":\"$head_sha\"}]"
+    export SHIM_RUN_VIEW_JSON='{"jobs":[{"steps":[{"name":"Check sod outputs","conclusion":"failure"}]}]}'
+    output="$(bash ./check.sh 2>&1)" && rc=0 || rc=$?
+    [ "$rc" = "1" ] || exit 1
+    printf '%s\n' "$output" | grep -qF "Validate" || exit 1
+    printf '%s\n' "$output" | grep -qF "Check sod outputs" || exit 1
+    printf '%s\n' "$output" | grep -qF "https://example.com/42" || exit 1
+  ) || fail "check-deploy-health exit 1 on failure"
+
+  pass "check-deploy-health exit 1 on failure"
+}
+
+check_deploy_health_exit_2_in_progress() {
+  local repo shim rc head_sha
+  repo="$TMP_DIR/health-inprogress"
+  shim="$TMP_DIR/shim-inprogress"
+  head_sha="$(make_git_upstream_repo "$repo")"
+  make_gh_shim "$shim"
+
+  (
+    cd "$repo"
+    cp "$ROOT_DIR/scripts/check-deploy-health.sh" ./check.sh
+    chmod +x check.sh
+    export PATH="$shim:$PATH"
+    export SHIM_RUN_LIST_JSON="[{\"databaseId\":7,\"name\":\"Validate\",\"status\":\"in_progress\",\"conclusion\":\"\",\"workflowName\":\"Validate\",\"url\":\"u7\",\"headSha\":\"$head_sha\"}]"
+    bash ./check.sh >/dev/null 2>&1 && rc=0 || rc=$?
+    [ "$rc" = "2" ] || exit 1
+  ) || fail "check-deploy-health exit 2 on in-progress only"
+
+  pass "check-deploy-health exit 2 on in-progress only"
+}
+
+check_deploy_health_exit_3_on_unauthenticated() {
+  local repo shim rc
+  repo="$TMP_DIR/health-unauth"
+  shim="$TMP_DIR/shim-unauth"
+  make_git_upstream_repo "$repo" >/dev/null
+  make_gh_shim "$shim"
+
+  (
+    cd "$repo"
+    cp "$ROOT_DIR/scripts/check-deploy-health.sh" ./check.sh
+    chmod +x check.sh
+    export PATH="$shim:$PATH"
+    export SHIM_AUTH_STATUS=1
+    bash ./check.sh >/dev/null 2>&1 && rc=0 || rc=$?
+    [ "$rc" = "3" ] || exit 1
+  ) || fail "check-deploy-health exit 3 on unauthenticated"
+
+  pass "check-deploy-health exit 3 on unauthenticated"
+}
+
+check_deploy_health_exit_3_on_gh_missing() {
+  local repo rc
+  repo="$TMP_DIR/health-gh-missing"
+  make_git_upstream_repo "$repo" >/dev/null
+
+  (
+    cd "$repo"
+    cp "$ROOT_DIR/scripts/check-deploy-health.sh" ./check.sh
+    chmod +x check.sh
+    # PATH contains core binaries (bash, git, python3) but not gh's usual homes.
+    # This pattern is robust as long as gh isn't in /bin or /usr/bin.
+    PATH="/usr/bin:/bin" bash ./check.sh >/dev/null 2>&1 && rc=0 || rc=$?
+    [ "$rc" = "3" ] || exit 1
+  ) || fail "check-deploy-health exit 3 when gh missing"
+
+  pass "check-deploy-health exit 3 when gh missing"
+}
+
+check_deploy_health_failure_takes_precedence_over_in_progress() {
+  local repo shim rc head_sha
+  repo="$TMP_DIR/health-precedence"
+  shim="$TMP_DIR/shim-precedence"
+  head_sha="$(make_git_upstream_repo "$repo")"
+  make_gh_shim "$shim"
+
+  (
+    cd "$repo"
+    cp "$ROOT_DIR/scripts/check-deploy-health.sh" ./check.sh
+    chmod +x check.sh
+    export PATH="$shim:$PATH"
+    export SHIM_RUN_LIST_JSON="[{\"databaseId\":100,\"name\":\"Validate\",\"status\":\"completed\",\"conclusion\":\"failure\",\"workflowName\":\"Validate\",\"url\":\"u100\",\"headSha\":\"$head_sha\"},{\"databaseId\":101,\"name\":\"Other\",\"status\":\"in_progress\",\"conclusion\":\"\",\"workflowName\":\"Other\",\"url\":\"u101\",\"headSha\":\"$head_sha\"}]"
+    export SHIM_RUN_VIEW_JSON='{"jobs":[{"steps":[{"name":"failed-step","conclusion":"failure"}]}]}'
+    bash ./check.sh >/dev/null 2>&1 && rc=0 || rc=$?
+    [ "$rc" = "1" ] || exit 1
+  ) || fail "check-deploy-health failure takes precedence over in-progress"
+
+  pass "check-deploy-health failure takes precedence over in-progress"
+}
+
 setup_configures_self_update_scaffolding
 build_dust_regenerates_from_template
 build_dust_errors_on_missing_markers
 build_dust_errors_on_missing_template
 build_dust_errors_on_reversed_markers
+check_deploy_health_exit_0_all_green
+check_deploy_health_exit_1_on_failure
+check_deploy_health_exit_2_in_progress
+check_deploy_health_exit_3_on_unauthenticated
+check_deploy_health_exit_3_on_gh_missing
+check_deploy_health_failure_takes_precedence_over_in_progress

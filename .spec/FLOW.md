@@ -95,6 +95,15 @@ Configured in `.spec/b-startup.md` via `push: never | confirm | auto` (default `
 
 Push failure is reported but does not undo the local archive — the commit is already on the target branch. If no remote `origin` exists, push is skipped with a warning.
 
+### Post-push health
+
+After any push (direct or via `merge-completed-work.sh`), run `bash scripts/check-deploy-health.sh` to see whether CI is green on the pushed ref. Per-exit-code agent action:
+
+- `0` — all green, continue
+- `1` — at least one workflow failed. Surface the failure summary to the user. Draft a new change file `.spec/changes/fix-ci-{short-description}.md` at `status: spec` with the workflow name, run ID, failed step, and run URL in the `## What` section. Wait for user confirmation before moving to build.
+- `2` — runs still in progress, verdict not yet known. Report "CI still running" and plan to re-check next session or after a brief wait. Do NOT draft a fix spec yet.
+- `3` — environment issue (no `gh`, not authenticated, no upstream, no runs). Report the environment problem; do NOT draft a fix spec since there is no CI signal.
+
 ## Self-update
 
 sod updates itself through its own workflow. On session start, the agent checks whether it should look upstream for a newer version.

@@ -3,13 +3,13 @@
 - Version: `0.2.0`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `80`
-- Total lines: `7839`
-- Total words: `65594`
-- Total characters: `509910`
-- Total estimated tokens: `127503`
-- bootstrap sod: `2974 / 3000 target`
-- operational sod: `4133 / 5000 target`
+- Total files: `82`
+- Total lines: `8302`
+- Total words: `69476`
+- Total characters: `539088`
+- Total estimated tokens: `134799`
+- bootstrap sod: `3188 / 3000 target`
+- operational sod: `6859 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -21,7 +21,7 @@
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 29 | 60 | 576 | 144 |
 | `.gitignore` | 7 | 15 | 147 | 37 |
-| `.spec/FLOW.md` | 171 | 1729 | 11318 | 2830 |
+| `.spec/FLOW.md` | 180 | 1871 | 12175 | 3044 |
 | `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -65,16 +65,17 @@
 | `.spec/archive/2026-04-19-132448-guard-external-publishing.md` | 66 | 1141 | 7578 | 1895 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/changes/post-push-health-check.md` | 79 | 1411 | 9086 | 2272 |
 | `.spec/devlog.jsonl` | 4 | 77 | 1120 | 280 |
-| `.spec/flowlog.jsonl` | 32 | 819 | 10496 | 2624 |
-| `AGENTS.md` | 28 | 243 | 1712 | 428 |
-| `CLAUDE.md` | 19 | 220 | 1453 | 364 |
-| `CODEX.md` | 19 | 222 | 1467 | 367 |
+| `.spec/flowlog.jsonl` | 33 | 840 | 10784 | 2696 |
+| `AGENTS.md` | 32 | 288 | 2032 | 508 |
+| `CLAUDE.md` | 23 | 265 | 1773 | 444 |
+| `CODEX.md` | 23 | 267 | 1787 | 447 |
 | `LICENSE` | 21 | 168 | 1068 | 267 |
 | `README.md` | 188 | 1191 | 7836 | 1959 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 18667 | 161744 | 40436 |
+| `docs/dust.html` | 655 | 19412 | 167383 | 41846 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
@@ -85,6 +86,7 @@
 | `packs/swift/v0/README.md` | 80 | 217 | 1632 | 408 |
 | `scripts/archive-done-changes.sh` | 103 | 265 | 2139 | 535 |
 | `scripts/build-dust.sh` | 258 | 903 | 8034 | 2009 |
+| `scripts/check-deploy-health.sh` | 165 | 763 | 5405 | 1352 |
 | `scripts/devlog.sh` | 71 | 333 | 2419 | 605 |
 | `scripts/flowlog.sh` | 83 | 395 | 2910 | 728 |
 | `scripts/merge-completed-work.sh` | 165 | 475 | 3749 | 938 |
@@ -92,4 +94,4 @@
 | `setup.sh` | 151 | 662 | 4341 | 1086 |
 | `templates/dust.html` | 655 | 1857 | 21516 | 5379 |
 | `tests/test-spec-gate.sh` | 625 | 2012 | 18125 | 4532 |
-| `tests/test-workflow-scripts.sh` | 374 | 1232 | 10774 | 2694 |
+| `tests/test-workflow-scripts.sh` | 571 | 1897 | 17717 | 4430 |
