@@ -5,3 +5,6 @@ CLAUDE.local.md
 
 # Self-update state (local per clone, not tracked)
 .spec/sod-last-checked
+
+# Claude Code runtime artifacts (scheduled task coordination, etc.)
+.claude/
