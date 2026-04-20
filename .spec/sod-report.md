@@ -3,20 +3,20 @@
 - Version: `0.2.0`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `85`
-- Total lines: `8825`
-- Total words: `76930`
-- Total characters: `594399`
-- Total estimated tokens: `148628`
+- Total files: `86`
+- Total lines: `8872`
+- Total words: `77501`
+- Total characters: `598556`
+- Total estimated tokens: `149669`
 - bootstrap sod: `3222 / 3000 target`
-- operational sod: `6602 / 5000 target`
+- operational sod: `5999 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
-| `.githooks/_spec_gate.sh` | 547 | 1575 | 12659 | 3165 |
+| `.githooks/_spec_gate.sh` | 547 | 1575 | 12672 | 3168 |
 | `.githooks/post-merge` | 8 | 24 | 243 | 61 |
-| `.githooks/pre-commit` | 21 | 91 | 635 | 159 |
-| `.githooks/pre-push` | 76 | 279 | 2117 | 530 |
+| `.githooks/pre-commit` | 21 | 91 | 636 | 159 |
+| `.githooks/pre-push` | 76 | 279 | 2118 | 530 |
 | `.githooks/prepare-commit-msg` | 10 | 26 | 250 | 63 |
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 29 | 60 | 576 | 144 |
@@ -45,7 +45,7 @@
 | `.spec/archive/2026-04-16-232653-require-commit-after-done.md` | 58 | 783 | 5331 | 1333 |
 | `.spec/archive/2026-04-16-232653-scope-aware-commit-gate.md` | 62 | 804 | 5156 | 1289 |
 | `.spec/archive/2026-04-16-232653-trim-bootstrap-context.md` | 58 | 575 | 3767 | 942 |
-| `.spec/archive/2026-04-16-232653-validate-done-closeout-gate.md` | 79 | 826 | 5372 | 1343 |
+| `.spec/archive/2026-04-16-232653-validate-done-closeout-gate.md` | 79 | 826 | 5373 | 1344 |
 | `.spec/archive/2026-04-17-002150-fix-archive-commit-gate-bypass.md` | 51 | 530 | 3699 | 925 |
 | `.spec/archive/2026-04-17-004339-fix-sod-viewer-rebuild-loop.md` | 46 | 353 | 2479 | 620 |
 | `.spec/archive/2026-04-17-005156-fix-viewer-freshness-and-archive-utc.md` | 66 | 864 | 6492 | 1623 |
@@ -62,13 +62,14 @@
 | `.spec/archive/2026-04-18-133345-build-dust-full-regen.md` | 57 | 758 | 5529 | 1383 |
 | `.spec/archive/2026-04-18-141632-bump-to-0-2-0.md` | 33 | 210 | 1482 | 371 |
 | `.spec/archive/2026-04-18-225455-pre-release-review-0-2-0.md` | 57 | 817 | 5694 | 1424 |
-| `.spec/archive/2026-04-19-132448-guard-external-publishing.md` | 66 | 1140 | 7577 | 1895 |
-| `.spec/archive/2026-04-19-143831-post-push-health-check.md` | 79 | 1410 | 9084 | 2271 |
-| `.spec/archive/2026-04-19-153936-fix-ci-sod-locale.md` | 74 | 1078 | 7577 | 1895 |
+| `.spec/archive/2026-04-19-132448-guard-external-publishing.md` | 66 | 1140 | 7578 | 1895 |
+| `.spec/archive/2026-04-19-143831-post-push-health-check.md` | 79 | 1410 | 9085 | 2272 |
+| `.spec/archive/2026-04-19-153936-fix-ci-sod-locale.md` | 74 | 1078 | 7578 | 1895 |
 | `.spec/archive/2026-04-19-160507-fix-ci-locale-matching-and-diagnostics.md` | 72 | 1239 | 8267 | 2067 |
 | `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
 | `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
-| `.spec/changes/fix-ci-wc-w-vs16-strip.md` | 62 | 1130 | 7921 | 1981 |
+| `.spec/changes/fix-ci-wc-w-use-awk.md` | 64 | 813 | 5511 | 1378 |
+| `.spec/changes/fix-ci-wc-w-vs16-strip.md` | 62 | 1124 | 7929 | 1983 |
 | `.spec/devlog.jsonl` | 5 | 93 | 1419 | 355 |
 | `.spec/flowlog.jsonl` | 36 | 923 | 11792 | 2948 |
 | `AGENTS.md` | 32 | 288 | 2032 | 508 |
@@ -78,7 +79,7 @@
 | `README.md` | 188 | 1191 | 7836 | 1959 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 21425 | 183657 | 45915 |
+| `docs/dust.html` | 655 | 21421 | 183664 | 45916 |
 | `docs/index.html` | 136 | 324 | 3723 | 931 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
 | `packs/index.json` | 41 | 107 | 1366 | 342 |
@@ -89,12 +90,12 @@
 | `packs/swift/v0/README.md` | 80 | 217 | 1632 | 408 |
 | `scripts/archive-done-changes.sh` | 103 | 265 | 2139 | 535 |
 | `scripts/build-dust.sh` | 258 | 903 | 8034 | 2009 |
-| `scripts/check-deploy-health.sh` | 182 | 854 | 6193 | 1549 |
+| `scripts/check-deploy-health.sh` | 182 | 854 | 6194 | 1549 |
 | `scripts/devlog.sh` | 71 | 333 | 2419 | 605 |
 | `scripts/flowlog.sh` | 83 | 395 | 2910 | 728 |
 | `scripts/merge-completed-work.sh` | 165 | 475 | 3749 | 938 |
-| `scripts/update-sod-report.sh` | 383 | 1364 | 10892 | 2723 |
+| `scripts/update-sod-report.sh` | 380 | 1308 | 10489 | 2623 |
 | `setup.sh` | 151 | 662 | 4341 | 1086 |
 | `templates/dust.html` | 655 | 1857 | 21516 | 5379 |
-| `tests/test-spec-gate.sh` | 625 | 2011 | 18124 | 4531 |
-| `tests/test-workflow-scripts.sh` | 776 | 3157 | 26964 | 6741 |
+| `tests/test-spec-gate.sh` | 625 | 2011 | 18125 | 4532 |
+| `tests/test-workflow-scripts.sh` | 762 | 2981 | 25977 | 6495 |
