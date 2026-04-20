@@ -49,12 +49,17 @@ jsonl_to_js_array() {
       else
         result+=","
       fi
-      # Escape backslashes, quotes, </script>, and JS line separators (U+2028/U+2029)
-      local escaped="$line"
-      escaped="${escaped//\\/\\\\}"
-      escaped="${escaped//\"/\\\"}"
-      escaped="${escaped//<\/script>/<\\\/script>}"
-      escaped="$(printf '%s' "$escaped" | sed $'s/\xe2\x80\xa8/\\\\u2028/g; s/\xe2\x80\xa9/\\\\u2029/g')"
+      # Escape backslashes, quotes, </script>, and JS line separators
+      # (U+2028/U+2029) via sed under LC_ALL=C. Order matters: double
+      # backslashes first so the later </script> substitution adds a
+      # fresh single `\` inside an already-doubled context.
+      local escaped
+      escaped="$(printf '%s' "$line" | LC_ALL=C sed \
+        -e 's|\\|\\\\|g' \
+        -e 's|"|\\"|g' \
+        -e 's|</script>|<\\/script>|g' \
+        -e $'s|\xe2\x80\xa8|\\\\u2028|g' \
+        -e $'s|\xe2\x80\xa9|\\\\u2029|g')"
       result+="\"$escaped\""
     done < "$file"
   fi
@@ -168,15 +173,31 @@ save_section() {
   esac
 }
 
-# Escape a string for embedding in JS
+# Escape a string for embedding in a JS string literal. Uses sed under
+# LC_ALL=C so behavior is byte-exact and identical across bash 3.2
+# (macOS) and bash 5 (Ubuntu) — bash parameter-expansion replacement
+# semantics differ between them for backslash-heavy patterns, producing
+# different escape depths and failing CI's `--check`.
 escape_str() {
   local s="$1"
-  s="${s//\\/\\\\}"
-  s="${s//\"/\\\"}"
-  s="${s//$'\n'/\\n}"
+  # Strip CR (cheap, safe bash PE on single-byte char).
   s="${s//$'\r'/}"
-  s="${s//<\/script>/<\\\/script>}"
-  printf '%s' "$s"
+  # Use awk to handle the whole string as one record (RS is a char we
+  # know never appears in our text input: U+0001 SOH). `gsub` then does
+  # byte-exact literal substitutions without bash PE's version-dependent
+  # backslash interpretation and without sed's BSD/GNU differences in
+  # branch-label syntax. Order matters: double `\` first so we don't
+  # re-escape backslashes we add later.
+  printf '%s' "$s" | LC_ALL=C awk '
+    BEGIN { RS = "\001"; ORS = "" }
+    {
+      gsub(/\\/, "\\\\");
+      gsub(/"/, "\\\"");
+      gsub(/<\/script>/, "<\\\\/script>");
+      gsub(/\n/, "\\n");
+      print
+    }
+  '
 }
 
 # Collect change files
