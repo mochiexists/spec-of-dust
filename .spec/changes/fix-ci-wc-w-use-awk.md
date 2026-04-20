@@ -1,4 +1,4 @@
-status: verify
+status: done
 files: scripts/update-sod-report.sh, tests/test-workflow-scripts.sh, .spec/sod-report.md, README.md, docs/dust.html
 
 # Fix CI: switch word count from wc -w to awk NF for cross-platform determinism
@@ -53,12 +53,16 @@ No functional blockers.
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
-
+- [x] `count_value` uses `LC_ALL="$UTF8_LOCALE" awk '{ n += NF } END { print n+0 }' "$path"` for `-w`. Confirmed at `scripts/update-sod-report.sh:95`.
+- [x] `VS16_BYTES` constant and sed pipe removed.
+- [x] `.spec/sod-report.md` + `README.md` summary regenerated; `--check` clean on macOS AND Ubuntu (verified via docker on the pushed tree).
+- [x] `sod_report_word_count_matches_awk_fields` passes (⚠️ fixture → Words=2).
+- [x] `sod_report_word_count_stable_for_bsd_gnu_divergent_chars` passes (a⚠b → Words=1 — would fail the old wc-w impl on macOS with result 2).
+- [x] `sod_report_preserves_non_vs16_chars_sharing_bytes` removed.
+- [x] `--check` clean locally.
 
 ## Closure
-<!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
-- Challenges: nothing notable
-- Learnings: nothing notable
-- Outcomes: nothing notable
-- Dust: nothing notable
+- Challenges: VS-16 strip was a targeted fix for the wrong root cause. Real problem is that BSD and GNU `wc -w` classify non-ASCII chars (like `⚠` U+26A0) differently as word boundaries. Stripping just VS-16 left the bare ⚠ still diverging. CI caught this on the pushed merge of the VS-16 fix.
+- Learnings: `wc -w` is not cross-platform-stable for non-ASCII content regardless of what gets stripped — BSD has more aggressive word-boundary classification than GNU. `awk '{print NF}'` is locale-insensitive for whitespace and gives identical results on BSD awk and GNU awk. For any future cross-platform text-stat work, prefer awk over wc for word counts. Codex peer review flagged python3 as a zero-dep violation even though it was my gut-reaction fix; awk kept the contract.
+- Outcomes: sod-report is byte-identical on macOS and Ubuntu now — verified against the actual files that failed CI (dust.html 21421, fix-ci change file 1124). Two committed fix-ci changes in sequence: VS-16 strip (necessary intermediate) and awk switch (real fix).
+- Dust: the counter learned to stop reading the world and just count the spaces between things.
