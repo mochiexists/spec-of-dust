@@ -1,4 +1,4 @@
-status: verify
+status: done
 files: scripts/build-dust.sh, docs/dust.html, .spec/sod-report.md, README.md
 
 # Fix CI: make build-dust.sh escape logic portable across bash 3.2 and bash 5
@@ -48,4 +48,7 @@ Skipped: this is a focused fix for a concrete, CI-reproducible bug with a verifi
 - [x] Full test suite (`tests/test-workflow-scripts.sh`) passes 24/24 including the four `build-dust *` cases.
 
 ## Closure
-<!-- Filled on done transition. -->
+- Challenges: third fix-ci change in one session for macOS/Ubuntu output drift. Each layer peeled back revealed the next (VS-16 strip → wc->awk → escape_str bash-version issue). bash parameter-expansion replacement semantics differ between bash 3.2 and bash 5 in ways hard to isolate in minimal tests but surfacing on real content through two nested passes.
+- Learnings: when a cross-platform build produces different bytes and both invocations "work", suspect the bash version itself — bash 3.2 on macOS is stuck forever (Apple's GPLv3 avoidance). Portable scripts should avoid complex PE replacements with backslashes; prefer `sed` / `awk` under `LC_ALL=C` for any non-trivial byte-deterministic transformation. Also: when protecting against sentinel collision, avoid sentinel strings altogether where the tooling supports it (awk's `RS` can hold a single control byte).
+- Outcomes: `docs/dust.html` now byte-identical on macOS and Ubuntu. Three CI-driven fixes in sequence (VS-16 → awk wc → awk escape) restore full platform parity for the sod pipeline.
+- Dust: the shell learned which tools do not lie about backslashes.
