@@ -6,16 +6,16 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SPEC_DIR="$ROOT_DIR/.spec/changes"
 ARCHIVE_DIR="$ROOT_DIR/.spec/archive"
 VIEWER_SCRIPT="$ROOT_DIR/scripts/build-dust.sh"
-SOD_SCRIPT="$ROOT_DIR/scripts/update-sod-report.sh"
-require_done=0
+AOD_SCRIPT="$ROOT_DIR/scripts/update-aod-report.sh"
+require_present=0
 quiet=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --require-done) require_done=1 ;;
+    --require-present|--require-done) require_present=1 ;;
     --quiet) quiet=1 ;;
     *)
-      echo "Usage: $0 [--require-done] [--quiet]" >&2
+      echo "Usage: $0 [--require-present|--require-done] [--quiet]" >&2
       exit 1
       ;;
   esac
@@ -30,7 +30,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 [ -d "$SPEC_DIR" ] || {
-  [ "$require_done" -eq 0 ] && exit 0
+  [ "$require_present" -eq 0 ] && exit 0
   echo "Missing .spec/changes directory." >&2
   exit 1
 }
@@ -63,7 +63,8 @@ for f in "$SPEC_DIR"/*.md; do
     _template.md|_example-*) continue ;;
   esac
 
-  if [ "$(extract_status "$f")" = "done" ]; then
+  case "$(extract_status "$f")" in
+    present|done)
     basename_f="$(basename "$f")"
     timestamp="$(date -u +%Y-%m-%d-%H%M%S)"
     dest="$ARCHIVE_DIR/${timestamp}-${basename_f}"
@@ -74,7 +75,8 @@ for f in "$SPEC_DIR"/*.md; do
 
     git mv "$f" "$dest"
     archived=$((archived + 1))
-  fi
+    ;;
+  esac
 done
 
 if [ "$archived" -gt 0 ]; then
@@ -83,14 +85,14 @@ if [ "$archived" -gt 0 ]; then
     stage_if_exists "$ROOT_DIR/docs/dust.html"
   fi
 
-  if [ -x "$SOD_SCRIPT" ]; then
-    "$SOD_SCRIPT"
+  if [ -x "$AOD_SCRIPT" ]; then
+    "$AOD_SCRIPT"
     stage_if_exists "$ROOT_DIR/README.md"
-    stage_if_exists "$ROOT_DIR/.spec/sod-report.md"
+    stage_if_exists "$ROOT_DIR/.spec/aod-report.md"
   fi
 fi
 
-if [ "$archived" -eq 0 ] && [ "$require_done" -eq 1 ]; then
+if [ "$archived" -eq 0 ] && [ "$require_present" -eq 1 ]; then
   echo "No completed standard change files found in .spec/changes/." >&2
   exit 1
 fi

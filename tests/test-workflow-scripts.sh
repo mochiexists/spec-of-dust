@@ -38,24 +38,24 @@ make_repo() {
   printf '%s\n' "$repo"
 }
 
-seed_done_change() {
+seed_present_change() {
   find .spec/changes -maxdepth 1 -type f -name '*.md' \
     ! -name '_template.md' \
     ! -name '_example-*' \
     -delete
 
   cat > .spec/changes/test-change.md <<'EOF'
-status: done
+status: present
 
 # Test change
 
-## What
+## Intent
 Test-only completed change for workflow script validation.
 
-## Acceptance criteria
+## Checks
 - [x] workflow script fixture
 
-## Peer spec review
+## Peer architecture review
 Synthetic fixture.
 
 ## Peer code review
@@ -147,11 +147,11 @@ archive_script_uses_utc_and_refreshes_outputs() {
 
     if (
       cd "$repo"
-      seed_done_change
+      seed_present_change
       bash scripts/build-dust.sh
-      bash scripts/update-sod-report.sh
-      git add .spec/changes docs/dust.html README.md .spec/sod-report.md
-      git commit --no-verify -qm 'setup: done change'
+      bash scripts/update-aod-report.sh
+      git add .spec/changes docs/dust.html README.md .spec/aod-report.md
+      git commit --no-verify -qm 'setup: present change'
 
       local utc_hour_before utc_hour_after local_hour archived_file archived_base archived_hour
       utc_hour_before="$(TZ=UTC date +%H)"
@@ -174,10 +174,10 @@ archive_script_uses_utc_and_refreshes_outputs() {
       [ "$archived_hour" != "$local_hour" ] || exit 1
 
       bash scripts/build-dust.sh --check
-      bash scripts/update-sod-report.sh --check
+      bash scripts/update-aod-report.sh --check
       git diff --cached --name-only | grep -Fx 'docs/dust.html' >/dev/null
       git diff --cached --name-only | grep -Fx 'README.md' >/dev/null
-      git diff --cached --name-only | grep -Fx '.spec/sod-report.md' >/dev/null
+      git diff --cached --name-only | grep -Fx '.spec/aod-report.md' >/dev/null
     ); then
       pass "archive script uses UTC and refreshes outputs"
       return 0
@@ -209,22 +209,22 @@ push_auto_delivers_to_remote() {
     else
       printf '\npush: auto\n' >> .spec/b-startup.md
     fi
-    bash scripts/update-sod-report.sh
+    bash scripts/update-aod-report.sh
     git add -A
     git -c core.hooksPath=/dev/null commit -qm 'config: push auto'
     git remote add origin "$bare_remote"
     git push -u origin main 2>/dev/null
 
-    seed_done_change
+    seed_present_change
     bash scripts/build-dust.sh
-    bash scripts/update-sod-report.sh
+    bash scripts/update-aod-report.sh
     git add -A
-    git -c core.hooksPath=/dev/null commit -qm 'setup: done change'
+    git -c core.hooksPath=/dev/null commit -qm 'setup: present change'
 
     bash scripts/merge-completed-work.sh
 
     # Verify the archive commit arrived at the remote
-    git -C "$bare_remote" log --oneline -1 | grep -q "archive completed specs" || exit 1
+    git -C "$bare_remote" log --oneline -1 | grep -q "archive presented changes" || exit 1
   ) || fail "push auto delivers to remote"
 
   pass "push auto delivers to remote"
@@ -242,15 +242,15 @@ push_skipped_when_no_origin() {
     else
       printf '\npush: auto\n' >> .spec/b-startup.md
     fi
-    bash scripts/update-sod-report.sh
+    bash scripts/update-aod-report.sh
     git add -A
     git -c core.hooksPath=/dev/null commit -qm 'config: push auto'
 
-    seed_done_change
+    seed_present_change
     bash scripts/build-dust.sh
-    bash scripts/update-sod-report.sh
+    bash scripts/update-aod-report.sh
     git add -A
-    git -c core.hooksPath=/dev/null commit -qm 'setup: done change'
+    git -c core.hooksPath=/dev/null commit -qm 'setup: present change'
 
     output="$(bash scripts/merge-completed-work.sh 2>&1)"
     printf '%s\n' "$output" | grep -qF "No remote" || exit 1
@@ -270,25 +270,25 @@ setup_configures_self_update_scaffolding() {
     bash setup.sh >/dev/null 2>&1
 
     # b-startup.md should have both self-update keys
-    grep -qF 'sod-upstream:' .spec/b-startup.md || exit 1
-    grep -qF 'sod-check-interval: 30d' .spec/b-startup.md || exit 1
+    grep -qF 'aod-upstream:' .spec/b-startup.md || exit 1
+    grep -qF 'aod-check-interval: 30d' .spec/b-startup.md || exit 1
 
-    # .gitignore should list sod-last-checked
-    grep -qF '.spec/sod-last-checked' .gitignore || exit 1
+    # .gitignore should list aod-last-checked
+    grep -qF '.spec/aod-last-checked' .gitignore || exit 1
 
     # Running setup again should be idempotent (no duplicate gitignore entries)
     bash setup.sh >/dev/null 2>&1
-    [ "$(grep -cF '.spec/sod-last-checked' .gitignore)" = "1" ] || exit 1
+    [ "$(grep -cF '.spec/aod-last-checked' .gitignore)" = "1" ] || exit 1
   ) || fail "setup configures self-update scaffolding"
 
   pass "setup configures self-update scaffolding"
 }
 
-sod_report_word_count_matches_awk_fields() {
+aod_report_word_count_matches_awk_fields() {
   # The VS-16 warning-emoji fixture still works with the awk impl.
   # `⚠️  test` -> one whitespace-separated field (`⚠️`) + "test" = 2 words.
   local repo row words
-  repo="$(make_repo sod-awk-vs16)"
+  repo="$(make_repo aod-awk-vs16)"
 
   (
     cd "$repo"
@@ -297,18 +297,18 @@ sod_report_word_count_matches_awk_fields() {
     git add fixtures/emoji.md
     git -c core.hooksPath=/dev/null commit -qm "add emoji fixture"
 
-    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
+    bash scripts/update-aod-report.sh >/dev/null 2>&1 || exit 1
 
-    row="$(grep -F "fixtures/emoji.md" .spec/sod-report.md || true)"
+    row="$(grep -F "fixtures/emoji.md" .spec/aod-report.md || true)"
     [ -n "$row" ] || exit 1
     words="$(printf '%s' "$row" | awk -F'|' '{gsub(/ /,"",$4); print $4}')"
     [ "$words" = "2" ] || { echo "expected words=2 for ⚠️ + test, got '$words'" >&2; exit 1; }
-  ) || fail "sod-report word count matches awk NF (⚠️ fixture)"
+  ) || fail "aod-report word count matches awk NF (⚠️ fixture)"
 
-  pass "sod-report word count matches awk NF (⚠️ fixture)"
+  pass "aod-report word count matches awk NF (⚠️ fixture)"
 }
 
-sod_report_word_count_stable_for_bsd_gnu_divergent_chars() {
+aod_report_word_count_stable_for_bsd_gnu_divergent_chars() {
   # Regression: `wc -w` disagrees between BSD and GNU for non-ASCII chars
   # that BSD's locale considers non-word (e.g. U+26A0 WARNING SIGN):
   # `a⚠b` under wc -w is 2 on BSD, 1 on GNU. awk's default field splitter
@@ -316,7 +316,7 @@ sod_report_word_count_stable_for_bsd_gnu_divergent_chars() {
   # This fixture is the minimal reproducer from the CI failure that drove
   # this change.
   local repo row words
-  repo="$(make_repo sod-awk-bsd-gnu-divergent)"
+  repo="$(make_repo aod-awk-bsd-gnu-divergent)"
 
   (
     cd "$repo"
@@ -325,23 +325,23 @@ sod_report_word_count_stable_for_bsd_gnu_divergent_chars() {
     git add fixtures/tight.md
     git -c core.hooksPath=/dev/null commit -qm "add tight fixture"
 
-    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
+    bash scripts/update-aod-report.sh >/dev/null 2>&1 || exit 1
 
-    row="$(grep -F "fixtures/tight.md" .spec/sod-report.md || true)"
+    row="$(grep -F "fixtures/tight.md" .spec/aod-report.md || true)"
     [ -n "$row" ] || exit 1
     words="$(printf '%s' "$row" | awk -F'|' '{gsub(/ /,"",$4); print $4}')"
     [ "$words" = "1" ] || { echo "expected words=1 (a⚠b is one whitespace-delimited token), got '$words' — wc -w divergence may have regressed" >&2; exit 1; }
-  ) || fail "sod-report word count stable for BSD/GNU-divergent chars"
+  ) || fail "aod-report word count stable for BSD/GNU-divergent chars"
 
-  pass "sod-report word count stable for BSD/GNU-divergent chars"
+  pass "aod-report word count stable for BSD/GNU-divergent chars"
 }
 
-sod_report_matches_ubuntu_style_locale_name() {
+aod_report_matches_ubuntu_style_locale_name() {
   # Reproduces the exact Ubuntu failure: `locale -a` prints `C.utf8`
   # (lowercase, no hyphen). Script must normalize and succeed, AND use
   # the exact system-reported name C.utf8 (not the canonical C.UTF-8).
   local repo fake_locale_cmd selected
-  repo="$(make_repo sod-ubuntu-locale)"
+  repo="$(make_repo aod-ubuntu-locale)"
   fake_locale_cmd="$TMP_DIR/fake-locale.sh"
 
   cat > "$fake_locale_cmd" <<'EOF'
@@ -360,20 +360,20 @@ EOF
       set -euo pipefail
       export SOD_LOCALE_LIST_CMD='$fake_locale_cmd'
       # Extract and run only pick_utf8_locale + its invocation
-      source scripts/update-sod-report.sh 2>/dev/null || true
+      source scripts/update-aod-report.sh 2>/dev/null || true
       printf '%s' \"\$UTF8_LOCALE\"
     " 2>/dev/null || true)"
     [ "$selected" = "C.utf8" ] || { echo "expected UTF8_LOCALE=C.utf8, got '$selected'" >&2; exit 1; }
     # Also confirm the full run succeeds with this locale
-    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
-  ) || fail "sod-report uses exact system locale name (C.utf8)"
+    bash scripts/update-aod-report.sh >/dev/null 2>&1 || exit 1
+  ) || fail "aod-report uses exact system locale name (C.utf8)"
 
-  pass "sod-report uses exact system locale name (C.utf8)"
+  pass "aod-report uses exact system locale name (C.utf8)"
 }
 
-sod_report_hard_fails_when_no_utf8_locale() {
+aod_report_hard_fails_when_no_utf8_locale() {
   local repo fake_locale_cmd output
-  repo="$(make_repo sod-no-utf8)"
+  repo="$(make_repo aod-no-utf8)"
   fake_locale_cmd="$TMP_DIR/fake-locale-empty.sh"
 
   # A fake `locale -a` that only emits non-UTF-8 entries
@@ -387,37 +387,37 @@ EOF
   (
     cd "$repo"
     export SOD_LOCALE_LIST_CMD="$fake_locale_cmd"
-    output="$(bash scripts/update-sod-report.sh 2>&1)" && exit 1
+    output="$(bash scripts/update-aod-report.sh 2>&1)" && exit 1
     printf '%s\n' "$output" | grep -qF "no UTF-8 locale available" || exit 1
-  ) || fail "sod-report hard-fails when no UTF-8 locale"
+  ) || fail "aod-report hard-fails when no UTF-8 locale"
 
-  pass "sod-report hard-fails when no UTF-8 locale"
+  pass "aod-report hard-fails when no UTF-8 locale"
 }
 
-sod_check_emits_diff_on_stale_output() {
+aod_check_emits_diff_on_stale_output() {
   local repo output
-  repo="$(make_repo sod-diff-diag)"
+  repo="$(make_repo aod-diff-diag)"
 
   (
     cd "$repo"
     # Ensure a clean baseline first
-    bash scripts/update-sod-report.sh >/dev/null 2>&1
+    bash scripts/update-aod-report.sh >/dev/null 2>&1
     # Now corrupt the committed report so --check fails
-    echo "SYNTHETIC STALE MARKER — should-appear-in-diff" >> .spec/sod-report.md
+    echo "SYNTHETIC STALE MARKER — should-appear-in-diff" >> .spec/aod-report.md
 
-    output="$(bash scripts/update-sod-report.sh --check 2>&1)" && exit 1
+    output="$(bash scripts/update-aod-report.sh --check 2>&1)" && exit 1
     # Diff markers should appear (unified diff format)
     printf '%s\n' "$output" | grep -qE '^(---|\+\+\+|@@) ' || exit 1
     # The stale-only line should appear in the diff, confirming diff is meaningful
     printf '%s\n' "$output" | grep -qF "SYNTHETIC STALE MARKER" || exit 1
-  ) || fail "sod --check emits diff on stale output"
+  ) || fail "aod --check emits diff on stale output"
 
-  pass "sod --check emits diff on stale output"
+  pass "aod --check emits diff on stale output"
 }
 
-sod_report_counts_unicode_codepoints_not_bytes() {
+aod_report_counts_unicode_codepoints_not_bytes() {
   local repo report
-  repo="$(make_repo sod-unicode)"
+  repo="$(make_repo aod-unicode)"
 
   (
     cd "$repo"
@@ -432,13 +432,13 @@ sod_report_counts_unicode_codepoints_not_bytes() {
     # 5 code-points + newline = 6 chars, 15 bytes + newline = 16 bytes.
     # The discriminator 6-vs-16 is how we detect locale drift.
     printf '\xe2\x80\x94\xe2\x80\x94\xe2\x80\x94\xe2\x80\x94\xe2\x80\x94\n' > fixtures/mbchars.md
-    # The sod script lists files via `git ls-files`, so stage the fixture
+    # The AoD script lists files via `git ls-files`, so stage the fixture
     git add fixtures/mbchars.md
     git -c core.hooksPath=/dev/null commit -qm "add mbchars fixture"
 
     # Run the script and inspect the generated row for fixtures/mbchars.md
-    bash scripts/update-sod-report.sh >/dev/null 2>&1 || exit 1
-    report="$(cat .spec/sod-report.md)"
+    bash scripts/update-aod-report.sh >/dev/null 2>&1 || exit 1
+    report="$(cat .spec/aod-report.md)"
 
     # Extract the character count column for the fixture file's row
     # Format: | `path` | lines | words | chars | tokens |
@@ -450,9 +450,9 @@ sod_report_counts_unicode_codepoints_not_bytes() {
     # Expected: 6 code-points (5 em-dashes + 1 newline). If we were counting
     # bytes we'd see 16. The assertion discriminates the two.
     [ "$chars" = "6" ] || { echo "expected 6 code-points, got '$chars'" >&2; exit 1; }
-  ) || fail "sod-report counts unicode code-points not bytes"
+  ) || fail "aod-report counts unicode code-points not bytes"
 
-  pass "sod-report counts unicode code-points not bytes"
+  pass "aod-report counts unicode code-points not bytes"
 }
 
 build_dust_regenerates_from_template() {
@@ -653,11 +653,11 @@ check_deploy_health_exit_1_on_failure() {
     chmod +x check.sh
     export PATH="$shim:$PATH"
     export SHIM_RUN_LIST_JSON="[{\"databaseId\":42,\"name\":\"Validate\",\"status\":\"completed\",\"conclusion\":\"failure\",\"workflowName\":\"Validate\",\"url\":\"https://example.com/42\",\"headSha\":\"$head_sha\"}]"
-    export SHIM_RUN_VIEW_JSON='{"jobs":[{"steps":[{"name":"Check sod outputs","conclusion":"failure"}]}]}'
+    export SHIM_RUN_VIEW_JSON='{"jobs":[{"steps":[{"name":"Check AoD outputs","conclusion":"failure"}]}]}'
     output="$(bash ./check.sh 2>&1)" && rc=0 || rc=$?
     [ "$rc" = "1" ] || exit 1
     printf '%s\n' "$output" | grep -qF "Validate" || exit 1
-    printf '%s\n' "$output" | grep -qF "Check sod outputs" || exit 1
+    printf '%s\n' "$output" | grep -qF "Check AoD outputs" || exit 1
     printf '%s\n' "$output" | grep -qF "https://example.com/42" || exit 1
   ) || fail "check-deploy-health exit 1 on failure"
 
@@ -744,12 +744,12 @@ check_deploy_health_failure_takes_precedence_over_in_progress() {
 }
 
 setup_configures_self_update_scaffolding
-sod_report_word_count_matches_awk_fields
-sod_report_word_count_stable_for_bsd_gnu_divergent_chars
-sod_report_matches_ubuntu_style_locale_name
-sod_report_hard_fails_when_no_utf8_locale
-sod_check_emits_diff_on_stale_output
-sod_report_counts_unicode_codepoints_not_bytes
+aod_report_word_count_matches_awk_fields
+aod_report_word_count_stable_for_bsd_gnu_divergent_chars
+aod_report_matches_ubuntu_style_locale_name
+aod_report_hard_fails_when_no_utf8_locale
+aod_check_emits_diff_on_stale_output
+aod_report_counts_unicode_codepoints_not_bytes
 build_dust_regenerates_from_template
 build_dust_errors_on_missing_markers
 build_dust_errors_on_missing_template

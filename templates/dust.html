@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>spec-of-dust &middot; dust</title>
+    <title>architect-of-dust &middot; dust</title>
     <style>
       :root {
         --bg: #f4efe6;
@@ -229,7 +229,7 @@
         border: 1px solid rgba(140, 79, 47, 0.2);
       }
 
-      .status-badge.done {
+      .status-badge.complete {
         background: rgba(74, 124, 89, 0.12);
         color: var(--smooth);
         border: 1px solid rgba(74, 124, 89, 0.3);
@@ -271,7 +271,7 @@
     <main>
       <h1>dust</h1>
       <p class="subtitle">
-        Browse workflow logs from spec-of-dust.
+        Browse workflow logs from architect-of-dust.
       </p>
 
       <div id="app" style="display:none">
@@ -350,7 +350,10 @@
             filtered = allEntries;
           } else if (currentFilter === "dust") {
             filtered = allEntries.filter(
-              (e) => e._source === "change" && e.status === "done" && hasRealDust(e)
+              (e) =>
+                e._source === "change" &&
+                (e.status === "present" || e.status === "done") &&
+                hasRealDust(e)
             );
           } else {
             filtered = allEntries.filter((e) => e._source === currentFilter);
@@ -367,10 +370,16 @@
 
           renderStats();
 
-          // Separate active (non-done) changes from the rest
+          // Separate active (non-present) changes from the rest while keeping
+          // old `done` entries compatible in archives.
           const activeSection = document.getElementById("activeSection");
-          const activeChanges = filtered.filter((e) => e._source === "change" && e.status && e.status !== "done");
-          const timelineEntries = filtered.filter((e) => !(e._source === "change" && e.status && e.status !== "done"));
+          const isCompleted = (status) => status === "present" || status === "done";
+          const activeChanges = filtered.filter(
+            (e) => e._source === "change" && e.status && !isCompleted(e.status)
+          );
+          const timelineEntries = filtered.filter(
+            (e) => !(e._source === "change" && e.status && !isCompleted(e.status))
+          );
 
           activeSection.textContent = "";
           if (activeChanges.length > 0 && (currentFilter === "all" || currentFilter === "change")) {
@@ -560,7 +569,8 @@
           header.appendChild(el("span", { className: "entry-ts", textContent: formatTs(entry.ts) }));
           header.appendChild(el("span", { className: "entry-source", textContent: "change" }));
 
-          const statusCls = "status-badge" + (entry.status === "done" ? " done" : "");
+          const statusCls =
+            "status-badge" + (entry.status === "present" || entry.status === "done" ? " complete" : "");
           header.appendChild(el("span", { className: statusCls, textContent: entry.status || "\u2014" }));
 
           article.appendChild(header);
@@ -596,7 +606,8 @@
           }
 
           // Peer review and verify as collapsible
-          const hasReview = entry.peer_spec_review || entry.peer_code_review || entry.verify;
+          const hasReview =
+            entry.peer_architecture_review || entry.peer_spec_review || entry.peer_code_review || entry.verify;
           if (hasReview) {
             const details = document.createElement("details");
             details.className = "entry-details";
@@ -606,7 +617,11 @@
 
             const content = el("div", { className: "detail-content" });
             const fields = el("div", { className: "entry-fields" });
-            if (entry.peer_spec_review) appendField(fields, "spec review", entry.peer_spec_review);
+            if (entry.peer_architecture_review) {
+              appendField(fields, "architecture review", entry.peer_architecture_review);
+            } else if (entry.peer_spec_review) {
+              appendField(fields, "architecture review", entry.peer_spec_review);
+            }
             if (entry.peer_code_review) appendField(fields, "code review", entry.peer_code_review);
             if (entry.verify) appendField(fields, "verify", entry.verify);
             content.appendChild(fields);

@@ -1,6 +1,6 @@
 # JavaScript / TypeScript Pack
 
-Stack-specific gate suggestions for JavaScript and TypeScript projects using `spec-of-dust`.
+Stack-specific gate suggestions for JavaScript and TypeScript projects using `architect-of-dust`.
 These are suggestions, not requirements — adapt to your project's needs.
 
 ## Local gates
@@ -65,7 +65,7 @@ jobs:
       - run: npx prettier --check .
       - run: npx tsc --noEmit
       - run: npx vitest run
-      - run: bash scripts/update-sod-report.sh --check
+      - run: bash scripts/update-aod-report.sh --check
       - run: bash tests/test-spec-gate.sh
 ```
 

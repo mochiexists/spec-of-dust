@@ -1,49 +1,49 @@
-# spec-of-dust
+# architect-of-dust
 
-> **Experimental.** This is an early experiment in AI-collaborative workflow design.
-> The flow, file shapes, and gates will change. It might turn out to be a bad idea.
-> No support commitment, no stability promise — use at your own risk and fork freely.
-> Feedback welcome, but this isn't a product yet.
+> **Experimental.** This is an early architecture-first workflow for
+> AI-assisted development. The flow, templates, and gates will keep changing.
 
-`spec-of-dust` is a zero-dependency spec, review, and gate workflow for AI-assisted
-development. No CLI tools, no slash commands, no npm packages. Just markdown files,
-plain Git hooks, and a root layout that stays clean as a repo grows.
+`architect-of-dust` is a zero-dependency architecture, review, and gate
+workflow for AI-assisted development. No CLI tools, no slash commands, no npm
+packages. Just markdown files, plain Git hooks, and a root layout that stays
+clean as a repo grows.
 
-It is designed to be publishable as a real project: local-first by default, but ready
-to grow into GitHub Pages docs, GitHub Release artifacts, language-specific gate packs,
-and starter repo layouts.
-
-<!-- sod-summary:start -->
-## sod
+<!-- aod-summary:start -->
+## aod
 
 - Version: `0.2.0`
-- Files: `87`
-- Lines: `8953`
-- Words: `80048`
-- Characters: `617881`
-- Est. tokens: `154502`
-- bootstrap sod: `3222 / 3000 target`
-- operational sod: `5997 / 5000 target`
+- Files: `90`
+- Lines: `9271`
+- Words: `82911`
+- Characters: `640867`
+- Est. tokens: `160249`
+- bootstrap aod: `3213 / 3000 target`
+- operational aod: `6676 / 5000 target`
 
-See `.spec/sod-report.md` for the full per-file breakdown.
-<!-- sod-summary:end -->
+See `.spec/aod-report.md` for the full per-file breakdown.
+<!-- aod-summary:end -->
 
 ## How it works
 
-```
-spec → build → verify → done
+```text
+architect -> build -> verify -> present
 ```
 
-1. **Spec** — Write what you're building in a change file. 10-30 lines, not a PRD.
-2. **Peer review** — The other AI model reviews your spec before you build.
-3. **Build** — Implement. The spec's acceptance criteria guide the work.
-4. **Peer review** — The other AI model reviews the code against the spec.
-5. **Verify** — Walk through every acceptance criterion. Pass/fail each one.
-6. **Done** — The merge helper archives and commits completed changes; a plain merge stages the archive closeout via `post-merge`.
+1. **Architect** — write the architecture note for the change: intent,
+   ordering, constraints, and checks.
+2. **Peer architecture review** — the other model reviews the plan before code.
+3. **Build** — implement within the declared scope.
+4. **Peer code review** — the other model reviews the diff against the change.
+5. **Verify** — walk through every listed check and mark pass/fail.
+6. **Present** — the change is locally complete and ready to merge, split, or
+   continue through a follow-up.
+
+AoD is explicitly not a ticket-spec framework. The point is to architect the
+change first, then build, verify, and present it.
 
 ## Root Layout
 
-```
+```text
 apps/                       # Deployable apps and services
 packages/                   # Shared modules, configs, tooling
 docs/                       # Docked documentation and ADRs
@@ -53,20 +53,20 @@ packs/                      # Source definitions for future release packs
   FLOW.md                   # Workflow rules (AI reads this)
   b-startup.md              # Minimal boot brief read on session start
   devlog.jsonl              # Structured audit log for skip-no-verify commits
-  flowlog.jsonl             # Workflow feedback log (beta) for completed changes
+  flowlog.jsonl             # Workflow feedback log for completed changes
   changes/
     _template.md            # Template for new changes
-    my-feature.md           # Active change (one per feature)
-  archive/                  # Completed changes after archive closeout
+    my-change.md            # Active change
+  archive/                  # Presented changes after archive closeout
 .githooks/
   pre-commit                # Blocks code commits without an active change file
-  prepare-commit-msg        # Enforces trivial-only skip logging, even with --no-verify
+  prepare-commit-msg        # Enforces trivial-only skip logging
   post-merge                # Stages archive closeout after plain merges
 AGENTS.md                   # Agent-agnostic project context
 CODEX.md                    # Codex-specific notes
 CLAUDE.md                   # Claude Code specific config
 VERSION                     # Current project version
-scripts/                    # Repo-local automation such as sod generation
+scripts/                    # Repo-local automation such as AoD metrics
 ```
 
 ## Setup
@@ -75,128 +75,138 @@ scripts/                    # Repo-local automation such as sod generation
 bash setup.sh
 ```
 
-That's it. It configures git to use the hooks in `.githooks/` and creates the directories.
+That wires up `.githooks/`, creates the `.spec/` scaffolding, and leaves the
+repo ready for the workflow.
 
 ## Usage
 
 ```bash
-# Start a new feature
 cp .spec/changes/_template.md .spec/changes/add-dark-mode.md
-# Edit the file, set status: spec, write your spec
-# AI picks it up automatically on session start
 ```
 
-The AI reads `.spec/b-startup.md` and `.spec/FLOW.md` and knows what to do. You don't need to remember commands.
+Then edit the file:
+- set `status: architect`
+- write the intent
+- capture ordering if the work depends on other changes
+- list the checks that will prove the change
 
-## B:/ Start Up
+The AI reads `.spec/b-startup.md` and `.spec/FLOW.md` and resumes from the
+active change file.
 
-Read `.spec/b-startup.md` on session start. Keep long-lived detail in `docs/`, not in the startup brief.
+## Ordering
 
-Optional setup soundtrack: Blank Banshee, `B:/ Start Up`.
+AoD treats sequencing as first-class. Non-trivial changes should say:
+- what must happen first
+- what this change unlocks next
+- whether it is phase 1/n of a larger effort
 
-## Monorepo-Ready By Default
-
-The root is intentionally shaped for growth:
-
-- `apps/` holds deployable products and services
-- `packages/` holds shared modules, UI, config, schemas, and internal tooling
-- `docs/` keeps architecture notes, ADRs, and runbooks out of the root
-- `packs/` can hold versioned gate-pack sources without polluting the core workflow
-- `.spec/` and `.githooks/` stay repo-global, so the workflow scales across projects
+That lives in `## Ordering` inside the change file template. The framework does
+not force a graph structure yet, but it does force the issue into the open.
 
 ## Cross-model review
 
 Claude Code and Codex work as adversarial peers:
-- Before building, the active model sends the spec to the other for review
-- After building, the active model sends the diff to the other for review
-- If the other CLI isn't available, the AI prints a prompt for you to relay manually
+- before building, the active model sends the architecture note to the other
+- after building, the active model sends the staged diff to the other
+- if the other CLI is unavailable, the limitation is recorded explicitly
 
 The exact protocol lives in `.spec/FLOW.md`.
 
-## Skipping The Workflow
+## Skipping the workflow
 
-Some changes are too small for the full ceremony: typos, version bumps, comment tweaks,
-or a one-line fix with obvious intent. Those can skip the full flow, but the skip is still documented in `.spec/devlog.jsonl`.
+Some changes are too small for the full loop: typos, version bumps, comment
+tweaks, or a one-line fix with obvious intent. Those can skip the full flow, but
+the skip is still documented in `.spec/devlog.jsonl`.
 
-Use the exact skip rules in `.spec/FLOW.md`. The short version is:
-
-- only truly trivial, single-file, in-place changes qualify
-- skip commits must be logged
-- if it is small but not tiny, use a minimal spec instead of skipping
+If it is small but not tiny, use a minimal architecture note instead of skip
+mode.
 
 ## Gates
 
-In `spec-of-dust`, a gate is any mechanical check that must pass before work moves forward.
-The built-in local gates are intentionally small and local-first.
+In `architect-of-dust`, a gate is any mechanical check that must pass before
+work moves forward. The built-in local gates are intentionally small and
+local-first:
 
-You should extend these gates inline with your repo's real engineering policy.
+- active-change gate
+- present-closeout gate
+- scope gate
+- skip gate
+- archive gate
 
-## sod
+Extend these with your repo's real engineering policy.
 
-`sod` is the short name for `spec-of-dust` repo metrics.
+## AoD metrics
 
-- run `bash scripts/update-sod-report.sh` to refresh the committed report
-- the detailed report lives at `.spec/sod-report.md`
-- the README block near the top is generated from the same script
-- commit hooks expect the sod report and README summary to be fresh and staged when tracked text files change
+`aod` is the short name for the framework metrics in this repo.
 
-## Release Packs
+- run `bash scripts/update-aod-report.sh` to refresh the committed report
+- the detailed report lives at `.spec/aod-report.md`
+- the README summary block near the top is generated from the same script
+- commit hooks expect the metrics report and README summary to be fresh and
+  staged when tracked text files change
 
-`spec-of-dust` keeps the core workflow local and minimal, then layers optional stack defaults on top as release packs.
+## Migration from SoD
+
+AoD is the continuation of the old `spec-of-dust` framing.
+
+What changed conceptually:
+- `spec` becomes `architect`
+- `done` becomes `present`
+- change files lead with architecture intent, ordering, and checks
+- the framework is explicit that it is about system-shape thinking, not tiny
+  specs
+
+What stays mechanically similar:
+- one active change file per standard change
+- peer review before build and before verify
+- skip logging for truly trivial work
+- archive after completion
+
+What downstream repos may need to adopt manually:
+- rename their local docs and conventions from SoD to AoD
+- update any scripts or CI that depend on `status: spec` / `status: done`
+- decide whether to keep any old filenames as compatibility shims
+
+## Release packs
+
+`architect-of-dust` keeps the core workflow local and minimal, then layers
+optional stack defaults on top as release packs.
 
 - pack source lives under `packs/`
 - the public index lives at `packs/index.json`
-- future GitHub Releases can ship tarballs or zip assets built from those source directories
-- downstream repos can keep using plain Git hooks or adapt the same gate policy through tools like Husky
+- future GitHub Releases can ship tarballs or zip assets built from those
+  source directories
 
-The initial manifest is intentionally small: slug, version, summary, docs path, and artifact path.
-Artifact paths are placeholders for future release automation, not files that exist yet in the repo.
+## Publishing shape
 
-## Publishing Shape
+The repo has a minimal public shape:
 
-The repo now has a minimal public shape:
-
-- `README.md` explains the project and workflow
-- `docs/index.html` is a lightweight static entrypoint for GitHub Pages
-- `docs/README.md` holds the documentation dock
+- `README.md` explains the framework
+- `docs/index.html` is a lightweight static entrypoint
+- `docs/README.md` holds the docs dock
 - `.github/README.md` captures GitHub-facing publishing intent
-- `LICENSE` makes public reuse unambiguous
 
 ## Versioning
 
-`spec-of-dust` uses a lightweight manual version file at `VERSION`.
+`architect-of-dust` uses a lightweight manual version file at `VERSION`.
 
 - start at `0.0.1`
 - bump manually on meaningful repo changes
-- use normal semantic version formatting, such as `0.0.2`, `0.1.0`, and `1.0.0`
+- use normal semantic version formatting
 
-## Local Hooks And CI
+## Local hooks and CI
 
-The shipped hooks are the floor, not the ceiling. Extend them inline with your CI/CD so the same rules run locally and in automation.
+The shipped hooks are the floor, not the ceiling.
 
-- Put architecture checks, linting, unit tests, type checks, and safety rails close to the repo
-- Keep local hooks fast enough for normal commits; reserve heavier suites for CI when needed
-- Make CI the strict superset when possible, so local feedback is fast and CI is the final backstop
-- Treat hooks as project policy, not as a substitute for good architecture or good tests
-
-## Git Hooks vs Husky
-
-This approach is broadly portable, not literally universal.
-
-- It works well anywhere Git and Bash are normal: macOS, Linux, dev containers, CI, WSL, Git Bash
-- It is weaker on stock Windows environments that only assume `cmd.exe` or PowerShell
-- Git hooks are repo-local but not auto-installed on clone, which is why `setup.sh` exists
-
-Tools like Husky are popular because JavaScript repos already depend on Node and package managers:
-
-- `npm install` or `pnpm install` can auto-wire the hooks
-- teams get one more layer of cross-platform normalization
-- hook logic can reuse the same Node toolchain the repo already needs
-
-If you do not want Node as infrastructure, plain Git hooks are simpler and more language-agnostic.
+- put architecture checks, linting, tests, type checks, and safety rails close
+  to the repo
+- keep local hooks fast enough for normal commits
+- make CI the strict superset when possible
+- treat hooks as project policy, not as a substitute for architecture or tests
 
 ## Requirements
 
 - git
-- bash (for hooks; native on macOS/Linux, works via Git Bash or WSL on Windows)
-- That's it
+- bash (native on macOS/Linux, works via Git Bash or WSL on Windows)
+- awk, sed, grep, and other normal POSIX shell tools already expected in repo
+  scripting

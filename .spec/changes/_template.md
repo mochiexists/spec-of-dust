@@ -1,13 +1,18 @@
-status: spec
+status: architect
 files:
 
 # {Change name}
 
-## What
+## Intent
 <!-- One paragraph. What are we building/fixing/changing and why. -->
 
+## Ordering
+<!-- Optional but expected for non-trivial work. -->
+- Prerequisites:
+- Unlocks:
+- Sequence notes:
 
-## Acceptance criteria
+## Checks
 <!-- Simple checkboxes. These become your verify checklist. -->
 - [ ] 
 - [ ] 
@@ -19,7 +24,7 @@ files:
 <!-- Also note the expected Git account/author identity and whether publishing is restricted to that account or only the human operator. If local implementation can finish before authorized publish, say how that should be reported. -->
 
 
-## Peer spec review
+## Peer architecture review
 <!-- Filled by the other model before build begins. -->
 
 
@@ -28,7 +33,7 @@ files:
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+<!-- During verify: copy checks here, mark pass/fail with notes. -->
 
 
 ## Closure

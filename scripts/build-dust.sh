@@ -17,9 +17,9 @@ if [ ! -f "$TEMPLATE" ]; then
   echo "Error: $TEMPLATE not found." >&2
   if [ -f "$VIEWER" ]; then
     echo "This repo has docs/dust.html but is missing templates/dust.html." >&2
-    echo "Copy templates/dust.html from the spec-of-dust distribution (or from your upstream sod repo) and run this script again." >&2
+    echo "Copy templates/dust.html from the architect-of-dust distribution (or from your upstream AoD repo) and run this script again." >&2
   else
-    echo "templates/dust.html is part of the spec-of-dust distribution — fetch it or re-run the bootstrap before building dust." >&2
+    echo "templates/dust.html is part of the architect-of-dust distribution — fetch it or re-run the bootstrap before building dust." >&2
   fi
   exit 1
 fi
@@ -75,7 +75,7 @@ flowlog_js="$(jsonl_to_js_array "$FLOWLOG")"
 parse_change_file() {
   local file="$1"
   local basename_f name status ts what dust challenges learnings outcomes
-  local peer_spec_review peer_code_review verify section=""
+  local peer_architecture_review peer_code_review verify section=""
   local body=""
 
   basename_f="$(basename "$file" .md)"
@@ -93,7 +93,7 @@ parse_change_file() {
   fi
 
   status="" what="" dust="" challenges="" learnings="" outcomes=""
-  peer_spec_review="" peer_code_review="" verify=""
+  peer_architecture_review="" peer_code_review="" verify=""
 
   while IFS= read -r line; do
     # Status from first line
@@ -108,8 +108,10 @@ parse_change_file() {
       save_section "$section" "$body"
       body=""
       case "$line" in
+        "## Intent"*) section="what" ;;
         "## What"*) section="what" ;;
-        "## Peer spec review"*) section="peer_spec_review" ;;
+        "## Peer architecture review"*) section="peer_architecture_review" ;;
+        "## Peer spec review"*) section="peer_architecture_review" ;;
         "## Peer code review"*) section="peer_code_review" ;;
         "## Verify"*) section="verify" ;;
         "## Closure"*) section="closure" ;;
@@ -143,7 +145,7 @@ parse_change_file() {
   fi
 
   # Build JSON
-  printf '{"name":"%s","status":"%s","ts":"%s","what":"%s","dust":"%s","challenges":"%s","learnings":"%s","outcomes":"%s","peer_spec_review":"%s","peer_code_review":"%s","verify":"%s"}' \
+  printf '{"name":"%s","status":"%s","ts":"%s","what":"%s","dust":"%s","challenges":"%s","learnings":"%s","outcomes":"%s","peer_architecture_review":"%s","peer_code_review":"%s","verify":"%s"}' \
     "$(escape_str "$name")" \
     "$(escape_str "$status")" \
     "$(escape_str "$ts")" \
@@ -152,13 +154,13 @@ parse_change_file() {
     "$(escape_str "$challenges")" \
     "$(escape_str "$learnings")" \
     "$(escape_str "$outcomes")" \
-    "$(escape_str "$_peer_spec_review")" \
+    "$(escape_str "$_peer_architecture_review")" \
     "$(escape_str "$_peer_code_review")" \
     "$(escape_str "$_verify")"
 }
 
 # Section accumulator variables
-_what="" _peer_spec_review="" _peer_code_review="" _verify=""
+_what="" _peer_architecture_review="" _peer_code_review="" _verify=""
 
 save_section() {
   local section="$1"
@@ -167,7 +169,7 @@ save_section() {
   content="$(printf '%s' "$content" | sed '/^<!--.*-->$/d' | awk 'NF{found=1} found')"
   case "$section" in
     what) _what="$content" ;;
-    peer_spec_review) _peer_spec_review="$content" ;;
+    peer_architecture_review) _peer_architecture_review="$content" ;;
     peer_code_review) _peer_code_review="$content" ;;
     verify) _verify="$content" ;;
   esac
@@ -214,7 +216,7 @@ for dir in "$ROOT_DIR/.spec/archive" "$ROOT_DIR/.spec/changes"; do
     esac
 
     # Reset section vars
-    _what="" _peer_spec_review="" _peer_code_review="" _verify=""
+    _what="" _peer_architecture_review="" _peer_code_review="" _verify=""
 
     entry="$(parse_change_file "$file")"
 

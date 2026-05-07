@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# setup.sh — run once per clone to wire up spec-of-dust.
+# setup.sh — run once per clone to wire up architect-of-dust.
 # No dependencies. No npm. No Python. Just git.
 
 set -euo pipefail
 
-echo "Setting up spec-of-dust..."
+echo "Setting up architect-of-dust..."
 
 # Create directories
 mkdir -p .spec/changes .spec/archive
@@ -19,8 +19,8 @@ Keep it short. Put deeper context in docs/ or active change files.
 merge: confirm
 merge-target: main
 push: never
-sod-upstream:
-sod-check-interval: 30d
+aod-upstream:
+aod-check-interval: 30d
 EOF
 fi
 touch .spec/devlog.jsonl
@@ -29,30 +29,34 @@ if [ ! -f VERSION ]; then
   printf '0.0.1\n' > VERSION
 fi
 
-# Ensure sod-last-checked is gitignored (local self-update state)
+# Ensure aod-last-checked is gitignored (local self-update state)
 if [ -f .gitignore ]; then
-  if ! grep -qF '.spec/sod-last-checked' .gitignore; then
-    printf '\n# Self-update state (local per clone, not tracked)\n.spec/sod-last-checked\n' >> .gitignore
-    echo "  ✓ Added .spec/sod-last-checked to .gitignore"
+  if ! grep -qF '.spec/aod-last-checked' .gitignore; then
+    printf '\n# Self-update state (local per clone, not tracked)\n.spec/aod-last-checked\n' >> .gitignore
+    echo "  ✓ Added .spec/aod-last-checked to .gitignore"
   fi
 else
-  printf '# Self-update state (local per clone, not tracked)\n.spec/sod-last-checked\n' > .gitignore
-  echo "  ✓ Created .gitignore with .spec/sod-last-checked entry"
+  printf '# Self-update state (local per clone, not tracked)\n.spec/aod-last-checked\n' > .gitignore
+  echo "  ✓ Created .gitignore with .spec/aod-last-checked entry"
 fi
 
 # Copy template if not present
 if [ ! -f .spec/changes/_template.md ]; then
   cat > .spec/changes/_template.md <<'EOF'
-status: spec
+status: architect
 files:
 
 # {Change name}
 
-## What
+## Intent
 <!-- One paragraph. What are we building/fixing/changing and why. -->
 
+## Ordering
+- Prerequisites:
+- Unlocks:
+- Sequence notes:
 
-## Acceptance criteria
+## Checks
 <!-- Simple checkboxes. These become your verify checklist. -->
 - [ ] 
 - [ ] 
@@ -62,7 +66,7 @@ files:
 <!-- Optional. Constraints, edge cases, links, prior art. Delete if empty. -->
 
 
-## Peer spec review
+## Peer architecture review
 <!-- Filled by the other model before build begins. -->
 
 
@@ -71,14 +75,14 @@ files:
 
 
 ## Verify
-<!-- During verify: copy acceptance criteria here, mark pass/fail with notes. -->
+<!-- During verify: copy checks here, mark pass/fail with notes. -->
 
 
 ## Closure
 <!-- Keep it short. Use "nothing notable" if a bucket has no real signal. -->
 - Challenges: friction, surprises, blockers, or nothing notable
 - Learnings: reusable lessons or follow-up insight, or nothing notable
-- Outcomes: delivered result plus key review/verify signal, or nothing notable
+- Outcomes: verified result plus key review/verify signal, or nothing notable
 - Dust: one short human line; keep it under 80 chars
 EOF
   echo "  ✓ Created .spec/changes/_template.md"
@@ -116,7 +120,7 @@ echo "  ✓ post-merge: stages archive closeout after plain merges"
 echo "  ✓ .spec/b-startup.md: created for minimal startup ingest"
 echo "  ✓ .spec/devlog.jsonl: created for skip-no-verify audit entries"
 echo "  ✓ VERSION: initialized to 0.0.1 if missing"
-echo "  ✓ sod flow: use scripts/update-sod-report.sh to refresh repo metrics"
+echo "  ✓ AoD flow: use scripts/update-aod-report.sh to refresh repo metrics"
 
 # Test readiness advisory
 has_tests=false
@@ -147,5 +151,5 @@ if [ -f CODEX.md ]; then
 fi
 
 echo ""
-echo "Done. Start a feature with: cp .spec/changes/_template.md .spec/changes/my-feature.md"
+echo "Done. Start a change with: cp .spec/changes/_template.md .spec/changes/my-change.md"
 echo ""

@@ -69,13 +69,13 @@ status: ${status}
 
 # Test change
 
-## What
+## Intent
 Test-only change file for hook validation.
 
-## Acceptance criteria
+## Checks
 - [ ] Hook behavior under test
 
-## Peer spec review
+## Peer architecture review
 Synthetic test fixture.
 
 ## Peer code review
@@ -111,8 +111,8 @@ active_change_commit_passes() {
     seed_change_file build
     git add -A .spec/changes
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/aod-report.md
     git commit -qm 'test: active change commit'
   ) || fail "active change commit"
 
@@ -125,14 +125,14 @@ missing_change_commit_is_blocked() {
 
   (
     cd "$repo"
-    # A change in `spec` state exists on disk but does not count as an active build/verify/done change.
-    seed_change_file spec
+    # A change in `spec` state exists on disk but does not count as an active build/verify/present change.
+    seed_change_file architect
     git add -A .spec/changes
     source .githooks/_spec_gate.sh
     has_active_standard_change && exit 1
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/aod-report.md
     expect_blocked_commit "blocked without active change" "Commit policy failed" git commit -m 'test: blocked without active change'
   ) || fail "blocked commit without active change"
 
@@ -146,7 +146,7 @@ invalid_skip_commit_is_blocked() {
   (
     cd "$repo"
     # `--no-verify` skips pre-commit, so this proves prepare-commit-msg still enforces skip mode.
-    seed_change_file spec
+    seed_change_file architect
     source .githooks/_spec_gate.sh
     has_active_standard_change && exit 1
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
@@ -163,7 +163,7 @@ valid_skip_commit_passes() {
 
   (
     cd "$repo"
-    seed_change_file spec
+    seed_change_file architect
     source .githooks/_spec_gate.sh
     has_active_standard_change && exit 1
     cat >> .spec/devlog.jsonl <<'EOF'
@@ -185,64 +185,64 @@ setup_scaffold_includes_files_metadata() {
     cd "$repo"
     rm -f .spec/changes/_template.md
     bash setup.sh >/dev/null
-    grep -Fx 'status: spec' .spec/changes/_template.md >/dev/null
+    grep -Fx 'status: architect' .spec/changes/_template.md >/dev/null
     grep -Fx 'files:' .spec/changes/_template.md >/dev/null
   ) || fail "setup scaffold includes files metadata"
 
   pass "setup scaffold includes files metadata"
 }
 
-done_change_commit_passes() {
+present_change_commit_passes() {
   local repo
-  repo="$(make_repo done-closeout)"
+  repo="$(make_repo present-closeout)"
 
   (
     cd "$repo"
     commit_isolated_changes_fixture
-    seed_change_file done
+    seed_change_file present
     bash scripts/flowlog.sh --change test-change --agent codex --sentiment smooth >/dev/null
     git add .spec/changes/test-change.md .spec/flowlog.jsonl docs/dust.html
-    bash scripts/update-sod-report.sh
-    git add README.md .spec/sod-report.md
-    git commit -qm 'test: done change commit'
-  ) || fail "done change commit"
+    bash scripts/update-aod-report.sh
+    git add README.md .spec/aod-report.md
+    git commit -qm 'test: present change commit'
+  ) || fail "present change commit"
 
-  pass "done change commit"
+  pass "present change commit"
 }
 
-done_change_with_additional_work_is_blocked() {
+present_change_with_additional_work_is_blocked() {
   local repo
-  repo="$(make_repo done-blocked)"
+  repo="$(make_repo present-blocked)"
 
   (
     cd "$repo"
     commit_isolated_changes_fixture
-    seed_change_file done
+    seed_change_file present
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
     git add .spec/changes/test-change.md CODEX.md
-    expect_blocked_commit "done with additional work" "Completed change must be committed before more work proceeds" git commit -m 'test: done with additional work'
-  ) || fail "done with additional work"
+    expect_blocked_commit "present with additional work" "Completed change must be committed before more work proceeds" git commit -m 'test: present with additional work'
+  ) || fail "present with additional work"
 
-  pass "done with additional work blocked"
+  pass "present with additional work blocked"
 }
 
-multiple_done_changes_are_blocked() {
+multiple_present_changes_are_blocked() {
   local repo
-  repo="$(make_repo multi-done)"
+  repo="$(make_repo multi-present)"
 
   (
     cd "$repo"
     commit_isolated_changes_fixture
-    seed_change_file done
+    seed_change_file present
     cat > .spec/changes/second-change.md <<'INNER'
-status: done
+status: present
 
-# Second done change
-## What
-Test fixture for multi-done closeout.
-## Acceptance criteria
+# Second present change
+## Intent
+Test fixture for multi-present closeout.
+## Checks
 - [ ] closeout test
-## Peer spec review
+## Peer architecture review
 test
 ## Peer code review
 test
@@ -255,10 +255,10 @@ test
 - Dust: nothing notable
 INNER
     git add .spec/changes/test-change.md .spec/changes/second-change.md
-    expect_blocked_commit "multiple done changes" "Multiple completed changes are still uncommitted" git commit -m 'test: multiple done changes'
-  ) || fail "multiple done changes"
+    expect_blocked_commit "multiple present changes" "Multiple completed changes are still uncommitted" git commit -m 'test: multiple present changes'
+  ) || fail "multiple present changes"
 
-  pass "multiple done changes blocked"
+  pass "multiple present changes blocked"
 }
 
 scoped_commit_passes() {
@@ -273,8 +273,8 @@ scoped_commit_passes() {
     rm -f .spec/changes/test-change.md.bak
     git add -A .spec/changes
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/aod-report.md
     git commit -qm 'test: scoped commit'
   ) || fail "scoped commit"
 
@@ -294,8 +294,8 @@ unscoped_commit_is_blocked() {
     git add -A .spec/changes
     # Edit a non-exempt file NOT in scope (CODEX.md is non-exempt)
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/aod-report.md
     expect_blocked_commit "unscoped commit" "not listed in any active change" git commit -m 'test: unscoped commit'
   ) || fail "unscoped commit"
 
@@ -312,8 +312,8 @@ empty_scope_falls_back() {
     # No files: field — should fall back to current behavior
     git add -A .spec/changes
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/aod-report.md
     git commit -qm 'test: empty scope fallback'
   ) || fail "empty scope fallback"
 
@@ -326,8 +326,8 @@ skip_mode_ignores_scope() {
 
   (
     cd "$repo"
-    seed_change_file spec
-    # Add scope to the spec-state change (which doesn't count as active for commits)
+    seed_change_file architect
+    # Add scope to the architect-state change (which doesn't count as active for commits)
     sed -i.bak '1s/^/files: nothing.txt\n/' .spec/changes/test-change.md
     rm -f .spec/changes/test-change.md.bak
     source .githooks/_spec_gate.sh
@@ -360,11 +360,11 @@ status: build
 files: CODEX.md
 
 # Second change
-## What
+## Intent
 Test fixture for multi-scope.
-## Acceptance criteria
+## Checks
 - [ ] scope test
-## Peer spec review
+## Peer architecture review
 test
 ## Peer code review
 test
@@ -380,8 +380,8 @@ INNER
     git add -A .spec/changes
     # Edit CODEX.md — should match the second change's scope
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/aod-report.md
     git commit -qm 'test: multi-scope match'
   ) || fail "multi-scope match"
 
@@ -400,8 +400,8 @@ blank_files_field_falls_back() {
     rm -f .spec/changes/test-change.md.bak
     git add -A .spec/changes
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CODEX.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CODEX.md README.md .spec/aod-report.md
     git commit -qm 'test: blank scope fallback'
   ) || fail "blank scope fallback"
 
@@ -421,8 +421,8 @@ exempt_passes_under_scope() {
     git add -A .spec/changes
     # Edit an exempt file (CLAUDE.md) — should pass regardless of scope
     perl -0pi -e 's/subagents only for/subagents for/' CLAUDE.md
-    bash scripts/update-sod-report.sh
-    git add .spec/changes CLAUDE.md README.md .spec/sod-report.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes CLAUDE.md README.md .spec/aod-report.md
     git commit -qm 'test: exempt under scope'
   ) || fail "exempt under scope"
 
@@ -435,18 +435,18 @@ archive_only_commit_passes() {
 
   (
     cd "$repo"
-    # Create a done change, commit it first
-    seed_change_file done
+    # Create a present change, commit it first
+    seed_change_file present
     git add -A .spec/changes
-    bash scripts/update-sod-report.sh
-    git add .spec/changes .spec/sod-report.md README.md
-    git commit -qm 'setup: done change'
+    bash scripts/update-aod-report.sh
+    git add .spec/changes .spec/aod-report.md README.md
+    git commit -qm 'setup: present change'
 
     # Now archive it (mirrors real release flow)
     mkdir -p .spec/archive
     git mv .spec/changes/test-change.md .spec/archive/2026-04-17-test-change.md
-    bash scripts/update-sod-report.sh
-    git add .spec/archive .spec/sod-report.md README.md
+    bash scripts/update-aod-report.sh
+    git add .spec/archive .spec/aod-report.md README.md
     git commit -qm 'test: archive only commit'
   ) || fail "archive only commit"
 
@@ -459,19 +459,19 @@ archive_mixed_with_code_is_blocked() {
 
   (
     cd "$repo"
-    # Create a done change, commit it first
-    seed_change_file done
+    # Create a present change, commit it first
+    seed_change_file present
     git add -A .spec/changes
-    bash scripts/update-sod-report.sh
-    git add .spec/changes .spec/sod-report.md README.md
-    git commit -qm 'setup: done change'
+    bash scripts/update-aod-report.sh
+    git add .spec/changes .spec/aod-report.md README.md
+    git commit -qm 'setup: present change'
 
     # Archive it but also touch an unrelated code file
     mkdir -p .spec/archive
     git mv .spec/changes/test-change.md .spec/archive/2026-04-17-test-change.md
     perl -0pi -e 's/On session start, run:/On session start, always run:/' CODEX.md
-    bash scripts/update-sod-report.sh
-    git add .spec/archive CODEX.md .spec/sod-report.md README.md
+    bash scripts/update-aod-report.sh
+    git add .spec/archive CODEX.md .spec/aod-report.md README.md
     expect_blocked_commit "archive mixed with code" "Commit policy failed" git commit -m 'test: archive mixed with code'
   ) || fail "archive mixed with code"
 
@@ -483,9 +483,9 @@ missing_change_commit_is_blocked
 invalid_skip_commit_is_blocked
 valid_skip_commit_passes
 setup_scaffold_includes_files_metadata
-done_change_commit_passes
-done_change_with_additional_work_is_blocked
-multiple_done_changes_are_blocked
+present_change_commit_passes
+present_change_with_additional_work_is_blocked
+multiple_present_changes_are_blocked
 scoped_commit_passes
 unscoped_commit_is_blocked
 empty_scope_falls_back
@@ -493,34 +493,34 @@ skip_mode_ignores_scope
 multiple_changes_scope_matches
 blank_files_field_falls_back
 exempt_passes_under_scope
-dust_only_change_skips_sod_staleness() {
+dust_only_change_skips_aod_staleness() {
   local repo
-  repo="$(make_repo dust-sod)"
+  repo="$(make_repo dust-aod)"
 
   (
     cd "$repo"
     seed_change_file build
     git add -A .spec/changes
-    bash scripts/update-sod-report.sh
-    git add .spec/changes .spec/sod-report.md README.md
+    bash scripts/update-aod-report.sh
+    git add .spec/changes .spec/aod-report.md README.md
     git commit -qm 'setup: baseline'
 
     # Simulate a dust rebuild by touching docs/dust.html
     echo "<!-- rebuilt -->" >> docs/dust.html
     git add docs/dust.html
 
-    # The hook should NOT trigger sod staleness for dust-only changes
-    # Test by sourcing the gate and checking has_sod_relevant_changes directly
+    # The hook should NOT trigger AoD staleness for dust-only changes
+    # Test by sourcing the gate and checking has_aod_relevant_changes directly
     source .githooks/_spec_gate.sh
-    if has_sod_relevant_changes; then
+    if has_aod_relevant_changes; then
       exit 1
     fi
-  ) || fail "dust only change skips sod staleness"
+  ) || fail "dust only change skips aod staleness"
 
-  pass "dust only change skips sod staleness"
+  pass "dust only change skips aod staleness"
 }
 
-EXPECTED_PREPUSH_WARNING='⚠️  Publishing push with no active change file. FLOW.md requires a spec naming the external target. Set SOD_PUBLISH_ACK=1 to bypass intentionally.'
+EXPECTED_PREPUSH_WARNING='⚠️  Publishing push with no active change file. FLOW.md requires an architecture note naming the external target. Set AOD_PUBLISH_ACK=1 to bypass intentionally.'
 
 pre_push_warns_on_tag_push_without_active_change() {
   local repo output
@@ -583,15 +583,15 @@ pre_push_silent_with_publish_ack() {
     local zeros="0000000000000000000000000000000000000000"
     local sha
     sha="$(git rev-parse HEAD)"
-    # Even with no active change, SOD_PUBLISH_ACK=1 should suppress
-    output="$(SOD_PUBLISH_ACK=1 printf 'refs/tags/v9.9.9 %s refs/tags/v9.9.9 %s\n' "$sha" "$zeros" | SOD_PUBLISH_ACK=1 bash .githooks/pre-push 2>&1)"
+    # Even with no active change, AOD_PUBLISH_ACK=1 should suppress
+    output="$(AOD_PUBLISH_ACK=1 printf 'refs/tags/v9.9.9 %s refs/tags/v9.9.9 %s\n' "$sha" "$zeros" | AOD_PUBLISH_ACK=1 bash .githooks/pre-push 2>&1)"
     if [ -n "$output" ]; then
       printf '%s\n' "$output" >&2
       exit 1
     fi
-  ) || fail "pre-push silent with SOD_PUBLISH_ACK=1"
+  ) || fail "pre-push silent with AOD_PUBLISH_ACK=1"
 
-  pass "pre-push silent with SOD_PUBLISH_ACK=1"
+  pass "pre-push silent with AOD_PUBLISH_ACK=1"
 }
 
 pre_push_silent_with_active_change() {
@@ -617,7 +617,7 @@ pre_push_silent_with_active_change() {
 
 archive_only_commit_passes
 archive_mixed_with_code_is_blocked
-dust_only_change_skips_sod_staleness
+dust_only_change_skips_aod_staleness
 pre_push_warns_on_tag_push_without_active_change
 pre_push_warns_on_new_branch_push_without_active_change
 pre_push_silent_on_non_branch_zero_sha_ref

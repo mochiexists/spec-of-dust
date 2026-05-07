@@ -2,8 +2,8 @@
 
 SPEC_DIR=".spec/changes"
 DEVLOG_FILE=".spec/devlog.jsonl"
-SOD_REPORT_FILE=".spec/sod-report.md"
-SOD_SCRIPT="scripts/update-sod-report.sh"
+AOD_REPORT_FILE=".spec/aod-report.md"
+AOD_SCRIPT="scripts/update-aod-report.sh"
 README_FILE="README.md"
 EXEMPT_PATTERNS='^\.spec/|^AGENTS\.md$|^CLAUDE\.md$|^README|^\.git|^\.github/|package\.json$|package-lock\.json$|\.lock$'
 MAX_SKIP_LINES=20
@@ -76,14 +76,14 @@ has_active_standard_change() {
     status=$(extract_meta_value "$file" "status")
 
     case "$status" in
-      build|verify|done) return 0 ;;
+      build|verify|present) return 0 ;;
     esac
   done
 
   return 1
 }
 
-collect_dirty_done_changes() {
+collect_dirty_present_changes() {
   local file status
 
   [ -d "$SPEC_DIR" ] || return
@@ -100,18 +100,21 @@ collect_dirty_done_changes() {
     is_reserved_change_file "$file" && continue
 
     status=$(extract_meta_value "$file" "status")
-    [ "$status" = "done" ] || continue
+    case "$status" in
+      present|done) ;;
+      *) continue ;;
+    esac
 
     printf '%s\n' "$file"
   done < <(list_dirty_files)
 }
 
-is_allowed_done_closeout_file() {
-  local done_change="$1"
+is_allowed_present_closeout_file() {
+  local present_change="$1"
   local file="$2"
 
   case "$file" in
-    "$done_change"|".spec/flowlog.jsonl"|".spec/sod-report.md"|"README.md"|"docs/dust.html")
+    "$present_change"|".spec/flowlog.jsonl"|".spec/aod-report.md"|"README.md"|"docs/dust.html")
       return 0
       ;;
   esac
@@ -119,24 +122,24 @@ is_allowed_done_closeout_file() {
   return 1
 }
 
-enforce_done_closeout_gate() {
-  local file done_change
-  local dirty_done_changes=()
+enforce_present_closeout_gate() {
+  local file present_change
+  local dirty_present_changes=()
   local extra_dirty_files=()
 
   while IFS= read -r file; do
-    [ -n "$file" ] && dirty_done_changes+=("$file")
-  done < <(collect_dirty_done_changes)
+    [ -n "$file" ] && dirty_present_changes+=("$file")
+  done < <(collect_dirty_present_changes)
 
-  if [ "${#dirty_done_changes[@]}" -eq 0 ]; then
+  if [ "${#dirty_present_changes[@]}" -eq 0 ]; then
     return 0
   fi
 
-  if [ "${#dirty_done_changes[@]}" -gt 1 ]; then
+  if [ "${#dirty_present_changes[@]}" -gt 1 ]; then
     echo ""
     echo "⚠️  Multiple completed changes are still uncommitted:"
     echo ""
-    for file in "${dirty_done_changes[@]}"; do
+    for file in "${dirty_present_changes[@]}"; do
       echo "   $file"
     done
     echo ""
@@ -146,11 +149,11 @@ enforce_done_closeout_gate() {
     return 1
   fi
 
-  done_change="${dirty_done_changes[0]}"
+  present_change="${dirty_present_changes[0]}"
 
   while IFS= read -r file; do
     [ -n "$file" ] || continue
-    if ! is_allowed_done_closeout_file "$done_change" "$file"; then
+    if ! is_allowed_present_closeout_file "$present_change" "$file"; then
       extra_dirty_files+=("$file")
     fi
   done < <(list_dirty_files)
@@ -159,7 +162,7 @@ enforce_done_closeout_gate() {
     echo ""
     echo "⚠️  Completed change must be committed before more work proceeds:"
     echo ""
-    echo "   $done_change"
+    echo "   $present_change"
     echo ""
     echo "Dirty paths beyond the allowed closeout artifacts were found:"
     echo ""
@@ -186,7 +189,7 @@ collect_scope_patterns() {
 
     status=$(extract_meta_value "$file" "status")
     case "$status" in
-      build|verify|done) ;;
+      build|verify|present) ;;
       *) continue ;;
     esac
 
@@ -431,7 +434,7 @@ validate_skip_mode() {
 
 is_archive_allowed_extra() {
   case "$1" in
-    "$SOD_REPORT_FILE"|"$README_FILE"|"docs/dust.html"|"$DEVLOG_FILE"|".spec/flowlog.jsonl") return 0 ;;
+    "$AOD_REPORT_FILE"|"$README_FILE"|"docs/dust.html"|"$DEVLOG_FILE"|".spec/flowlog.jsonl") return 0 ;;
     *) return 1 ;;
   esac
 }
@@ -480,14 +483,14 @@ enforce_spec_gate() {
   validate_skip_mode
 }
 
-has_sod_relevant_changes() {
+has_aod_relevant_changes() {
   local file
 
   while IFS= read -r file; do
     [ -n "$file" ] || continue
 
     case "$file" in
-      "$DEVLOG_FILE"|"$SOD_REPORT_FILE"|"docs/dust.html") continue ;;
+      "$DEVLOG_FILE"|"$AOD_REPORT_FILE"|"docs/dust.html") continue ;;
     esac
 
     if is_text_file_path "$file"; then
@@ -502,36 +505,36 @@ skip_mode_applies() {
   validate_skip_mode >/dev/null 2>&1
 }
 
-enforce_sod_gate() {
+enforce_aod_gate() {
   if skip_mode_applies; then
     return 0
   fi
 
-  if ! has_sod_relevant_changes; then
+  if ! has_aod_relevant_changes; then
     return 0
   fi
 
-  if [ ! -x "$SOD_SCRIPT" ]; then
+  if [ ! -x "$AOD_SCRIPT" ]; then
     echo ""
-    echo "⚠️  Missing executable sod generator: ${SOD_SCRIPT}"
-    echo ""
-    return 1
-  fi
-
-  if ! "$SOD_SCRIPT" --check >/dev/null 2>&1; then
-    echo ""
-    echo "⚠️  sod output is stale."
-    echo ""
-    echo "Run \`${SOD_SCRIPT}\`, then stage \`${SOD_REPORT_FILE}\` and \`${README_FILE}\`."
+    echo "⚠️  Missing executable AoD generator: ${AOD_SCRIPT}"
     echo ""
     return 1
   fi
 
-  if ! git diff --quiet -- "$SOD_REPORT_FILE" "$README_FILE"; then
+  if ! "$AOD_SCRIPT" --check >/dev/null 2>&1; then
     echo ""
-    echo "⚠️  Refreshed sod files are not fully staged."
+    echo "⚠️  AoD output is stale."
     echo ""
-    echo "Stage \`${SOD_REPORT_FILE}\` and \`${README_FILE}\` before committing."
+    echo "Run \`${AOD_SCRIPT}\`, then stage \`${AOD_REPORT_FILE}\` and \`${README_FILE}\`."
+    echo ""
+    return 1
+  fi
+
+  if ! git diff --quiet -- "$AOD_REPORT_FILE" "$README_FILE"; then
+    echo ""
+    echo "⚠️  Refreshed AoD files are not fully staged."
+    echo ""
+    echo "Stage \`${AOD_REPORT_FILE}\` and \`${README_FILE}\` before committing."
     echo ""
     return 1
   fi
@@ -541,7 +544,7 @@ enforce_sod_gate() {
 
 enforce_commit_policies() {
   enforce_spec_gate || return 1
-  enforce_done_closeout_gate || return 1
+  enforce_present_closeout_gate || return 1
   enforce_scope_gate || return 1
-  enforce_sod_gate || return 1
+  enforce_aod_gate || return 1
 }

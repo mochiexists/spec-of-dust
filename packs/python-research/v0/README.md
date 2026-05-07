@@ -1,6 +1,6 @@
 # Python ML / Research Pack
 
-Stack-specific gate suggestions for machine learning and research projects using `spec-of-dust`.
+Stack-specific gate suggestions for machine learning and research projects using `architect-of-dust`.
 These are suggestions, not requirements — adapt to your project's needs.
 
 ## Local gates
@@ -59,7 +59,7 @@ jobs:
       - run: mypy --strict src/
       - run: pytest -v --ignore=notebooks/
       - run: nbstripout --verify notebooks/*.ipynb
-      - run: bash scripts/update-sod-report.sh --check
+      - run: bash scripts/update-aod-report.sh --check
       - run: bash tests/test-spec-gate.sh
 
   gpu-tests:

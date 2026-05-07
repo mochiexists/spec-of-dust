@@ -4,9 +4,9 @@ Date gathered: 2026-04-17
 
 ## Recommendation
 
-Publish `spec-of-dust` publicly as `dust` on `mochiexists.com/dust`.
+Publish `architect-of-dust` publicly as `dust` on `mochiexists.com/dust`.
 
-Keep the internal/repo name as `spec-of-dust`. Use `dust` only as the public
+Keep the internal/repo name as `architect-of-dust`. Use `dust` only as the public
 label and page slug.
 
 ## Homepage copy

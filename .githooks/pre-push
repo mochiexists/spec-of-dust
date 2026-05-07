@@ -2,19 +2,19 @@
 # .githooks/pre-push
 # Warns (never blocks) when a publishing-pattern push happens without an active change file.
 # Publishing pattern: pushing a tag ref, or pushing to a brand-new remote branch.
-# Bypass: SOD_PUBLISH_ACK=1
+# Bypass: AOD_PUBLISH_ACK=1 (legacy SOD_PUBLISH_ACK=1 still accepted)
 
 set -euo pipefail
 
 # Honor explicit bypass — caller is acknowledging this is intentional
-if [ "${SOD_PUBLISH_ACK:-0}" = "1" ]; then
+if [ "${AOD_PUBLISH_ACK:-${SOD_PUBLISH_ACK:-0}}" = "1" ]; then
   exit 0
 fi
 
 HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SPEC_DIR="$(cd "$HOOK_DIR/.." && pwd)/.spec/changes"
 
-# Check for a change file with status spec|build|verify (includes spec for in-progress intent)
+# Check for a change file with status architect|build|verify
 has_active_change_for_push() {
   local file status
 
@@ -36,7 +36,7 @@ has_active_change_for_push() {
     ' "$file")"
 
     case "$status" in
-      spec|build|verify) return 0 ;;
+      architect|build|verify|spec) return 0 ;;
     esac
   done
 
@@ -70,7 +70,7 @@ is_publishing_push() {
 }
 
 if is_publishing_push && ! has_active_change_for_push; then
-  echo "⚠️  Publishing push with no active change file. FLOW.md requires a spec naming the external target. Set SOD_PUBLISH_ACK=1 to bypass intentionally." >&2
+  echo "⚠️  Publishing push with no active change file. FLOW.md requires an architecture note naming the external target. Set AOD_PUBLISH_ACK=1 to bypass intentionally." >&2
 fi
 
 exit 0

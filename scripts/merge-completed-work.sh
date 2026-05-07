@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STARTUP_FILE="$ROOT_DIR/.spec/b-startup.md"
 ARCHIVE_SCRIPT="$ROOT_DIR/scripts/archive-done-changes.sh"
-SOD_SCRIPT="$ROOT_DIR/scripts/update-sod-report.sh"
+AOD_SCRIPT="$ROOT_DIR/scripts/update-aod-report.sh"
 VIEWER_SCRIPT="$ROOT_DIR/scripts/build-dust.sh"
 HOOK_TEST_SCRIPT="$ROOT_DIR/tests/test-spec-gate.sh"
 target=""
@@ -79,21 +79,21 @@ current_branch="$(git branch --show-current)"
 }
 
 run_archive_commit() {
-  "$ARCHIVE_SCRIPT" --require-done --quiet
+  "$ARCHIVE_SCRIPT" --require-present --quiet
 
   if git diff --cached --quiet; then
     echo "Archive step produced no staged changes." >&2
     exit 1
   fi
 
-  git commit -m "chore: archive completed specs"
+  git commit -m "chore: archive presented changes"
 }
 
 check_auto_prerequisites() {
   [ "$auto_mode" -eq 1 ] || return 0
 
-  if [ -x "$SOD_SCRIPT" ] && ! "$SOD_SCRIPT" --check >/dev/null 2>&1; then
-    echo "Auto merge requires fresh sod outputs." >&2
+  if [ -x "$AOD_SCRIPT" ] && ! "$AOD_SCRIPT" --check >/dev/null 2>&1; then
+    echo "Auto merge requires fresh AoD outputs." >&2
     exit 1
   fi
 

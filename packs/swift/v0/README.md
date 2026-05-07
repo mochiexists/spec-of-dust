@@ -1,6 +1,6 @@
 # Swift / iOS Pack
 
-Stack-specific gate suggestions for Swift projects using `spec-of-dust`.
+Stack-specific gate suggestions for Swift projects using `architect-of-dust`.
 These are suggestions, not requirements — adapt to your project's needs.
 
 ## Local gates
@@ -66,7 +66,7 @@ jobs:
       - run: swiftlint lint --strict
       - run: swift build
       - run: swift test
-      - run: bash scripts/update-sod-report.sh --check
+      - run: bash scripts/update-aod-report.sh --check
       - run: bash tests/test-spec-gate.sh
 ```
 

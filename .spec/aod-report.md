@@ -1,27 +1,27 @@
-# sod report
+# aod report
 
 - Version: `0.2.0`
 - Scope: Git-tracked text files when Git metadata is available; fallback to repo file scan otherwise
 - Token estimate: `ceil(characters / 4)`
-- Total files: `87`
-- Total lines: `8953`
-- Total words: `80048`
-- Total characters: `617881`
-- Total estimated tokens: `154502`
-- bootstrap sod: `3222 / 3000 target`
-- operational sod: `5997 / 5000 target`
+- Total files: `90`
+- Total lines: `9271`
+- Total words: `82911`
+- Total characters: `640867`
+- Total estimated tokens: `160249`
+- bootstrap aod: `3213 / 3000 target`
+- operational aod: `6676 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
-| `.githooks/_spec_gate.sh` | 547 | 1575 | 12672 | 3168 |
+| `.githooks/_spec_gate.sh` | 550 | 1577 | 12768 | 3192 |
 | `.githooks/post-merge` | 8 | 24 | 243 | 61 |
-| `.githooks/pre-commit` | 21 | 91 | 636 | 159 |
-| `.githooks/pre-push` | 76 | 279 | 2118 | 530 |
+| `.githooks/pre-commit` | 21 | 90 | 638 | 160 |
+| `.githooks/pre-push` | 76 | 279 | 2170 | 543 |
 | `.githooks/prepare-commit-msg` | 10 | 26 | 250 | 63 |
 | `.github/README.md` | 15 | 67 | 434 | 109 |
 | `.github/workflows/validate.yml` | 29 | 60 | 576 | 144 |
 | `.gitignore` | 10 | 25 | 225 | 57 |
-| `.spec/FLOW.md` | 180 | 1892 | 12309 | 3078 |
+| `.spec/FLOW.md` | 284 | 1828 | 12262 | 3066 |
 | `.spec/archive/2026-04-14-add-agent-team-guidance.md` | 60 | 516 | 3244 | 811 |
 | `.spec/archive/2026-04-14-add-feature-closure-summary.md` | 66 | 731 | 4787 | 1197 |
 | `.spec/archive/2026-04-14-add-sod-analysis-and-versioning.md` | 67 | 716 | 4727 | 1182 |
@@ -66,37 +66,40 @@
 | `.spec/archive/2026-04-19-143831-post-push-health-check.md` | 79 | 1410 | 9085 | 2272 |
 | `.spec/archive/2026-04-19-153936-fix-ci-sod-locale.md` | 74 | 1078 | 7578 | 1895 |
 | `.spec/archive/2026-04-19-160507-fix-ci-locale-matching-and-diagnostics.md` | 72 | 1239 | 8267 | 2067 |
-| `.spec/b-startup.md` | 16 | 81 | 574 | 144 |
-| `.spec/changes/_template.md` | 39 | 224 | 1400 | 350 |
+| `.spec/b-startup.md` | 16 | 82 | 587 | 147 |
+| `.spec/changes/_template.md` | 44 | 239 | 1500 | 375 |
 | `.spec/changes/fix-ci-build-dust-bash-portable-escape.md` | 54 | 759 | 5502 | 1376 |
 | `.spec/changes/fix-ci-wc-w-use-awk.md` | 68 | 1039 | 7037 | 1760 |
 | `.spec/changes/fix-ci-wc-w-vs16-strip.md` | 62 | 1124 | 7929 | 1983 |
+| `.spec/changes/gh-identity-per-repo-check.md` | 64 | 1168 | 7589 | 1898 |
+| `.spec/changes/rename-spec-of-dust-to-architect-of-dust.md` | 86 | 1126 | 8197 | 2050 |
 | `.spec/devlog.jsonl` | 5 | 93 | 1419 | 355 |
 | `.spec/flowlog.jsonl` | 38 | 1066 | 13051 | 3263 |
-| `AGENTS.md` | 32 | 288 | 2032 | 508 |
-| `CLAUDE.md` | 23 | 265 | 1773 | 444 |
-| `CODEX.md` | 23 | 267 | 1787 | 447 |
+| `AGENTS.md` | 32 | 292 | 2062 | 516 |
+| `CLAUDE.md` | 23 | 265 | 1786 | 447 |
+| `CODEX.md` | 23 | 267 | 1800 | 450 |
 | `LICENSE` | 21 | 168 | 1068 | 267 |
-| `README.md` | 188 | 1191 | 7836 | 1959 |
+| `README.md` | 198 | 997 | 6731 | 1683 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 655 | 22665 | 193677 | 48420 |
-| `docs/index.html` | 136 | 324 | 3723 | 931 |
-| `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1119 | 280 |
-| `packs/index.json` | 41 | 107 | 1366 | 342 |
-| `packs/javascript/v0/README.md` | 76 | 214 | 1631 | 408 |
-| `packs/python-research/v0/README.md` | 86 | 309 | 2336 | 584 |
-| `packs/python/v0/README.md` | 75 | 223 | 1618 | 405 |
-| `packs/rust/v0/README.md` | 67 | 194 | 1426 | 357 |
-| `packs/swift/v0/README.md` | 80 | 217 | 1632 | 408 |
-| `scripts/archive-done-changes.sh` | 103 | 265 | 2139 | 535 |
-| `scripts/build-dust.sh` | 279 | 1078 | 9059 | 2265 |
+| `docs/dust.html` | 670 | 23403 | 200361 | 50091 |
+| `docs/index.html` | 136 | 324 | 3753 | 939 |
+| `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1129 | 283 |
+| `packs/index.json` | 41 | 107 | 1396 | 349 |
+| `packs/javascript/v0/README.md` | 76 | 214 | 1636 | 409 |
+| `packs/python-research/v0/README.md` | 86 | 309 | 2341 | 586 |
+| `packs/python/v0/README.md` | 75 | 223 | 1628 | 407 |
+| `packs/rust/v0/README.md` | 67 | 194 | 1431 | 358 |
+| `packs/swift/v0/README.md` | 80 | 217 | 1637 | 410 |
+| `scripts/archive-done-changes.sh` | 105 | 263 | 2200 | 550 |
+| `scripts/build-dust.sh` | 281 | 1088 | 9259 | 2315 |
 | `scripts/check-deploy-health.sh` | 182 | 854 | 6194 | 1549 |
 | `scripts/devlog.sh` | 71 | 333 | 2419 | 605 |
 | `scripts/flowlog.sh` | 83 | 395 | 2910 | 728 |
-| `scripts/merge-completed-work.sh` | 165 | 475 | 3749 | 938 |
-| `scripts/update-sod-report.sh` | 380 | 1308 | 10489 | 2623 |
-| `setup.sh` | 151 | 662 | 4341 | 1086 |
-| `templates/dust.html` | 655 | 1857 | 21516 | 5379 |
-| `tests/test-spec-gate.sh` | 625 | 2011 | 18125 | 4532 |
-| `tests/test-workflow-scripts.sh` | 762 | 2981 | 25977 | 6495 |
+| `scripts/merge-completed-work.sh` | 165 | 475 | 3754 | 939 |
+| `scripts/update-aod-report.sh` | 381 | 1309 | 10530 | 2633 |
+| `scripts/update-sod-report.sh` | 7 | 13 | 152 | 38 |
+| `setup.sh` | 155 | 669 | 4395 | 1099 |
+| `templates/dust.html` | 670 | 1899 | 22095 | 5524 |
+| `tests/test-spec-gate.sh` | 625 | 2009 | 18259 | 4565 |
+| `tests/test-workflow-scripts.sh` | 762 | 2980 | 26000 | 6500 |

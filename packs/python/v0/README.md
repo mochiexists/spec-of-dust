@@ -1,6 +1,6 @@
 # Python Pack
 
-Stack-specific gate suggestions for Python projects using `spec-of-dust`.
+Stack-specific gate suggestions for Python projects using `architect-of-dust`.
 These are suggestions, not requirements — adapt to your project's needs.
 
 ## Local gates
@@ -63,7 +63,7 @@ jobs:
       - run: ruff format --check .
       - run: mypy --strict .
       - run: pytest -v
-      - run: bash scripts/update-sod-report.sh --check
+      - run: bash scripts/update-aod-report.sh --check
       - run: bash tests/test-spec-gate.sh
 ```
 
@@ -72,4 +72,4 @@ jobs:
 - **ruff** replaces black, isort, flake8, and pyupgrade in one tool. Strongly recommended for new projects.
 - **Virtual environments**: use `python -m venv .venv` and add `.venv/` to `.gitignore`.
 - **Dependencies**: pin with `requirements.txt` or `uv.lock`. Use `pyproject.toml` for project metadata.
-- **Pre-commit**: `pip install pre-commit` works alongside spec-of-dust hooks if you want both.
+- **Pre-commit**: `pip install pre-commit` works alongside architect-of-dust hooks if you want both.
