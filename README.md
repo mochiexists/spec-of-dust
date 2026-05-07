@@ -14,11 +14,11 @@ clean as a repo grows.
 - Version: `0.2.0`
 - Files: `90`
 - Lines: `9271`
-- Words: `82911`
-- Characters: `640867`
-- Est. tokens: `160249`
+- Words: `83211`
+- Characters: `643302`
+- Est. tokens: `160857`
 - bootstrap aod: `3213 / 3000 target`
-- operational aod: `6676 / 5000 target`
+- operational aod: `6002 / 5000 target`
 
 See `.spec/aod-report.md` for the full per-file breakdown.
 <!-- aod-summary:end -->

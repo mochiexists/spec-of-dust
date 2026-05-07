@@ -1,4 +1,4 @@
-status: verify
+status: present
 files:
   - README.md
   - AGENTS.md
@@ -79,8 +79,7 @@ full hook/workflow suite was run locally.
 
 
 ## Closure
-<!-- Filled at present. -->
-- Challenges:
-- Learnings:
-- Outcomes:
-- Dust:
+- Challenges: the rename touched state names, generated artifacts, hook logic, and the dormant-change story at the same time; the other-model CLI timed out on both review attempts, so compatibility had to be kept tight and verified locally.
+- Learnings: this framework needed an explicit parked state (`shelved`) once the flow moved away from vague “spec” staging; otherwise dormant work still looked active and broke the architecture-first story.
+- Outcomes: AoD now has a coherent state machine, ordering model, migration note, compatibility shims, regenerated outputs, and a green hook/workflow suite. The local repo folder can now be renamed without leaving the framework half-swapped.
+- Dust: Dust keeps the shape of the architecture after the names are gone.

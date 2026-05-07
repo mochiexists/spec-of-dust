@@ -5,11 +5,11 @@
 - Token estimate: `ceil(characters / 4)`
 - Total files: `90`
 - Total lines: `9271`
-- Total words: `82911`
-- Total characters: `640867`
-- Total estimated tokens: `160249`
+- Total words: `83211`
+- Total characters: `643302`
+- Total estimated tokens: `160857`
 - bootstrap aod: `3213 / 3000 target`
-- operational aod: `6676 / 5000 target`
+- operational aod: `6002 / 5000 target`
 
 | File | Lines | Words | Characters | Est. tokens |
 | --- | ---: | ---: | ---: | ---: |
@@ -72,9 +72,9 @@
 | `.spec/changes/fix-ci-wc-w-use-awk.md` | 68 | 1039 | 7037 | 1760 |
 | `.spec/changes/fix-ci-wc-w-vs16-strip.md` | 62 | 1124 | 7929 | 1983 |
 | `.spec/changes/gh-identity-per-repo-check.md` | 64 | 1168 | 7589 | 1898 |
-| `.spec/changes/rename-spec-of-dust-to-architect-of-dust.md` | 86 | 1126 | 8197 | 2050 |
+| `.spec/changes/rename-spec-of-dust-to-architect-of-dust.md` | 85 | 1230 | 8888 | 2222 |
 | `.spec/devlog.jsonl` | 5 | 93 | 1419 | 355 |
-| `.spec/flowlog.jsonl` | 38 | 1066 | 13051 | 3263 |
+| `.spec/flowlog.jsonl` | 39 | 1114 | 13562 | 3391 |
 | `AGENTS.md` | 32 | 292 | 2062 | 516 |
 | `CLAUDE.md` | 23 | 265 | 1786 | 447 |
 | `CODEX.md` | 23 | 267 | 1800 | 450 |
@@ -82,7 +82,7 @@
 | `README.md` | 198 | 997 | 6731 | 1683 |
 | `VERSION` | 1 | 1 | 6 | 2 |
 | `docs/README.md` | 23 | 93 | 707 | 177 |
-| `docs/dust.html` | 670 | 23403 | 200361 | 50091 |
+| `docs/dust.html` | 670 | 23551 | 201594 | 50399 |
 | `docs/index.html` | 136 | 324 | 3753 | 939 |
 | `docs/publish-dust-on-mochiexists.md` | 39 | 159 | 1129 | 283 |
 | `packs/index.json` | 41 | 107 | 1396 | 349 |
